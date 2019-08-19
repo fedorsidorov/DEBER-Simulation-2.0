@@ -35,6 +35,8 @@ plt.ylim(1e-6, 1e+1)
 plt.grid()
 plt.show()
 
+plt.savefig('Si_n_k_Palik.png', dpi=300)
+
 
 #%%
 E_arr = np.logspace(0, 3.3, 5000)
@@ -42,8 +44,8 @@ E_arr = np.logspace(0, 3.3, 5000)
 N_arr = mf.log_interp1d(E_arr_Palik, n_arr)(E_arr)
 K_arr = mf.log_interp1d(E_arr_Palik, k_arr)(E_arr)
 
-plt.loglog(E_arr, N_arr, '.')
-plt.loglog(E_arr, K_arr, '.')
+#plt.loglog(E_arr, N_arr, '.')
+#plt.loglog(E_arr, K_arr, '.')
 
 
 #%%
@@ -72,14 +74,14 @@ IM = mf.log_interp1d(E_arr_new, Im_arr_new)(EE)
 plt.loglog(EE, IM, 'ro', label='Extended')
 plt.loglog(E_arr, Im_arr, label='Original')
 
-plt.title('Palik OELF')
+plt.title('Si optical E-loss function from Palik data')
 plt.xlabel('E, eV')
 plt.ylabel('Im[1/eps]')
 
 plt.legend()
 plt.grid()
 plt.show()
-#plt.savefig('Palik_OELF.png', dpi=300)
+plt.savefig('Si_OELF_Palik.png', dpi=300)
 
 
 #%%
@@ -177,10 +179,10 @@ plt.show()
 
 
 #%%
-Si_INT_U = elf.diff2int(Si_DIFF_U, EE=mv.EE)
+Si_INT_U = elf.diff2int(Si_DIFF_U)
 
-np.save('Palik/Si_U_TOTAL.npy', Si_U)
-np.save('Palik/Si_SP_TOTAL.npy', Si_SP)
-np.save('Palik/Si_DIFF_U_TOTAL.npy', Si_DIFF_U)
-np.save('Palik/Si_INT_U_TOTAL.npy', Si_INT_U)
+np.save('diel_responce/Palik/Si_U_Palik.npy', Si_U)
+np.save('diel_responce/Palik/Si_SP_Palik.npy', Si_SP)
+np.save('diel_responce/Palik/Si_diff_U_Palik.npy', Si_DIFF_U)
+np.save('diel_responce/Palik/Si_int_U_Palik.npy', Si_INT_U)
 
