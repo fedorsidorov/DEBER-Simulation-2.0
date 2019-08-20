@@ -35,7 +35,7 @@ plt.legend()
 plt.grid()
 plt.show()
 
-plt.savefig('PMMA_SP_core_Dapor.png', dpi=300)
+#plt.savefig('PMMA_SP_core_Dapor.png', dpi=300)
 
 
 #%%
@@ -53,13 +53,14 @@ plt.ylim(1e+3, 1e+9)
 plt.grid()
 plt.show()
 
-plt.savefig('PMMA_val_SP.png', dpi=300)
+#plt.savefig('PMMA_val_SP.png', dpi=300)
 
 
 #%%
 E_BIND = np.zeros(len(EE))
 
-EB = np.logspace(0, 1.5, 2000)
+#EB = np.logspace(0, 1.5, 5000)
+EB = np.linspace(1, 25, 5000)
 
 CC = np.zeros(len(EE))
 
@@ -91,17 +92,17 @@ for i in range(len(EE)):
         
 
 #%%
-plt.semilogx(EE, E_BIND, label='My')
+plt.semilogx(EE, E_BIND)
 
 plt.title('U$_{bind}$(E)')
 plt.xlabel('e, eV')
 plt.ylabel('U$_{bind}$(E)')
 
-plt.legend()
+#plt.legend()
 plt.grid()
 plt.show()
 
-#plt.savefig('My U_bind_VAL_PMMA.png', dpi=300)
+plt.savefig('My U_bind_VAL_PMMA.png', dpi=300)
 
 
 #%%

@@ -83,7 +83,8 @@ plt.loglog(EB, now_SP)
 #%%
 E_BIND = np.zeros(len(EE))
 
-EB = np.logspace(0, 1.5, 1000)
+#EB = np.logspace(0, 1.5, 1000)
+EB = np.linspace(0.01, 25, 5000)
 
 
 for i in range(len(EE)):
@@ -145,7 +146,7 @@ for i in range(70, len(EE)):
 plt.loglog(EE, SP_VAL, label='Total - Core')
 plt.loglog(EE, SP_VAL_TEST, '--', label='E$_{bind}$')
 
-plt.title('SP$_{valence}(E)$')
+plt.title('Si SP$_{valence}(E)$')
 plt.xlabel('E, eV')
 plt.ylabel('SP$_{valence}$')
 

@@ -18,7 +18,9 @@ mc = importlib.reload(mc)
 def get_Gryzinski_diff_CS_single(E, Ui, WW=mv.EE):
     
     Gryzinski_diff_CS_single = np.zeros(len(WW))
+    
     inds = np.where(np.logical_and(WW>=Ui, WW <= (E+Ui)/2))
+    
     DE = WW[inds]
     
     if len(inds) == 0:
@@ -38,6 +40,7 @@ def get_Gryzinski_diff_CS(EE, Ui, WW=mv.EE):
     Gryzinski_diff_CS = np.zeros((len(EE), len(WW)))
     
     for i in range(len(EE)):
+        
         Gryzinski_diff_CS[i, :] = get_Gryzinski_diff_CS_single(EE[i], Ui, WW)
         
     return Gryzinski_diff_CS
@@ -48,6 +51,7 @@ def get_Gryzinski_CS(EE, Ui, WW=mv.EE):
     Gryzinski_CS = np.zeros(len(EE))
     
     for i in range(len(EE)):
+        
         diff_CS = get_Gryzinski_diff_CS_single(EE[i], Ui, WW)
         Gryzinski_CS[i] = np.trapz(diff_CS, x=WW)
         
@@ -57,6 +61,7 @@ def get_Gryzinski_CS(EE, Ui, WW=mv.EE):
 def get_Gryzinski_SP_single(E, Ui, conc, n_el, WW=mv.EE):
         
     diff_CS = get_Gryzinski_diff_CS_single(E, Ui, WW)
+    
     Gryzinski_SP_single = conc * n_el * np.trapz(diff_CS * WW, x=WW)
     
     return Gryzinski_SP_single
@@ -65,9 +70,11 @@ def get_Gryzinski_SP_single(E, Ui, conc, n_el, WW=mv.EE):
 def get_Gryzinski_SP(EE, Ui, conc, n_el, WW=mv.EE):
     
     Gryzinski_SP = np.zeros(len(EE))
+        
     diff_CS = get_Gryzinski_diff_CS(EE, Ui, WW)
     
     for i in range(len(EE)):
+        
         Gryzinski_SP[i] = conc * n_el * np.trapz(diff_CS[i, :] * WW, x=WW)
     
     return Gryzinski_SP
@@ -85,22 +92,24 @@ occupancy_Si = [2,    2,   6,   2,     2]
 
 n_val_PMMA = 40
 n_val_Si = 4
+#Ui_PMMA = 10
+#Ui_Si = 4
 
 
 #%% Integrals of spectra
-def diff2int(DIFF, V=mv.EE, H=mv.EE):
+def diff2int(DIFF, EE=mv.EE):
     
-    INT = np.zeros((len(V), len(H)))
+    INT = np.zeros((len(EE), len(EE)))
 
-    for i in range(len(V)):
+    for i in range(len(EE)):
 
-        integral = np.trapz(DIFF[i, :], x=H)
+        integral = np.trapz(DIFF[i, :], x=EE)
         
         if integral == 0:
             continue
         
-        for j in range(1, len(H)):
-            INT[i, j] = np.trapz(DIFF[i, :j+1], x=H[:j+1]) / integral
+        for j in range(1, len(EE)):
+            INT[i, j] = np.trapz(DIFF[i, :j], x=EE[:j]) / integral
     
     return INT
 
@@ -155,6 +164,10 @@ def get_Si_Gryzinski_3P_diff_U(EE):
     return get_Gryzinski_diff_CS(EE, binding_Si[4]) * occupancy_Si[4] * mc.n_Si
 
 
+#def get_Si_Gryzinski_VAL_diff_U(EE):
+#    return get_Gryzinski_diff_CS(EE, Ui_Si) * n_val_Si * mc.n_Si
+
+
 ## Integral
 def get_Si_Gryzinski_1S_int_U(EE):
     return diff2int(get_Si_Gryzinski_1S_diff_U(EE))
@@ -176,6 +189,10 @@ def get_Si_Gryzinski_3P_int_U(EE):
     return diff2int(get_Si_Gryzinski_3P_diff_U(EE))
 
 
+#def get_Si_Gryzinski_VAL_int_U(EE):
+#    return diff2int(get_Si_Gryzinski_VAL_diff_U(EE))
+
+
 ## Total
 def get_Si_Gryzinski_1S_U(EE):
     return get_Gryzinski_CS(EE, binding_Si[0]) * occupancy_Si[0] * mc.n_Si
@@ -195,6 +212,10 @@ def get_Si_Gryzinski_3S_U(EE):
 
 def get_Si_Gryzinski_3P_U(EE):
     return get_Gryzinski_CS(EE, binding_Si[4]) * occupancy_Si[4] * mc.n_Si
+
+
+#def get_Si_Gryzinski_VAL_U(EE):
+#    return get_Gryzinski_CS(EE, Ui_Si) * n_val_Si * mc.n_Si
 
 
 #%% Additions
@@ -290,6 +311,12 @@ def get_PMMA_Gryzinski_core_U(EE):
     U_O_K = CS_O_1S * mc.n_PMMA_mon * mc.n_O_PMMA
     
     return U_C_K + U_O_K
+    
+
+#def get_PMMA_Gryzinski_valence_U(EE):
+#    CS_PMMA_val = get_Gryzinski_CS(EE, Ui_PMMA) * n_val_PMMA
+#    U_PMMA_val = CS_PMMA_val * mc.n_PMMA_mon
+#    return U_PMMA_val
 
 
 def get_PMMA_Moller_valence_U(EE):
@@ -306,7 +333,12 @@ def get_PMMA_Gryzinski_core_SP(EE):
     SP_O_1S = get_Gryzinski_SP(EE, binding_O_1S, mc.n_PMMA_mon*mc.n_O_PMMA, occupancy_1S)
     
     return SP_C_1S + SP_O_1S
+    
 
+#def get_PMMA_Gryzinski_valence_SP(EE):
+#    SP_PMMA_val = get_Gryzinski_SP(EE, Ui_PMMA, mc.n_PMMA_mon, n_val_PMMA)
+#    return SP_PMMA_val
+    
 
 def get_PMMA_Moller_valence_SP(EE):
     
@@ -326,6 +358,12 @@ def get_Si_Gryzinski_core_U(EE):
     U_Si_L = (CS_Si_2S + CS_Si_2P) * mc.n_Si
     
     return U_Si_K + U_Si_L
+    
+
+#def get_Si_Gryzinski_valence_U(EE):
+#    CS_Si_val = get_Gryzinski_CS(EE, Ui_Si) * n_val_Si
+#    U_Si_val = CS_Si_val * mc.n_Si
+#    return U_Si_val
 
 
 def get_Si_Moller_valence_U(EE):
@@ -355,6 +393,13 @@ def get_Si_Gryzinski_total_SP(EE):
     
     return SP_Si_1S + SP_Si_2S + SP_Si_2P + SP_Si_3S + SP_Si_3P
 
+
+#def get_Si_Gryzinski_valence_SP(EE):
+#    return get_Gryzinski_SP(EE, Ui_Si, mc.n_Si, n_val_Si)
+
+
+#def get_Si_Moller_valence_SP(EE):
+#    return get_Moller_SP(EE, mc.n_Si, n_val_Si)
 
 #%% Bethe
 def get_Bethe_SP(E, Z, rho, A, J):
@@ -422,3 +467,45 @@ def get_PMMA_U_polaron(EE):
     
     return U_POL
 
+
+#%% PMMA
+#E = np.logspace(1, 4.4, 1000)
+#
+#SP_PMMA_GG = get_PMMA_Gryzinski_core_SP(E) + get_PMMA_Gryzinski_valence_SP(E)
+#SP_PMMA_GM = get_PMMA_Gryzinski_core_SP(E) + get_PMMA_Moller_valence_SP(E)
+#
+#SP_PMMA_B = get_PMMA_Bethe_SP(E)
+#
+#plt.loglog(E, SP_PMMA_GG, label='Gryzinski + Gryzinski')
+#plt.loglog(E, SP_PMMA_GM, label='Gryzinski + Moller')
+#plt.loglog(E, SP_PMMA_B, label='Bethe')
+#
+#plt.title('Stopping Power for PMMA')
+#plt.xlabel('E, eV')
+#plt.ylabel('SP, eV/cm')
+#
+#plt.legend()
+#plt.grid()
+#plt.show()
+#plt.savefig('SP_PMMA.png', dpi=300)
+
+#%% Si
+#E = np.logspace(1, 4.4, 1000)
+#
+#SP_Si_GG = get_Si_Gryzinski_core_SP(E) + get_Si_Gryzinski_valence_SP(E)
+#SP_Si_GM = get_Si_Gryzinski_core_SP(E) + get_Si_Moller_valence_SP(E)
+#
+#SP_Si_B = get_Si_Bethe_SP(E)
+#
+#plt.loglog(E, SP_Si_GG, label='Gryzinski + Gryzinski')
+#plt.loglog(E, SP_Si_GM, label='Gryzinski + Moller')
+#plt.loglog(E, SP_Si_B, label='Bethe')
+#
+#plt.title('Stopping Power for Si')
+#plt.xlabel('E, eV')
+#plt.ylabel('SP, eV/cm')
+#
+#plt.legend()
+#plt.grid()
+#plt.show()
+#plt.savefig('SP_Si.png', dpi=300)
