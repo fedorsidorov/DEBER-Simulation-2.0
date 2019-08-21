@@ -2,56 +2,115 @@
 import numpy as np
 #import os
 import importlib
-import my_functions as mf
-import my_variables as mv
 import my_constants as mc
+import my_utilities as mu
 #import matplotlib.pyplot as plt
 
-mf = importlib.reload(mf)
-mv = importlib.reload(mv)
 mc = importlib.reload(mc)
+mu = importlib.reload(mu)
+
+#print('my_arrays are loaded')
+
+
+#%%
+EE = mc.EE
+THETA = mc.THETA
 
 
 #%% Elastic scattering
+PMMA_el_U = np.load(mc.sim_path_MAC + 'elastic/PMMA_elastic_U.npy')
+PMMA_el_int_U = np.load(mc.sim_path_MAC + 'elastic/PMMA_elastic_int_CS.npy')
 
-
+Si_el_U = np.load(mc.sim_path_MAC + 'elastic/Si_elastic_U.npy')
+Si_el_int_U = np.load(mc.sim_path_MAC + 'elastic/Si_elastic_int_CS.npy')
 
 
 #%% Total inelastic U
 ## PMMA
-PMMA_total_U = np.load(mv.sim_path_MAC + 'E_loss/diel_responce/Dapor/PMMA_U_Dapor.npy')
-PMMA_int_U = np.load(mv.sim_path_MAC + 'E_loss/diel_responce/Dapor/PMMA_int_U_Dapor.npy')
+PMMA_total_inel_U = np.load(mc.sim_path_MAC + 'E_loss/diel_responce/Dapor/PMMA_U_Dapor.npy')
+PMMA_diff_inel_U = np.load(mc.sim_path_MAC + 'E_loss/diel_responce/Dapor/PMMA_diff_U_Dapor.npy')
+#PMMA_int_inel_U = np.load(mc.sim_path_MAC + 'E_loss/diel_responce/Dapor/PMMA_int_U_Dapor.npy')
 
 ## Si
-Si_U_total = np.load(mv.sim_path_MAC + 'E_loss/diel_responce/Palik/Si_U_Palik.npy')
-Si_int_U = np.load(mv.sim_path_MAC + 'E_loss/diel_responce/Palik/Si_int_U_Palik.npy')
+Si_total_inel_U = np.load(mc.sim_path_MAC + 'E_loss/diel_responce/Palik/Si_U_Palik.npy')
+Si_diff_inel_U = np.load(mc.sim_path_MAC + 'E_loss/diel_responce/Palik/Si_diff_U_Palik.npy')
+#Si_int_inel_U = np.load(mc.sim_path_MAC + 'E_loss/diel_responce/Palik/Si_int_U_Palik.npy')
 
 
 #%% Core electron U components
 ## PMMA
-PMMA_C_1S_total_U = np.load(mv.sim_path_MAC + 'E_loss/Gryzinski/PMMA/PMMA_C_1S_U.npy')
-PMMA_C_1S_int_U = np.load(mv.sim_path_MAC + 'E_loss/Gryzinski/PMMA/PMMA_C_1S_int_U.npy')
+PMMA_C_1S_total_U = np.load(mc.sim_path_MAC + 'E_loss/Gryzinski/PMMA/PMMA_C_1S_U.npy')
+PMMA_C_1S_diff_U = np.load(mc.sim_path_MAC + 'E_loss/Gryzinski/PMMA/PMMA_C_1S_diff_U.npy')
+PMMA_C_1S_int_U = np.load(mc.sim_path_MAC + 'E_loss/Gryzinski/PMMA/PMMA_C_1S_int_U.npy')
 
-PMMA_O_1S_total_U = np.load(mv.sim_path_MAC + 'E_loss/Gryzinski/PMMA/PMMA_O_1S_U.npy')
-PMMA_O_1S_int_U = np.load(mv.sim_path_MAC + 'E_loss/Gryzinski/PMMA/PMMA_O_1S_int_U.npy')
+PMMA_O_1S_total_U = np.load(mc.sim_path_MAC + 'E_loss/Gryzinski/PMMA/PMMA_O_1S_U.npy')
+PMMA_O_1S_diff_U = np.load(mc.sim_path_MAC + 'E_loss/Gryzinski/PMMA/PMMA_O_1S_diff_U.npy')
+PMMA_O_1S_int_U = np.load(mc.sim_path_MAC + 'E_loss/Gryzinski/PMMA/PMMA_O_1S_int_U.npy')
+
+PMMA_val_total_U = np.load(mc.sim_path_MAC + 'E_loss/diel_responce/Dapor/PMMA_val_tot_U_D+G.npy')
+PMMA_val_int_U = np.load(mc.sim_path_MAC + 'E_loss/diel_responce/Dapor/PMMA_val_int_U_D+G.npy')
 
 ## Si
-Si_1S_total_U = np.load(mv.sim_path_MAC + 'E_loss/Gryzinski/Si/Si_1S_U.npy')
-Si_1S_int_U = np.load(mv.sim_path_MAC + 'E_loss/Gryzinski/Si/Si_1S_int_U.npy')
+Si_1S_total_U = np.load(mc.sim_path_MAC + 'E_loss/Gryzinski/Si/Si_1S_U.npy')
+Si_1S_diff_U = np.load(mc.sim_path_MAC + 'E_loss/Gryzinski/Si/Si_1S_diff_U.npy')
+Si_1S_int_U = np.load(mc.sim_path_MAC + 'E_loss/Gryzinski/Si/Si_1S_int_U.npy')
 
-Si_2S_total_U = np.load(mv.sim_path_MAC + 'E_loss/Gryzinski/Si/Si_2S_U.npy')
-Si_2S_int_U = np.load(mv.sim_path_MAC + 'E_loss/Gryzinski/Si/Si_2S_int_U.npy')
+Si_2S_total_U = np.load(mc.sim_path_MAC + 'E_loss/Gryzinski/Si/Si_2S_U.npy')
+Si_2S_diff_U = np.load(mc.sim_path_MAC + 'E_loss/Gryzinski/Si/Si_2S_diff_U.npy')
+Si_2S_int_U = np.load(mc.sim_path_MAC + 'E_loss/Gryzinski/Si/Si_2S_int_U.npy')
 
-Si_2P_total_U = np.load(mv.sim_path_MAC + 'E_loss/Gryzinski/Si/Si_2P_U.npy')
-Si_2P_int_U = np.load(mv.sim_path_MAC + 'E_loss/Gryzinski/Si/Si_2P_int_U.npy')
+Si_2P_total_U = np.load(mc.sim_path_MAC + 'E_loss/Gryzinski/Si/Si_2P_U.npy')
+Si_2P_diff_U = np.load(mc.sim_path_MAC + 'E_loss/Gryzinski/Si/Si_2P_diff_U.npy')
+Si_2P_int_U = np.load(mc.sim_path_MAC + 'E_loss/Gryzinski/Si/Si_2P_int_U.npy')
+
+Si_val_total_U = np.load(mc.sim_path_MAC + 'E_loss/diel_responce/Palik/Si_val_tot_U_P+G.npy')
+Si_val_int_U = np.load(mc.sim_path_MAC + 'E_loss/diel_responce/Palik/Si_val_int_U_P+G.npy')
+
+
+#%% PMMA phonons and polarons
+PMMA_phonon_U = np.load(mc.sim_path_MAC + 'E_loss/phonons_polarons/PMMA_phonon_U.npy')
+PMMA_polaron_U = np.load(mc.sim_path_MAC + 'E_loss/phonons_polarons/PMMA_polaron_U.npy')
+
+
+#%% Combine it all for PMMA
+## elastic, valence, core_C, core_O, phonons, polarons
+PMMA_processes_U_list = [PMMA_el_U, PMMA_val_total_U, PMMA_C_1S_total_U, PMMA_O_1S_total_U,\
+                    PMMA_phonon_U, PMMA_polaron_U]
+
+PMMA_processes_U = np.zeros((len(mc.EE), len(PMMA_processes_U_list)))
+
+for i in range(len(PMMA_processes_U_list)):
+
+    PMMA_processes_U[:, i] = PMMA_processes_U_list[i]
+    
+
+PMMA_processes_int_U = [PMMA_el_int_U, PMMA_val_int_U, PMMA_C_1S_int_U, PMMA_O_1S_int_U]
+
+
+#%% Combine it all for Si
+## elastic, valence, core_1S, core_2S, core_2P
+Si_processes_U_list = [Si_el_U, Si_val_total_U, Si_1S_total_U, Si_2S_total_U, Si_2P_total_U]
+
+Si_processes_U = np.zeros((len(mc.EE), len(Si_processes_U_list)))
+
+for i in range(len(Si_processes_U_list)):
+
+    Si_processes_U[:, i] = Si_processes_U_list[i]
+
+
+Si_processes_int_U = [Si_el_int_U, Si_val_int_U, Si_1S_int_U, Si_2S_int_U, Si_2P_int_U]
 
 
 #%%
+processes_U = [PMMA_processes_U, Si_processes_U]
+
+processes_int_U = [PMMA_processes_int_U, Si_processes_int_U]
 
 
+#%%
+PMMA_val_E_bind = np.load(mc.sim_path_MAC + 'E_loss/E_bind_PMMA/PMMA_E_bind.npy')
+Si_val_E_bind = np.load(mc.sim_path_MAC + 'E_loss/E_bind_Si/Si_E_bind.npy')
 
-
-
-
+val_E_bind = [PMMA_val_E_bind, Si_val_E_bind]
 
 

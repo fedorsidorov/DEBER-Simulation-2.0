@@ -4,39 +4,41 @@ import matplotlib.pyplot as plt
 import importlib
 import os
 
-import my_functions as mf
-import my_variables as mv
+import my_utilities as mu
+import my_constants as mc
 
 import scipy.signal
 
-mf = importlib.reload(mf)
-mv = importlib.reload(mv)
+mu = importlib.reload(mu)
+mc = importlib.reload(mc)
 
-os.chdir(mv.sim_path_MAC + 'Elastic CS')
+os.chdir(mc.sim_path_MAC + 'elastic')
+
 
 #%% Rutherford CS
-def get_Ruth_CS(Z, E, theta):
+def get_Ruth_diff_CS(Z, E, theta):
     
-    eV = 1.6e-19    
-    h = 6.63e-34
+    alpha = mc.k_el**2 * (mc.m * mc.e**4 * np.pi**2 * Z**(2/3)) / (mc.h**2 * E * mc.eV)
     
-    eps_0 = 8.85e-12
-    k = 1 / (4 * np.pi * eps_0)
-    
-    m = 9.11e-31
-    e = 1.6e-19
-    
-    alpha = k**2 * (m * e**4 * np.pi**2 * Z**(2/3)) / (h**2 * E * eV)
-#    alpha = 0
-    
-    diff_cs = k**2 * Z**2 * e**4/ (4 * (E * eV)**2) / np.power(1 - np.cos(theta) + alpha, 2)
+    diff_cs = mc.k_el**2 * Z**2 * mc.e**4/ (4 * (E * mc.eV)**2) /\
+        np.power(1 - np.cos(theta) + alpha, 2)
     
     return diff_cs
 
-#%% Mott CS
-def get_Ioffe_data(Z):
+
+def get_Ruth_CS(Z, E):
     
-    text_file = open('DATA/' + str(Z) + '.txt', 'r')
+    alpha = mc.k_el**2 * (mc.m * mc.e**4 * np.pi**2 * Z**(2/3)) / (mc.h**2 * E * mc.eV)
+        
+    CS = np.pi * mc.k_el**2 * Z**2 * mc.e**4/ ((E * mc.eV)**2) / (alpha * (2 + alpha))
+    
+    return CS
+
+
+#%% Mott CS
+def get_Ioffe_data(el):
+    
+    text_file = open('Ioffe_DATA/' + el + '.txt', 'r')
     lines = text_file.readlines()
     
     theta_corr = list(map(lambda s: '0'+s, lines[12].split()[2:]))
@@ -78,6 +80,23 @@ def get_Ioffe_data(Z):
 
     return E_arr_final, theta_arr_deg_final, diff_cs_final, total_cs_final
 
+
+#%% Si
+E_arr, theta_arr, diff_cs_Mott, total_cs_Mott = get_Ioffe_data('Si')
+
+total_cs_Ruth = get_Ruth_CS(14, mc.EE)
+
+plt.loglog(E_arr, total_cs_Mott, label='Mott')
+plt.loglog(mc.EE, total_cs_Ruth * 1e+4, label='Rutherford')
+
+plt.xlabel('E, eV')
+plt.ylabel('$\sigma_{el}$, cm$^2$')
+
+plt.legend()
+plt.grid()
+plt.show()
+
+
 #%% Ar, Z = 18, E = 1000 eV
 Z = 18
 E = 1000
@@ -85,7 +104,7 @@ E_pos = 19
 
 E_arr, theta_arr, diff_cs_Mott, total_cs_Mott = get_Ioffe_data(Z)
 
-diff_cs_Ruth = get_Ruth_CS(Z, E, np.deg2rad(theta_arr))
+diff_cs_Ruth = get_Ruth_diff_CS(Z, E, np.deg2rad(theta_arr))
 
 plt.semilogy(theta_arr, diff_cs_Mott[E_pos] * 1e+16, label='Mott cross section')
 plt.semilogy(theta_arr, diff_cs_Ruth * 1e+20, label='Rutherford cross section')
@@ -112,7 +131,7 @@ E_pos = 14
 
 E_arr, theta_arr, diff_cs_Mott, total_cs_Mott = get_Ioffe_data(Z)
 
-diff_cs_Ruth = get_Ruth_CS(Z, E, np.deg2rad(theta_arr))
+diff_cs_Ruth = get_Ruth_diff_CS(Z, E, np.deg2rad(theta_arr))
 
 #plt.semilogy(theta_arr, diff_cs_Mott[E_pos] * 1e+16, label='Mott cross section')
 #plt.semilogy(theta_arr, diff_cs_Ruth * 1e+20, label='Rutherford cross section')
@@ -139,7 +158,7 @@ plt.show()
 
 theta_arr_interp = np.linspace(1, 180, 100)
 
-diff_cs_Mott_interp = mf.log_interp1d(theta_arr, diff_cs_Mott[E_pos])(theta_arr_interp)
+diff_cs_Mott_interp = mu.log_interp1d(theta_arr, diff_cs_Mott[E_pos])(theta_arr_interp)
 
 arr_filt = scipy.signal.medfilt(diff_cs_Mott_interp, kernel_size=3)
 

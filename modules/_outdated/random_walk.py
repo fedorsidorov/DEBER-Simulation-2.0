@@ -1,18 +1,16 @@
 #%% Import
 import numpy as np
-#import os
 import importlib
 import my_functions as mf
-import my_variables as mv
 import matplotlib.pyplot as plt
-
 from random import uniform
 
-mf = importlib.reload(mf)
-mv = importlib.reload(mv)
+import my_utilities as mu
+
+mu = importlib.reload(mu)
+
 
 from numpy import sin, cos, arccos
-
 
 #%%
 def check_chain(chain_coords, now_mon_coords, step_2):
@@ -34,9 +32,48 @@ def get_On(phi, theta, O_pre):
     return On
 
 
+def get_new_phi_theta(now_phi, now_theta):
+    
+    phi = 2*np.pi * mf.random()
+    theta = np.deg2rad(180 - 109)
+    
+    if now_theta == 0:
+        now_theta = 1e-5
+    
+    new_theta = arccos(
+                    cos(now_theta) * cos(theta) +\
+                    sin(now_theta) * sin(theta) * cos(phi)
+                )
+    
+    cos_delta_phi = (cos(theta) - cos(new_theta)*cos(now_theta)) / (sin(now_theta)*sin(new_theta))
+    
+    if cos_delta_phi < -1:
+        cos_delta_phi = -1
+    elif cos_delta_phi > 1:
+        cos_delta_phi = 1
+    
+    delta_phi = arccos(cos_delta_phi)
+    
+    if sin(theta)*sin(phi)/sin(new_theta) < 0:
+        delta_phi *= -1
+    
+    new_phi = now_phi + delta_phi
+    
+    return new_phi, new_theta
+
+
+def get_delta_xyz(L, new_phi, new_theta):
+    
+    delta_x = L * sin(new_theta) * cos(new_phi)
+    delta_y = L * sin(new_theta) * sin(new_phi)
+    delta_z = L * cos(new_theta)
+    
+    return np.array((delta_x, delta_y, delta_z))
+
+
 def make_PMMA_chain(chain_len):
 
-    step = 0.28
+    step = 1
     step_2 = step**2
     
     chain_len = 200
@@ -59,7 +96,7 @@ def make_PMMA_chain(chain_len):
     
     while i < chain_len:
         
-        mf.upd_progress_bar(i, chain_len)
+        mu.upd_progress_bar(i, chain_len)
         
         while True:
             
@@ -140,3 +177,8 @@ def check_angles(chain_arr):
         return True
     
     return False
+
+
+
+
+

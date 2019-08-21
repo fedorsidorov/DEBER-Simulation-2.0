@@ -15,6 +15,7 @@ elf = importlib.reload(elf)
 
 os.chdir(mv.sim_path_MAC + 'elastic')
 
+
 #%%
 def get_Ioffe_raw_data(el):
     
@@ -131,9 +132,13 @@ PMMA_INT_CS = elf.diff2int(PMMA_DIFF_CS, mv.EE, mv.THETA)
 #%%
 PMMA_TOTAL_CS = elf.mc.n_C_PMMA*C_TOTAL_CS + elf.mc.n_H_PMMA*H_TOTAL_CS + elf.mc.n_O_PMMA*O_TOTAL_CS
 
-#%%
-plt.loglog(EE, Si_TOTAL_CS)
+PMMA_U = PMMA_TOTAL_CS * mc.n_PMMA_mon
 
+#%%
+plt.loglog(EE, PMMA_U)
+
+#%%
+Si_U = Si_TOTAL_CS * mc.n_Si
 
 #%%
 Si_INT_CS = elf.diff2int(Si_DIFF_CS, mv.EE, mv.THETA)

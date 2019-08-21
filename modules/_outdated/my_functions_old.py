@@ -1,29 +1,44 @@
 import numpy as np
 from random import random
 from random import randint
-#from numpy.random import choice
-#from numpy.random import randint
+from numpy.random import choice
+from numpy.random import randint
 from random import uniform
 import sys
 from scipy import interpolate
 
 import importlib
 
-import my_arrays as ma
-import my_constants as mc
-import random_walk as rw
-import my_utilities as mu
-
+import my_arrays_25keV as ma
 ma = importlib.reload(ma)
-mc = importlib.reload(mc)
-rw = importlib.reload(rw)
-mu = importlib.reload(mu)
+
+import my_variables as mv
+mv = importlib.reload(mv)
 
 import matplotlib.pyplot as plt
-#from mpl_toolkits.mplot3d import Axes3D
+from mpl_toolkits.mplot3d import Axes3D
 
 from math import gamma
 
+#%% Non-simulation functions
+def upd_progress_bar(progress, total):
+    barLength, status = 20, ''
+    progress = float(progress) / float(total)
+    if progress >= 1.:
+        progress, status = 1, '\r\n'
+    block = int(round(barLength * progress))
+    text = '\r[{}] {:.0f}% {}'.format(
+        '#' * block + '-' * (barLength - block), round(progress * 100, 0),\
+        status)
+    sys.stdout.write(text)
+    sys.stdout.flush()
+
+def log_interp1d(xx, yy, kind='linear'):
+    logx = np.log10(xx)
+    logy = np.log10(yy)
+    lin_interp = interpolate.interp1d(logx, logy, kind=kind)
+    log_interp = lambda zz: np.power(10.0, lin_interp(np.log10(zz)))
+    return log_interp
 
 #%% Beam functions
 def get_norm_density(x, mu, sigma):
@@ -42,13 +57,11 @@ def get_x_y_square_beam(x0, y0, D):
     y = y0 + D*random()
     return x, y
 
-
 #%% Simulation functions
 def get_closest_el_ind(array, val):
     ind = np.argmin(np.abs(array - val))
     return ind
    
-    
 def get_closest_norm_int_ind(array, value):
     if value > array.max():
         print('Out of range!')
@@ -60,77 +73,47 @@ def get_closest_norm_int_ind(array, value):
     return len(array)
 
 
-def get_MC_ind(values):
+def get_atom_id(d_PMMA, E_ind, z): ## no negative z values are assumed
     
-    inds = np.arange(len(values))
-    probs = values / np.sum(values)
+    if z >= d_PMMA: ## current material is Si
+        return 3
     
-    return np.random.choice(inds, p=probs)
+    elif z >= 0: ## current material is PMMA
+        cs_sum_norm_array = ma.PMMA_ATOMS_CS_SUM_NORM[int(E_ind), :]
+        return get_closest_norm_int_ind(cs_sum_norm_array, random())
+
+
+def get_collision_id(atom_id, E_ind):
     
-
-#def get_layer_id(d_PMMA, z): ## no negative z values are assumed
-#    
-#    if z >= d_PMMA: ## current material is Si
-#        return 3
-#    
-#    elif z >= 0: ## current material is PMMA
-#        cs_sum_norm_array = ma.PMMA_ATOMS_CS_SUM_NORM[int(E_ind), :]
-#        return get_closest_norm_int_ind(cs_sum_norm_array, random())
+    coll_array = ma.ATOMS_CS_SUM_NORM[atom_id][E_ind, :]
+    return get_closest_norm_int_ind(coll_array, random())
 
 
-
-
-
-#def get_On(atom_id, coll_id, E_ind, O_prev):
-#    
-#    if coll_id == 0: ## elastic scattering
-#        theta_rand_arr = ma.ATOMS_DIFF_CS_INT_NORM[atom_id][E_ind, :]
-#        theta_ind = get_closest_norm_int_ind(theta_rand_arr, random())
-#        On = get_O_matrix(2*np.pi*random(), ma.theta_arr[theta_ind], O_prev)
-#        return On
-#    
-#    else: ## inelastic scattering, in case of ionization, deal with it later
-#        return O_prev
-
-
-#def get_O_matrix(phi, theta, O_prev):
-#    
-#    Wn = np.mat([[      np.cos(phi),                np.sin(phi),             0],\
-#        [-np.sin(phi)*np.cos(theta),  np.cos(phi)*np.cos(theta), np.sin(theta)],\
-#        [ np.sin(phi)*np.sin(theta), -np.cos(phi)*np.sin(theta), np.cos(theta)]])
-#    
-#    return Wn*O_prev
-        
+def get_On(atom_id, coll_id, E_ind, O_prev):
     
-#def get_O_matrix(phi, theta, O_pre):
-#    
-#    Wn = np.mat([
-#                [            cos(phi),             sin(phi),          0],
-#                [-sin(phi)*cos(theta),  cos(phi)*cos(theta), sin(theta)],
-#                [ sin(phi)*sin(theta), -cos(phi)*sin(theta), cos(theta)]
-#                ])
-#    On = np.matmul(Wn, O_pre)
-#    
-#    return On
+    if coll_id == 0: ## elastic scattering
+        theta_rand_arr = ma.ATOMS_DIFF_CS_INT_NORM[atom_id][E_ind, :]
+        theta_ind = get_closest_norm_int_ind(theta_rand_arr, random())
+        On = get_O_matrix(2*np.pi*random(), ma.theta_arr[theta_ind], O_prev)
+        return On
+    
+    else: ## inelastic scattering, in case of ionization, deal with it later
+        return O_prev
 
-'''
-def get_collision_id(layer_ind, E_ind):
+
+def get_O_matrix(phi, theta, O_prev):
     
-    processes_U = ma.processes_U[layer_ind]
+    Wn = np.mat([[      np.cos(phi),                np.sin(phi),             0],\
+        [-np.sin(phi)*np.cos(theta),  np.cos(phi)*np.cos(theta), np.sin(theta)],\
+        [ np.sin(phi)*np.sin(theta), -np.cos(phi)*np.sin(theta), np.cos(theta)]])
     
-    
-    return
+    return Wn*O_prev
 
 
 def get_dxdydz(atom_id, E_ind, d_PMMA, On, z):
     
-    ## PMMA
-#    if z <= d_PMMA:
-        
-        
-    
     ## get mean free path in current material
-#    mfp_now = 1/(mv.CONC[atom_id]*np.sum(ma.ATOMS_CS[atom_id][E_ind, :])) * 1e+7
+    mfp_now = 1/(mv.CONC[atom_id]*np.sum(ma.ATOMS_CS[atom_id][E_ind, :])) * 1e+7
     
     ## the random number for the determination of free path
     r = random()
@@ -164,21 +147,18 @@ def get_final_On_and_O2nd(E_prev, E2nd, On):
 
 ## The function for making next step of simulation
 def get_coll_data(d_PMMA, E_prev, O_prev, x, z):
-    
     is2nd = False
     E2nd = 0
     O2nd = O_prev*0
     
-    layer_ind = 0
-    
-    if z > d_PMMA:
-        layer_id = 1
-    
     ## get E index
-    E_ind = get_closest_el_ind(ma.EE, E_prev)
+    E_ind = get_closest_el_ind(ma.E_arr, E_prev)
+    
+    ## get atom id
+    atom_id = get_atom_id(d_PMMA, E_ind, z)
     
     ## get collision id
-    coll_id = get_collision_ind(layer_ind, E_ind)
+    coll_id = get_collision_id(atom_id, E_ind)
     
     ## get current flight direction matrix
     On = get_On(atom_id, coll_id, E_ind, O_prev)
@@ -297,7 +277,7 @@ def get_DATA(E0, D, d_PMMA, n_tracks):
     DATA = np.delete(DATA, np.where(np.isnan(DATA[:, 2])), axis=0)
     
     return DATA
-'''
+
 #%% Plot DATA
 def plot_DATA(DATA, d_PMMA=0, coords=[0, 2]):
     fig, ax = plt.subplots()
