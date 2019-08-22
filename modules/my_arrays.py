@@ -109,8 +109,23 @@ processes_int_U = [PMMA_processes_int_U, Si_processes_int_U]
 
 #%%
 PMMA_val_E_bind = np.load(mc.sim_path_MAC + 'E_loss/E_bind_PMMA/PMMA_E_bind.npy')
-Si_val_E_bind = np.load(mc.sim_path_MAC + 'E_loss/E_bind_Si/Si_E_bind.npy')
+PMMA_C_1S_E_bind = np.ones(len(EE)) * mc.binding_C_1S
+PMMA_O_1S_E_bind = np.ones(len(EE)) * mc.binding_O_1S
 
-val_E_bind = [PMMA_val_E_bind, Si_val_E_bind]
+PMMA_E_bind = [PMMA_val_E_bind, PMMA_C_1S_E_bind, PMMA_O_1S_E_bind]
+
+Si_val_E_bind = np.load(mc.sim_path_MAC + 'E_loss/E_bind_Si/Si_E_bind.npy')
+Si_1S_E_bind = np.ones(len(EE)) * mc.binding_Si[0]
+Si_2S_E_bind = np.ones(len(EE)) * mc.binding_Si[1]
+Si_2P_E_bind = np.ones(len(EE)) * mc.binding_Si[2]
+
+Si_E_bind = [Si_val_E_bind, Si_1S_E_bind, Si_2S_E_bind, Si_2P_E_bind]
+
+E_bind = [PMMA_E_bind, Si_E_bind]
+
+
+
+
+
 
 

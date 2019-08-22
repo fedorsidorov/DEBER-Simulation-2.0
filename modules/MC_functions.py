@@ -130,67 +130,64 @@ def get_ion_On_O2nd(E, E_prime, E_bind, O_prev):
     return On, O2nd
 
 
-def get_ion_dE_E2nd_On_O2nd(layer_ind, E_ind, coll_ind, O_prev):
+def get_ion_dE_E2nd_On_O2nd(layer_ind, proc_ind, E, E_ind, O_prev):
     
-    E_bind = ma.val_E_bind[layer_ind][E_ind]
-        
-    int_array = ma.processes_int_U[layer_ind][coll_ind][E_ind, :]
+    print(layer_ind, proc_ind, E_ind)
     
+    E_bind = ma.E_bind[layer_ind][proc_ind][E_ind]
+    int_array = ma.processes_int_U[layer_ind][proc_ind][E_ind, :]
     dE = get_closest_int_el(int_array, ma.EE)
+    
+    print('ION_dE', dE)
     
     if dE > E_bind:
         
         E2nd = dE - E_bind
-        
-        On, O2nd = get_ion_On_O2nd(ma.EE[E_ind], ma.EE[E_ind] - dE, E_bind, O_prev)
+        On, O2nd = get_ion_On_O2nd(E, E - dE, E_bind, O_prev)
         
         return dE, E2nd, On, O2nd
     
     else:
-        
         return dE, 0, O_prev, O_prev*0
 
-######
-def get_dE_E2nd_On_O2nd(layer_ind, E_ind, coll_ind, O_prev):
+
+def get_dE_E2nd_On_O2nd(layer_ind, proc_ind, E_ind, E, O_prev):
             
-    if coll_ind == 0: ## elastic scattering
+    if proc_ind == 0: ## elastic scattering
         
-        dE = 0
-        E2nd = 0
-        
+        print('elastic')
         On = get_elastic_On(layer_ind, E_ind, O_prev)
-        O2nd = On * 0
         
-        return dE, E2nd, On, O2nd
+        return 0, 0, On, On*0
     
-    if coll_ind == 1: ## valence electrons
+    elif (layer_ind == 0 and proc_ind in [1, 2, 3]) or\
+         (layer_ind == 1 and proc_ind in [1, 2, 3, 4]): ## ionization
         
-        E_bind = ma.val_E_bind[layer_ind][E_ind]
+        print('ionization')
+        return get_ion_dE_E2nd_On_O2nd(layer_ind, proc_ind, E, E_ind, O_prev)
+    
+    if proc_ind == 4: ## PMMA phonons
         
-        int_array = ma.processes_int_U[layer_ind][1][E_ind, :]
+        dE = mc.hw_phonon
         
-        dE = get_closest_int_el(int_array, ma.EE)
+        phi = 2*np.pi*rnd.random()
         
-        if dE > E_bind:
-            E2nd = dE - E_bind
+        E_prime = E - dE
+        B = (E + E_prime + 2*np.sqrt(E*E_prime)) / (E + E_prime - 2*np.sqrt(E*E_prime))
+        u5 = rnd.random()
         
+        cos_theta = (E + E_prime)/(2*np.sqrt(E*E_prime)) * (1 - B**u5) + B**u5
+        theta = np.arccos(cos_theta)
         
-    
-    
-    
-    
-    
-    if coll_id == 0: ## elastic scattering
-        theta_rand_arr = ma.ATOMS_DIFF_CS_INT_NORM[atom_id][E_ind, :]
-        theta_ind = get_closest_norm_int_ind(theta_rand_arr, random())
-        On = get_O_matrix(2*np.pi*random(), ma.theta_arr[theta_ind], O_prev)
-        return On
-    
-    else: ## inelastic scattering, in case of ionization, deal with it later
-        return O_prev
+        On = get_O_matrix(phi, theta, O_prev)
+        
+        return dE, 0, On, On*0
+        
+    else: ## PMMA polarons
+        return E, 0, O_prev*0, O_prev*0
 
 
-def get_dxdydz(layer_ind, E_ind, d_PMMA, On, z):
+def get_dxdydz(layer_ind, E_ind, d_PMMA, z, On):
     
     now_U = np.sum(ma.processes_U[layer_ind][E_ind, :])
     now_mfp = 1 / now_U
@@ -220,138 +217,111 @@ def get_dxdydz(layer_ind, E_ind, d_PMMA, On, z):
     return dxdydz
 
 
-def get_final_On_and_O2nd(E_prev, E2nd, On):
-    phi_ion = 2*np.pi*random()
-    omega, t = E2nd/E_prev, E_prev/mv.m_eV
-    alpha = np.arcsin(np.sqrt(2*omega/(2 + t - t*omega)))
-    gamma = np.arcsin(np.sqrt(2*(1 - omega)/(2 + t*omega)))
-    O_final = get_O_matrix(phi_ion, alpha, On)
-    O2nd = get_O_matrix(np.pi + phi_ion, gamma, On)
-    return O_final, O2nd
-
-
-## The function for making next step of simulation
 def get_coll_data(d_PMMA, E_prev, O_prev, x, z):
     
-    is2nd = False
-    E2nd = 0
-    O2nd = O_prev*0
+    ## x - in future!!
     
     E_ind = get_closest_el_ind(ma.EE, E_prev)
     layer_ind = get_layer_ind(d_PMMA, z)
-    coll_ind = get_collision_ind(layer_ind, E_ind)
+    proc_ind = get_collision_ind(layer_ind, E_ind)
     
-    ## get current flight direction matrix
-    On, O2nd = get_On_O2nd(atom_id, coll_ind, E_ind, O_prev)
+#    print(proc_ind)
     
-    ## get (dx, dy, dz)
-    dxdydz = get_dxdydz(layer_ind, E_ind, d_PMMA, On, z)
+    dE, E2nd, On, O2nd = get_dE_E2nd_On_O2nd(layer_ind, E_prev, E_ind, proc_ind, O_prev)
     
-    ## if an electron enters im PMMA, continue moving without changing direction
-    if z == 0:# or np.abs(z - d_PMMA) < 1e-10:
-#        return (atom_id, coll_id, E_prev, dxdydz.transpose(), O_prev, False, 0, 0, 0)
-        return (100, -100, E_prev, dxdydz.transpose(), O_prev, False, 0, 0, 0)
-    
-    if coll_id == 0: ## elastic scattering
-        dE = 0
-        E = E_prev
-    
-    elif coll_id == 1: ## excitation
-        dE = ma.ATOMS_EXC_DE[atom_id][E_ind]
-        E = E_prev - dE
-    
-    else: ## ionization
-        subshell_id = coll_id - 2
-        
-        E_bind = ma.ATOMS_ION_E_BIND[atom_id][subshell_id]
-        
-        spectra_line = ma.ATOMS_ION_SPECTRA[atom_id][subshell_id][E_ind, :]
-        E_ext = ma.ATOMS_ION_E_SPECTRA[atom_id][subshell_id]
-        
-        flag = False
-        
-        E2nd = np.nan
-        
-        while not flag:
+    dxdydz = get_dxdydz(layer_ind, E_ind, d_PMMA, z, On)
             
-            E2nd = E_ext[get_closest_el_ind(spectra_line, random())]
-            
-            if E2nd < E_prev - E_bind:
-                flag = True
-        
-        is2nd = True
-        On, O2nd = get_final_On_and_O2nd(E_prev, E2nd, On)
-            
-#        dE = E2nd + ma.ATOMS_ION_E_BIND[atom_id][subshell_id]
-        dE = E_bind
-        
-        E = E_prev - E_bind - E2nd
-    
-    
-    if E_prev - dE < 15:
-        dE = E_prev
-        E = 0
-    
-#    if dE > 2e+4:
-#        print('atom_id=', atom_id, 'coll_id=', coll_id, 'E=', E, 'E2nd=', E2nd, 'dE=', dE)
-        
-    return atom_id, coll_id, E, dxdydz.transpose(), On, is2nd, E2nd, O2nd, dE
+    return layer_ind, proc_ind, E_prev-dE, dxdydz.transpose(), dE, E2nd, On, O2nd
 
-def get_TASKS_and_sim_data(d_PMMA, TASKS, tr_num, par_num, E0, x0y0z0, O_prev):
+
+def get_TT_and_sim_data(TT, d_PMMA, tr_num, par_num, E0, x0y0z0, O_prev):
+    
     # DATA array structure:
-    # track_num | parent_num | aid | pid | E | x | y | z | dE
+    # track_num | parent_track_num | atom_ind | proc_ind | E | x | y | z | dE
+    
     E = E0
-    sim_data = np.zeros((int(2e+4), 9))*np.nan
+    
+    sim_data = np.zeros((mc.TT_len, 9))*np.nan
+    
     pos = 0
+    
     sim_data[pos, :] = np.hstack((tr_num, par_num, np.nan, np.nan, E0, x0y0z0, np.nan))
     
-    while E > 15:
+#    while E > mc.E_cut:
+    while E > 19950:
+        
         x = sim_data[pos, 5]
         z = sim_data[pos, 7]
+        
         if z < 0:
             break
-        aid, cid, E, dxdydz, On, is2nd, E2nd, O2nd, dE =\
+        
+        layer_ind, proc_ind, E, dxdydz, dE, E2nd, On, O2nd,  =\
             get_coll_data(d_PMMA, E, O_prev, x, z)
-        new_task = []
-        if (is2nd):
+            
+#        print('layer_ind', layer_ind)
+#        print('proc_ind', proc_ind)
+#        print('E', E)
+#        print('dE', dE)
+        
+        
+        if (E2nd > 0):
             new_task = [tr_num, E2nd, sim_data[pos, 5:-1], O2nd]
-            TASKS.append(new_task)
-        sim_data[pos, 2] = aid
-        sim_data[pos, 3] = cid
+            TT.append(new_task)
+            
+        sim_data[pos, 2] = layer_ind
+        sim_data[pos, 3] = proc_ind
         sim_data[pos, 8] = dE
+        
         sim_data[pos + 1, :] = np.concatenate(([[tr_num]], [[par_num]], [[np.nan]],\
                  [[np.nan]], [[E]], sim_data[pos, 5:-1] + dxdydz, [[np.nan]]), axis=1)
+        
         O_prev = On
         pos += 1
     
-    sim_data = np.delete(sim_data, np.where(np.isnan(sim_data[:, 0])), axis=0)    
-    return TASKS, sim_data
+    sim_data = np.delete(sim_data, np.where(np.isnan(sim_data[:, 0])), axis=0)
+    
+    return TT, sim_data
 
-def create_TASKS(E0, n_tracks):
+
+def create_TT(E0, n_tracks):
+    
     O0 = np.eye(3)
-    TASKS = [None]*n_tracks
+    TT = [None]*n_tracks
+    
     for i in range(n_tracks):
-        x0, y0 = 0, 0
+        
+        x0, y0 = 0, 0 ## to improve?
         coords = np.array(np.hstack((x0, y0, 0)))
         task = [np.nan, E0, coords, O0]
-        TASKS[i] = task
-    return TASKS
+        
+        TT[i] = task
+        
+    return TT
 
-def get_DATA(E0, D, d_PMMA, n_tracks):
-    n_coords = int(5e+3)
-    TASKS = create_TASKS(E0, n_tracks)
-    DATA = np.zeros((n_coords*n_tracks, 9))*np.nan
+
+def get_DATA(d_PMMA, E0, n_tracks):
+    
+    TT = create_TT(E0, n_tracks)
+    
+    DATA = np.zeros((mc.TT_len*n_tracks, 9))*np.nan
+    
     dataline_pos = 0
     track_num = 0
     
-    # create DATA file for TASKS
-    while track_num < len(TASKS):
-        upd_progress_bar(track_num + 1, len(TASKS))
-        task = TASKS[track_num]
+    while track_num < len(TT):
+        
+        mu.upd_progress_bar(track_num + 1, len(TT))
+        
+        task = TT[track_num]
+        
         par_num, E0, coords, O0 = task[0], task[1], task[2], task[3]
-        TASKS, tr_data = get_TASKS_and_sim_data(d_PMMA, TASKS, track_num,\
+        
+        TT, tr_data = get_TT_and_sim_data(TT, d_PMMA, track_num,\
                                                 par_num, E0, coords, O0)
+        
         DATA[dataline_pos:dataline_pos + len(tr_data), :] = tr_data
+        
         dataline_pos += len(tr_data)
         track_num += 1
 

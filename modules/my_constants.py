@@ -87,3 +87,11 @@ occupancy_Si = [2,    2,   6,   2,     2]
 n_val_PMMA = 40
 n_val_Si = 4
 
+
+#%%
+E_cut = 5
+
+#%%
+TT_len = np.int(1e+5)
+#DATA_len = np.int(1e+5)
+
