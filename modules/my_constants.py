@@ -89,9 +89,9 @@ n_val_Si = 4
 
 
 #%%
-E_cut = 3
+E_cut = 5
 
 #%%
-TT_len = np.int(1e+5)
+TT_len = np.int(1e+6)
 #DATA_len = np.int(1e+5)
 

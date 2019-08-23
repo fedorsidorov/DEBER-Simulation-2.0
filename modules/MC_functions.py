@@ -19,11 +19,11 @@ from math import gamma
 
 #%% Simulation functions
 def get_closest_el_ind(array, val):
-    ind = np.argmin(np.abs(array - val))
-    return ind
+    
+    return np.argmin(np.abs(array - val))
 
 
-def get_closest_int_el(int_array, source, value=rnd.random()):
+def get_closest_int_el(int_array, source, value):
     
     closest_ind = 0
     
@@ -75,7 +75,7 @@ def get_elastic_On(layer_ind, E_ind, O_prev):
     phi = 2 * np.pi * rnd.random()
     
     int_array = ma.processes_int_U[layer_ind][0][E_ind, :]
-    theta = get_closest_int_el(int_array, ma.THETA)
+    theta = get_closest_int_el(int_array, ma.THETA, rnd.random())
     
     return get_O_matrix(phi, theta, O_prev)
 
@@ -88,16 +88,20 @@ def get_ion_On_O2nd(E, E_prime, E_bind, O_prev):
     p = np.sqrt(E / (2*mc.m))
     p_prime = np.sqrt(E_prime / (2*mc.m))
     
-#    cos_theta = pprime / p
-    cos_theta = (E_prime + E_bind/2) / (np.sqrt(E*E_prime))
+#    cos_theta = (E_prime + E_bind/2) / (np.sqrt(E*E_prime))
+#    
+#    theta = np.arccos(cos_theta)
+#    sin_theta = np.sin(theta)
+#    
+#    q = np.sqrt(p**2 + p_prime**2 - 2*p*p_prime*cos_theta)
+#    
+#    sin_theta_s = np.sqrt(p_prime**2 / q**2 * sin_theta**2)
+#    theta_s = np.arcsin(sin_theta_s)
     
+    cos_theta = p_prime / p
     theta = np.arccos(cos_theta)
-    sin_theta = np.sin(theta)
     
-    q = np.sqrt(p**2 + p_prime**2 - 2*p*p_prime*cos_theta)
-    
-    sin_theta_s = np.sqrt(p_prime**2 / q**2 * sin_theta**2)
-    theta_s = np.arcsin(sin_theta_s)
+    theta_s = np.arcsin(cos_theta)
     
     On = get_O_matrix(phi, theta, O_prev)
     O2nd = get_O_matrix(phi_s, theta_s, O_prev)
@@ -107,9 +111,15 @@ def get_ion_On_O2nd(E, E_prime, E_bind, O_prev):
 
 def get_ion_dE_E2nd_On_O2nd(layer_ind, proc_ind, E, E_ind, O_prev):
     
+#    print('layer_ind =', layer_ind)
+#    print('proc_ind =', proc_ind)
+#    print('E_ind =', E_ind)
+    
     E_bind = ma.E_bind[layer_ind][proc_ind][E_ind]
+    
     int_array = ma.processes_int_U[layer_ind][proc_ind][E_ind, :]
-    dE = get_closest_int_el(int_array, ma.EE)
+    dE = get_closest_int_el(int_array, ma.EE, rnd.random())
+    
     
     if dE > E_bind:
         
@@ -123,7 +133,7 @@ def get_ion_dE_E2nd_On_O2nd(layer_ind, proc_ind, E, E_ind, O_prev):
 
 
 def get_dE_E2nd_On_O2nd(layer_ind, proc_ind, E, E_ind, O_prev):
-            
+    
     if proc_ind == 0: ## elastic scattering
         
         On = get_elastic_On(layer_ind, E_ind, O_prev)
@@ -214,8 +224,8 @@ def get_TT_and_sim_data(TT, d_PMMA, tr_num, par_num, E0, x0y0z0, O_prev):
     
     sim_data[pos, :] = np.hstack((tr_num, par_num, np.nan, np.nan, E0, x0y0z0, np.nan))
     
-    while E > mc.E_cut:
-#    while E > 19950:
+#    while E > mc.E_cut:
+    while E > 1:
         
         x = sim_data[pos, 5]
         z = sim_data[pos, 7]
@@ -225,14 +235,11 @@ def get_TT_and_sim_data(TT, d_PMMA, tr_num, par_num, E0, x0y0z0, O_prev):
         
         layer_ind, proc_ind, E, dxdydz, dE, E2nd, On, O2nd,  =\
             get_coll_data(d_PMMA, E, O_prev, x, z)
-            
-#        print('layer_ind', layer_ind)
-#        print('proc_ind', proc_ind)
-#        print('E', E)
-#        print('dE', dE)
         
+        if layer_ind == 1 and E < 10:
+            break
         
-        if (E2nd > 0):
+        if E2nd > 0:
             new_task = [tr_num, E2nd, sim_data[pos, 5:-1], O2nd]
             TT.append(new_task)
             
@@ -286,6 +293,8 @@ def get_DATA(d_PMMA, E0, n_tracks):
         
         TT, tr_data = get_TT_and_sim_data(TT, d_PMMA, track_num,\
                                                 par_num, E0, coords, O0)
+        
+        print(dataline_pos + len(tr_data))
         
         DATA[dataline_pos:dataline_pos + len(tr_data), :] = tr_data
         
