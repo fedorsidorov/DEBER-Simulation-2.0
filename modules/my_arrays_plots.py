@@ -7,7 +7,7 @@ import importlib
 mc = importlib.reload(mc)
 mu = importlib.reload(mu)
 
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 
 #%%
@@ -47,6 +47,15 @@ PMMA_O_1S_int_U = np.load(mc.sim_path_MAC + 'E_loss/Gryzinski/PMMA/PMMA_O_1S_int
 
 
 #%%
+#PMMA_core_diff_U = PMMA_C_1S_diff_U + PMMA_O_1S_diff_U
+#PMMA_val_diff_U = PMMA_diff_inel_U - PMMA_core_diff_U
+#
+#PMMA_val_diff_U[np.where(PMMA_val_diff_U < 0)] = 0
+#
+#PMMA_val_int_U = mu.diff2int(PMMA_val_diff_U)
+
+
+#%%
 PMMA_val_total_U = np.load(mc.sim_path_MAC + 'E_loss/diel_responce/Dapor/PMMA_val_tot_U_D+G.npy')
 PMMA_val_int_U = np.load(mc.sim_path_MAC + 'E_loss/diel_responce/Dapor/PMMA_val_int_U_D+G+A.npy')
 
@@ -67,8 +76,51 @@ Si_2P_int_U = np.load(mc.sim_path_MAC + 'E_loss/Gryzinski/Si/Si_2P_int_U.npy')
 
 
 #%%
+Si_core_diff_U = Si_1S_diff_U + Si_2S_diff_U + Si_2P_diff_U
+Si_val_diff_U = Si_diff_inel_U - Si_core_diff_U
+
+Si_val_diff_U[np.where(Si_val_diff_U < 0)] = 0
+
+Si_val_int_U = mu.diff2int(Si_val_diff_U)
+
+
+#%%
+#ind = 800
+#
+#plt.loglog(EE, Si_core_diff_U[ind, :], label='core')
+#plt.loglog(EE, Si_diff_inel_U[ind, :], label='total')
+#plt.grid()
+#plt.legend()
+#plt.show()
+
+
 Si_val_total_U = np.load(mc.sim_path_MAC + 'E_loss/diel_responce/Palik/Si_val_tot_U_P+G.npy')
-Si_val_int_U = np.load(mc.sim_path_MAC + 'E_loss/diel_responce/Palik/Si_val_int_U_P+G+A.npy')
+#Si_val_int_U = np.load(mc.sim_path_MAC + 'E_loss/diel_responce/Palik/Si_val_int_U_P+G.npy')
+
+
+
+
+#%%
+#plt.loglog(EE, PMMA_diff_inel_U[-1, :])
+#plt.loglog(EE, PMMA_C_1S_diff_U[-1, :] + PMMA_O_1S_diff_U[-1, :])
+
+
+#%%
+#ind = 500
+
+#plt.loglog(EE, Si_diff_inel_U[ind, :])
+#plt.loglog(EE, Si_1S_diff_U[ind, :] + Si_2S_diff_U[ind, :] + Si_2P_diff_U[ind, :])
+
+
+#%%
+#ind = 500
+#
+#plt.loglog(EE, PMMA_diff_inel_U[ind, :], label='PMMA')
+#plt.loglog(EE, Si_diff_inel_U[ind, :], label='Si')
+#
+#plt.legend()
+#plt.grid()
+#plt.show()
 
 
 #%% PMMA phonons and polarons
@@ -88,6 +140,18 @@ for i in range(len(PMMA_processes_U_list)):
     PMMA_processes_U[:, i] = PMMA_processes_U_list[i]
 
 
+#for U in PMMA_processes_U_list:
+#    
+#    plt.loglog(EE, U)
+#
+#plt.xlabel('E, eV')
+#plt.ylabel('U, cm$^{-1}$')
+#
+#plt.ylim(1e+1, 1e+9)
+#
+#plt.grid()
+
+
 #%%
 PMMA_processes_int_U = [PMMA_el_int_U, PMMA_val_int_U, PMMA_C_1S_int_U, PMMA_O_1S_int_U]
 
@@ -101,6 +165,17 @@ Si_processes_U = np.zeros((len(mc.EE), len(Si_processes_U_list)))
 for i in range(len(Si_processes_U_list)):
 
     Si_processes_U[:, i] = Si_processes_U_list[i]
+
+#for U in Si_processes_U_list:
+#    
+#    plt.loglog(EE, U)
+#
+#plt.xlabel('E, eV')
+#plt.ylabel('U, cm$^{-1}$')
+#
+#plt.ylim(1e+1, 1e+9)
+#
+#plt.grid()
 
 
 #%%
@@ -128,4 +203,10 @@ Si_2P_E_bind = np.ones(len(EE)) * mc.binding_Si[2]
 Si_E_bind = [Si_val_E_bind, Si_1S_E_bind, Si_2S_E_bind, Si_2P_E_bind]
 
 E_bind = [PMMA_E_bind, Si_E_bind]
+
+
+
+
+
+
 

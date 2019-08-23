@@ -89,7 +89,7 @@ n_val_Si = 4
 
 
 #%%
-E_cut = 5
+E_cut = 3
 
 #%%
 TT_len = np.int(1e+5)

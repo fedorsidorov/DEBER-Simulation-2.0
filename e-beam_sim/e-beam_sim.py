@@ -6,10 +6,11 @@ import importlib
 import MC_functions as mcf
 import my_constants as mc
 
-mcf = importlib.reload(mcf)
 mc = importlib.reload(mc)
+mcf = importlib.reload(mcf)
 
 os.chdir(mc.sim_path_MAC + 'e-beam_sim')
+
 
 #%%
 ## Usual

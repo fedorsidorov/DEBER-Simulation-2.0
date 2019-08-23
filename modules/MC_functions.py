@@ -1,12 +1,5 @@
 import numpy as np
 import random as rnd
-#from random import random
-#from random import randint
-#from numpy.random import choice
-#from numpy.random import randint
-#from random import uniform
-import sys
-from scipy import interpolate
 
 import importlib
 
@@ -22,24 +15,6 @@ import matplotlib.pyplot as plt
 #from mpl_toolkits.mplot3d import Axes3D
 
 from math import gamma
-
-
-#%% Beam functions
-#def get_norm_density(x, mu, sigma):
-#    y = 1/(sigma*np.sqrt(2*np.pi))*np.exp((-1)*(x - mu)**2/(2*sigma**2))
-#    return y
-#
-#def get_x_y_round_beam(x0, y0, R):
-#    rho = random()*R
-#    phi = 2*np.pi*random()
-#    x = x0 + rho*np.cos(phi)
-#    y = y0 + rho*np.sin(phi)
-#    return x, y
-#
-#def get_x_y_square_beam(x0, y0, D):
-#    x = x0 + D*random()
-#    y = y0 + D*random()
-#    return x, y
 
 
 #%% Simulation functions
@@ -132,13 +107,9 @@ def get_ion_On_O2nd(E, E_prime, E_bind, O_prev):
 
 def get_ion_dE_E2nd_On_O2nd(layer_ind, proc_ind, E, E_ind, O_prev):
     
-    print(layer_ind, proc_ind, E_ind)
-    
     E_bind = ma.E_bind[layer_ind][proc_ind][E_ind]
     int_array = ma.processes_int_U[layer_ind][proc_ind][E_ind, :]
     dE = get_closest_int_el(int_array, ma.EE)
-    
-    print('ION_dE', dE)
     
     if dE > E_bind:
         
@@ -151,11 +122,10 @@ def get_ion_dE_E2nd_On_O2nd(layer_ind, proc_ind, E, E_ind, O_prev):
         return dE, 0, O_prev, O_prev*0
 
 
-def get_dE_E2nd_On_O2nd(layer_ind, proc_ind, E_ind, E, O_prev):
+def get_dE_E2nd_On_O2nd(layer_ind, proc_ind, E, E_ind, O_prev):
             
     if proc_ind == 0: ## elastic scattering
         
-        print('elastic')
         On = get_elastic_On(layer_ind, E_ind, O_prev)
         
         return 0, 0, On, On*0
@@ -163,7 +133,6 @@ def get_dE_E2nd_On_O2nd(layer_ind, proc_ind, E_ind, E, O_prev):
     elif (layer_ind == 0 and proc_ind in [1, 2, 3]) or\
          (layer_ind == 1 and proc_ind in [1, 2, 3, 4]): ## ionization
         
-        print('ionization')
         return get_ion_dE_E2nd_On_O2nd(layer_ind, proc_ind, E, E_ind, O_prev)
     
     if proc_ind == 4: ## PMMA phonons
@@ -225,9 +194,7 @@ def get_coll_data(d_PMMA, E_prev, O_prev, x, z):
     layer_ind = get_layer_ind(d_PMMA, z)
     proc_ind = get_collision_ind(layer_ind, E_ind)
     
-#    print(proc_ind)
-    
-    dE, E2nd, On, O2nd = get_dE_E2nd_On_O2nd(layer_ind, E_prev, E_ind, proc_ind, O_prev)
+    dE, E2nd, On, O2nd = get_dE_E2nd_On_O2nd(layer_ind, proc_ind, E_prev, E_ind, O_prev)
     
     dxdydz = get_dxdydz(layer_ind, E_ind, d_PMMA, z, On)
             
@@ -247,8 +214,8 @@ def get_TT_and_sim_data(TT, d_PMMA, tr_num, par_num, E0, x0y0z0, O_prev):
     
     sim_data[pos, :] = np.hstack((tr_num, par_num, np.nan, np.nan, E0, x0y0z0, np.nan))
     
-#    while E > mc.E_cut:
-    while E > 19950:
+    while E > mc.E_cut:
+#    while E > 19950:
         
         x = sim_data[pos, 5]
         z = sim_data[pos, 7]

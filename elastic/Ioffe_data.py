@@ -2,24 +2,20 @@
 import numpy as np
 import os
 import importlib
-import my_functions as mf
-import my_variables as mv
 import my_constants as mc
-import E_loss_functions as elf
+import my_utilities as mu
 import matplotlib.pyplot as plt
 
-mf = importlib.reload(mf)
-mv = importlib.reload(mv)
 mc = importlib.reload(mc)
-elf = importlib.reload(elf)
+mu = importlib.reload(mu)
 
-os.chdir(mv.sim_path_MAC + 'elastic')
+os.chdir(mc.sim_path_MAC + 'elastic')
 
 
 #%%
 def get_Ioffe_raw_data(el):
     
-    text_file = open('DATA/' + el + '.txt', 'r')
+    text_file = open('Ioffe_DATA/' + el + '.txt', 'r')
     lines = text_file.readlines()
     
     theta_corr = list(map(lambda s: '0'+s, lines[12].split()[2:]))
@@ -63,22 +59,31 @@ def get_Ioffe_raw_data(el):
 
 
 #%%
-def get_Ioffe_final_data(el, EE=mv.EE, THETA_deg=mv.THETA_deg):
+def get_Ioffe_final_data(el, EE=mc.EE, THETA_deg=mc.THETA_deg):
 
-    EE = mv.EE
+    EE = mc.EE
     
     EE_raw, THETA_deg_raw, DIFF_CS_raw, TOTAL_CS_raw =\
         get_Ioffe_raw_data(el)
     
-    EE_raw = np.concatenate((np.array([1]), EE_raw))
+    EE_raw = np.concatenate((EE[:1], EE_raw))
     DIFF_CS_raw = np.concatenate((DIFF_CS_raw[:1, :], DIFF_CS_raw), axis=0)
-    TOTAL_CS_raw = np.concatenate(((TOTAL_CS_raw[:1]), TOTAL_CS_raw))
+    
+    cs1 = TOTAL_CS_raw[0]
+    cs2 = TOTAL_CS_raw[1]
+    E0 = EE[0]
+    E1 = EE_raw[1]
+    E2 = EE_raw[2]
+    
+    cs0 = np.exp( np.log(cs1/cs2) / np.log(E1/E2) * np.log(E0/E1) ) * cs1
+    
+    TOTAL_CS_raw = np.concatenate((np.array([cs0]), TOTAL_CS_raw))
     
     DIFF_CS_pre = np.zeros((len(EE), len(THETA_deg_raw)))
     
     for i in range(len(THETA_deg_raw)):
         
-        DIFF_CS_pre[:, i] = mf.log_interp1d(EE_raw, DIFF_CS_raw[:, i])(EE)
+        DIFF_CS_pre[:, i] = mu.log_interp1d(EE_raw, DIFF_CS_raw[:, i])(EE)
     
     
 #    THETA_deg = np.linspace(0.1, 180, 1000)
@@ -86,10 +91,10 @@ def get_Ioffe_final_data(el, EE=mv.EE, THETA_deg=mv.THETA_deg):
     
     for i in range(len(EE)):
         
-        DIFF_CS[i, :] = mf.log_interp1d(THETA_deg_raw, DIFF_CS_pre[i, :])(THETA_deg)
+        DIFF_CS[i, :] = mu.log_interp1d(THETA_deg_raw, DIFF_CS_pre[i, :])(THETA_deg)
     
     
-    TOTAL_CS = mf.log_interp1d(EE_raw, TOTAL_CS_raw)(EE)
+    TOTAL_CS = mu.log_interp1d(EE_raw, TOTAL_CS_raw)(EE)
     
     THETA = np.deg2rad(THETA_deg)
 
@@ -125,12 +130,12 @@ _, _, C_DIFF_CS, C_TOTAL_CS = get_Ioffe_final_data('C')
 _, _, O_DIFF_CS, O_TOTAL_CS = get_Ioffe_final_data('O')
 _, _, Si_DIFF_CS, Si_TOTAL_CS = get_Ioffe_final_data('Si')
 
-PMMA_DIFF_CS = elf.mc.n_C_PMMA*C_DIFF_CS + elf.mc.n_H_PMMA*H_DIFF_CS + elf.mc.n_O_PMMA*O_DIFF_CS
-PMMA_INT_CS = elf.diff2int(PMMA_DIFF_CS, mv.EE, mv.THETA)
+PMMA_DIFF_CS = mc.n_C_PMMA*C_DIFF_CS + mc.n_H_PMMA*H_DIFF_CS + mc.n_O_PMMA*O_DIFF_CS
+PMMA_INT_CS = mu.diff2int(PMMA_DIFF_CS, mc.EE, mc.THETA)
 
 
 #%%
-PMMA_TOTAL_CS = elf.mc.n_C_PMMA*C_TOTAL_CS + elf.mc.n_H_PMMA*H_TOTAL_CS + elf.mc.n_O_PMMA*O_TOTAL_CS
+PMMA_TOTAL_CS = mc.n_C_PMMA*C_TOTAL_CS + mc.n_H_PMMA*H_TOTAL_CS + mc.n_O_PMMA*O_TOTAL_CS
 
 PMMA_U = PMMA_TOTAL_CS * mc.n_PMMA_mon
 
@@ -141,7 +146,7 @@ plt.loglog(EE, PMMA_U)
 Si_U = Si_TOTAL_CS * mc.n_Si
 
 #%%
-Si_INT_CS = elf.diff2int(Si_DIFF_CS, mv.EE, mv.THETA)
+Si_INT_CS = mu.diff2int(Si_DIFF_CS, mc.EE, mc.THETA)
 
 
 #%%

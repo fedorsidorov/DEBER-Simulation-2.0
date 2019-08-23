@@ -2,16 +2,13 @@
 import numpy as np
 import os
 import importlib
-import my_functions as mf
-import my_variables as mv
 import my_constants as mc
 import matplotlib.pyplot as plt
 
-mf = importlib.reload(mf)
-mv = importlib.reload(mv)
 mc = importlib.reload(mc)
 
-os.chdir(mv.sim_path_MAC + 'diel_responce')
+os.chdir(mc.sim_path_MAC + 'E_loss/diel_responce')
+
 
 #%%
 EE = np.logspace(0, 4.4, 1000)
@@ -45,6 +42,7 @@ plt.show()
 
 #plt.savefig('oscillators_Dapor.png', dpi=300)
 
+
 #%%
 def L(x):
     f = (1-x)*np.log(4/x) - 7/4*x + x**(3/2) - 33/32*x**2
@@ -54,7 +52,8 @@ def S(x):
     f = np.log(1.166/x) - 3/4*x - x/4*np.log(4/x) + 1/2*x**(3/2) - x**2/16*np.log(4/x) - 31/48*x**2
     return f
 
-#%%
+
+#%% Dapor
 U = np.zeros(len(EE))
 SP = np.zeros(len(EE))
 
@@ -78,6 +77,54 @@ for i in range(len(EE)):
     U_DIFF[i, inds] = mc.k_el * mc.m * mc.e**2 / (2 * np.pi * mc.hbar**2 *\
         EE[i]) * IM[inds] * L(EE[inds]/E) * 1e-2 ## eV^-1 cm^-1
     
+    
+
+#%% Ashley 1990
+U_DIFF_A = np.zeros((len(EE), len(EE)))
+
+for i in range(len(EE)):
+    
+    print(i)
+    
+    now_E = EE[i]
+
+    for j in range(len(EE)):
+        
+        now_w = EE[j]
+        
+        w_min = 0
+        
+        if now_w <= now_E/2:
+            w_min = 0
+        elif now_w <= 3*now_E/4:
+            w_min = 2*now_w - now_E
+        else:
+            continue
+        
+        w_max = 2*np.sqrt(now_E - now_w)*(np.sqrt(now_E) - np.sqrt(now_E - now_w))
+        
+        inds = np.where(np.logical_and(EE >= w_min, EE <= w_max))[0]
+        
+        X = EE[inds]*mc.eV
+        
+        E = now_E * mc.eV
+        w = now_w * mc.eV
+        wp = EE[inds] * mc.eV
+        
+        ## From Chan thesis - W/O exchange correction
+#        F = (now_w*mc.eV * (now_w - E_arr[inds])*mc.eV)**(-1)
+        
+        ## From ashley1990.pdf
+        F = (w*(w - wp))**(-1) +\
+            ((E + wp - w)*(E - w))**(-1) +\
+            (w*(w - wp)*(E + wp - w)*(E-w))**(-1/2)
+        
+        Y = IM[inds] * EE[inds]*mc.eV * F
+        
+        U_DIFF_A[i, j] = mc.k_el * mc.m * mc.e**2 /\
+            (2 * np.pi * mc.hbar**2 * now_E*mc.eV) * np.trapz(Y, x=X) / 1e+2 * mc.eV
+
+
 
 #%%
 IMFP_solid = np.loadtxt('curves/IMFP_solid.txt')
@@ -96,6 +143,7 @@ plt.ylabel('IMFP, $\AA$')
 plt.legend()
 plt.grid()
 plt.show()
+
 
 #%%
 dEds_solid = np.loadtxt('curves/dEds_solid.txt')
@@ -122,7 +170,22 @@ plt.legend()
 plt.grid()
 plt.show()
 
-plt.savefig('PMMA_SP_Dapor_Tahir.png', dpi=300)
+#plt.savefig('PMMA_SP_Dapor_Tahir.png', dpi=300)
+
+
+#%%
+## E = 200 eV
+#ind = 522
+#ind = 682
+ind = 750
+
+plt.loglog(EE, U_DIFF[ind, :])
+plt.loglog(EE, U_DIFF_A[ind, :])
+
+plt.grid()
+plt.legend()
+plt.show()
+
 
 #%%
 IMFP_inv_arr_test = np.zeros(len(EE))
@@ -141,16 +204,18 @@ for i in range(len(EE)):
 
 plt.loglog(EE, 1/IMFP_inv_arr_test * 1e+8, label='My 2')
 
+
 #%% Integrals
-U_INT = np.zeros((len(EE), len(EE)))
+U_INT_A = np.zeros((len(EE), len(EE)))
 
 for i in range(len(EE)):
     
-    integral = np.trapz(U_DIFF[i, :], x=EE)
+    integral = np.trapz(U_DIFF_A[i, :], x=EE)
     
     if integral == 0:
         continue
     
     for j in range(1, len(EE)):
         
-        U_INT[i, j] = np.trapz(U_DIFF[i, :j], x=EE[:j]) / integral
+        U_INT_A[i, j] = np.trapz(U_DIFF_A[i, :j], x=EE[:j]) / integral
+
