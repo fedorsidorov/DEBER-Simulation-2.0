@@ -211,7 +211,7 @@ def get_coll_data(d_PMMA, E_prev, O_prev, x, z):
     return layer_ind, proc_ind, E_prev-dE, dxdydz.transpose(), dE, E2nd, On, O2nd
 
 
-def get_TT_and_sim_data(TT, n_TT, d_PMMA, tr_num, par_num, E0, x0y0z0, O_prev, z_cut_Si=0):
+def get_TT_and_sim_data(TT, n_TT, d_PMMA, tr_num, par_num, E0, x0y0z0, O_prev, z_cut_Si):
     
     # DATA array structure:
     # track_num | parent_track_num | atom_ind | proc_ind | E | x | y | z | dE
@@ -284,7 +284,7 @@ def create_TT(E0, n_tracks):
     return TT, n_TT
 
 
-def get_DATA(d_PMMA, E0, n_tracks, z_cut_Si=0):
+def get_DATA(d_PMMA, E0, n_tracks, z_cut_Si):
     
     TT, n_TT = create_TT(E0, n_tracks)
     
