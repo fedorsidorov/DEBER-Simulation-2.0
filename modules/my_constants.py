@@ -89,7 +89,8 @@ n_val_Si = 4
 
 
 #%%
-E_cut = 5
+E_cut_PMMA = 5
+E_cut_Si = 20
 
 #%%
 TT_len = np.int(1e+6)

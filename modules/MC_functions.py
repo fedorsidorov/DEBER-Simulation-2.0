@@ -211,7 +211,7 @@ def get_coll_data(d_PMMA, E_prev, O_prev, x, z):
     return layer_ind, proc_ind, E_prev-dE, dxdydz.transpose(), dE, E2nd, On, O2nd
 
 
-def get_TT_and_sim_data(TT, d_PMMA, tr_num, par_num, E0, x0y0z0, O_prev):
+def get_TT_and_sim_data(TT, n_TT, d_PMMA, tr_num, par_num, E0, x0y0z0, O_prev):
     
     # DATA array structure:
     # track_num | parent_track_num | atom_ind | proc_ind | E | x | y | z | dE
@@ -224,8 +224,7 @@ def get_TT_and_sim_data(TT, d_PMMA, tr_num, par_num, E0, x0y0z0, O_prev):
     
     sim_data[pos, :] = np.hstack((tr_num, par_num, np.nan, np.nan, E0, x0y0z0, np.nan))
     
-#    while E > mc.E_cut:
-    while E > 1:
+    while E > mc.E_cut_PMMA:
         
         x = sim_data[pos, 5]
         z = sim_data[pos, 7]
@@ -236,16 +235,25 @@ def get_TT_and_sim_data(TT, d_PMMA, tr_num, par_num, E0, x0y0z0, O_prev):
         layer_ind, proc_ind, E, dxdydz, dE, E2nd, On, O2nd,  =\
             get_coll_data(d_PMMA, E, O_prev, x, z)
         
+        ## CUT!
+        if z > d_PMMA + 1.5e-4:
+            break
+        
         if layer_ind == 1 and E < 10:
             break
         
-        if E2nd > 0:
-            new_task = [tr_num, E2nd, sim_data[pos, 5:-1], O2nd]
-            TT.append(new_task)
-            
         sim_data[pos, 2] = layer_ind
         sim_data[pos, 3] = proc_ind
         sim_data[pos, 8] = dE
+        
+        if E2nd > 0:
+            new_task = [tr_num, E2nd, sim_data[pos, 5:-1], O2nd]
+            TT[n_TT] = new_task
+            n_TT += 1
+            
+        else:
+            sim_data[pos, 3] = proc_ind*(-1)
+        
         
         sim_data[pos + 1, :] = np.concatenate(([[tr_num]], [[par_num]], [[np.nan]],\
                  [[np.nan]], [[E]], sim_data[pos, 5:-1] + dxdydz, [[np.nan]]), axis=1)
@@ -255,13 +263,14 @@ def get_TT_and_sim_data(TT, d_PMMA, tr_num, par_num, E0, x0y0z0, O_prev):
     
     sim_data = np.delete(sim_data, np.where(np.isnan(sim_data[:, 0])), axis=0)
     
-    return TT, sim_data
+    return TT, n_TT, sim_data
 
 
 def create_TT(E0, n_tracks):
     
     O0 = np.eye(3)
-    TT = [None]*n_tracks
+    TT = [None] * (n_tracks*1000)
+    n_TT = 0
     
     for i in range(n_tracks):
         
@@ -270,35 +279,35 @@ def create_TT(E0, n_tracks):
         task = [np.nan, E0, coords, O0]
         
         TT[i] = task
+        n_TT += 1
         
-    return TT
+    return TT, n_TT
 
 
 def get_DATA(d_PMMA, E0, n_tracks):
     
-    TT = create_TT(E0, n_tracks)
+    TT, n_TT = create_TT(E0, n_tracks)
     
     DATA = np.zeros((mc.TT_len*n_tracks, 9))*np.nan
     
     dataline_pos = 0
     track_num = 0
     
-    while track_num < len(TT):
-        
-        mu.upd_progress_bar(track_num + 1, len(TT))
+    while track_num < n_TT:
         
         task = TT[track_num]
         
         par_num, E0, coords, O0 = task[0], task[1], task[2], task[3]
         
-        TT, tr_data = get_TT_and_sim_data(TT, d_PMMA, track_num,\
+        TT, n_TT, tr_data = get_TT_and_sim_data(TT, n_TT, d_PMMA, track_num,\
                                                 par_num, E0, coords, O0)
-        
-        print(dataline_pos + len(tr_data))
         
         DATA[dataline_pos:dataline_pos + len(tr_data), :] = tr_data
         
         dataline_pos += len(tr_data)
+        
+        mu.upd_progress_bar(track_num + 1, n_TT)
+        
         track_num += 1
 
     DATA = np.delete(DATA, np.where(np.isnan(DATA[:, 2])), axis=0)
@@ -307,38 +316,6 @@ def get_DATA(d_PMMA, E0, n_tracks):
 
 
 #%% Plot DATA
-def plot_DATA(DATA, d_PMMA=0, coords=[0, 2]):
-    fig, ax = plt.subplots()
-    for tn in range(int(np.max(DATA[:, 0]))):
-        if len(np.where(DATA[:, 0] == tn)[0]) == 0:
-            continue
-        beg = np.where(DATA[:, 0] == tn)[0][0]
-        end = np.where(DATA[:, 0] == tn)[0][-1] + 1
-        ax.plot(DATA[beg:end, 5 + coords[0]], DATA[beg:end, 5 + coords[1]], linewidth=0.7)
-        
-#        inds_el = beg + np.where(DATA[beg:end, 3] == 0)[0]
-#        inds_ion = beg + np.where(DATA[beg:end, 3] >= 2)[0]
-#        inds_exc = beg + np.where(DATA[beg:end, 3] == 1)[0]
-#        ax.plot(DATA[inds_el, 5], DATA[inds_el, 7], 'r.')
-#        ax.plot(DATA[inds_ion, 5], DATA[inds_ion, 7], 'b.')
-#        ax.plot(DATA[inds_exc, 5], DATA[inds_exc, 7], 'g.')
-    
-#    if coords[1] == 2:
-#        points = np.arange(-3e+3, 3e+3, 10)
-#        ax.plot(points, np.zeros(np.shape(points)), 'k')
-#        ax.plot(points, np.ones(np.shape(points))*d_PMMA, 'k')
-    
-    ax.xaxis.get_major_formatter().set_powerlimits((0, 1))
-    ax.yaxis.get_major_formatter().set_powerlimits((0, 1))
-    plt.gca().set_aspect('equal', adjustable='box')
-#    plt.title('Direct Monte-Carlo simulation')
-    plt.xlabel('x, nm')
-    plt.ylabel('z, nm')
-    plt.axis('on')
-    plt.grid('on')
-    plt.gca().invert_yaxis()
-    plt.show()
-
 def plot_chain(chain_arr, beg=0, end=-1):
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
@@ -454,13 +431,4 @@ def get_schulz_zimm(Mn, Mw, x):
     f = l**z / (gamma(z) * Mn) * np.power(x, z) * np.exp(-l*x)
     
     return f
-
-
-
-
-
-
-
-
-
 

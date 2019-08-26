@@ -17,7 +17,6 @@ def plot_DATA(DATA, d_PMMA):
         end = np.where(DATA[:, 0] == tn)[0][-1] + 1
         
         ax.plot(DATA[beg:end, 5], DATA[beg:end, 7])
-    #    plt.plot(DATA[beg:end, 5], DATA[beg:end, 7])
         
     #        if np.isnan(DATA[beg, 1]):
     #            
@@ -39,7 +38,7 @@ def plot_DATA(DATA, d_PMMA):
     #        ax.plot(DATA[inds_exc, 5], DATA[inds_exc, 7],\
     #                marker='^', color='tab:green' , linestyle='')
     
-    points = np.arange(-d_PMMA*3, d_PMMA*3, 10)
+    points = np.linspace(-d_PMMA*10, d_PMMA*10, 100)
     ax.plot(points, np.zeros(len(points)), 'k')
     ax.plot(points, np.ones(len(points))*d_PMMA, 'k')
     
