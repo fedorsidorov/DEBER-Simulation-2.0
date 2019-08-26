@@ -2,4 +2,7 @@
 .DS_Store
 
 # Ignore large files
-*.npy
+*_H.npy
+
+# Ignore DATA folders
+e_DATA/

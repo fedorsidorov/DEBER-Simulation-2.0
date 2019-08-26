@@ -1,2 +1,0 @@
-d_PMMA = 100 nm
-E = 20 keV
