@@ -24,9 +24,9 @@ E0 = 10e+3
 z_cut_Si = 1.5e-4
 
 n_files = 100000
-n_tracks = 1
+n_tracks = 10
 
-num = 0
+num = 21
 
 while num < n_files:
     
@@ -34,8 +34,8 @@ while num < n_files:
     DATA_PMMA = DATA[np.where(np.logical_and(DATA[:, 2] == 0,\
                                     np.abs(DATA[:, 3]) == 1))]
     
-    fname = '../e_DATA_FTIAN/e_DATA_Harris/DATA_' + str(num) + '.npy'
-    fname_PMMA = '../e_DATA_FTIAN/e_DATA_Harris/DATA_PMMA_' + str(num) + '.npy'
+    fname = '../e_DATA/e_DATA_Harris/DATA_' + str(num) + '.npy'
+    fname_PMMA = '../e_DATA/e_DATA_Harris/DATA_PMMA_' + str(num) + '.npy'
     
     np.save(fname, DATA)
     np.save(fname_PMMA, DATA_PMMA)

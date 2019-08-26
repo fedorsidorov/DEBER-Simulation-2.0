@@ -2,8 +2,8 @@ import numpy as np
 
 
 #%%
-#sim_folder = '/Users/fedor/Documents/DEBER-Simulation-2.0/'
-sim_folder = '/home/fedor/DEBER-Simulation-2.0/'
+sim_folder = '/Users/fedor/Documents/DEBER-Simulation-2.0/'
+#sim_folder = '/home/fedor/DEBER-Simulation-2.0/'
 
 
 #%% SI!!!
