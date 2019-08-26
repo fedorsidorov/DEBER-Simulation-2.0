@@ -17,26 +17,27 @@ import plot_data as pd
 pd = importlib.reload(pd)
 
 
-#%%
-## Usual
-n_files = 1
-n_tracks = 1
-
+#%% Harris
 d_PMMA = 500e-7
 E0 = 10e+3
 
-num = 0
+z_cut_Si = 1.5e-4
+
+n_files = 1000
+n_tracks = 10
+
+num = 1
 
 while num < n_files:
     
-    DATA = mcf.get_DATA(d_PMMA, E0, n_tracks)
+    DATA = mcf.get_DATA(d_PMMA, E0, n_tracks, z_cut_Si)
     
-    DATA_PMMA = DATA[np.where(np.logical_and(DATA[:, 2] == 0, np.abs(DATA[:, 3]) == 1))]
+#    DATA_PMMA = DATA[np.where(np.logical_and(DATA[:, 2] == 0, np.abs(DATA[:, 3]) == 1))]
     
-#    fname = 'e_DATA/DATA_' + str(num) + '.npy'
-#    np.save(fname, DATA)
+    fname = 'e_DATA_Harris/DATA_' + str(num) + '.npy'
+    np.save(fname, DATA)
     
-#    print('file ' + fname + ' is ready')
+    print('file ' + fname + ' is ready')
 
     num += 1
 
