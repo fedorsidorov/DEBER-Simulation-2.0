@@ -1,19 +1,18 @@
 #%% Import
 import numpy as np
+from numpy import sin, cos, arccos
 import os
 import importlib
-import my_functions as mf
-import my_variables as mv
+import my_constants as mc
+import my_utilities as mu
 import matplotlib.pyplot as plt
 
 from random import uniform
 
-mf = importlib.reload(mf)
-mv = importlib.reload(mv)
+mc = importlib.reload(mc)
 
-os.chdir(mv.sim_path_MAC + 'random_walk')
+os.chdir(mc.sim_folder + 'random_walk')
 
-from numpy import sin, cos, arccos
 
 #%%
 def check_chain(chain_coords, now_mon_coords, step_2):
@@ -37,10 +36,45 @@ def get_On(phi, theta, O_pre):
 
 def make_PMMA_chain(chain_len):
 
-    step = 1
+    step = 0.28
+    
+#    chain_len = 1000000
+    
+    chain_coords = np.zeros((chain_len, 3))
+    chain_coords[0, :] = 0, 0, 0
+    
+    i = 1
+    
+    On = np.eye(3)
+    x_prime = np.array([0, 0, 1])
+    
+    On_list = [None] * chain_len
+    On_list[0] = On
+    
+    while i < chain_len:
+        
+        mu.upd_progress_bar(i, chain_len)
+        
+        phi = uniform(0, 2*np.pi)
+        theta = np.deg2rad(180-109)
+        
+        On = get_On(phi, theta, On_list[i-1])
+        xn = np.matmul(On.transpose(), x_prime)
+        
+        chain_coords[i, :] = chain_coords[i-1, :] + step*xn
+        On_list[i] = On
+        
+        i += 1
+    
+    return chain_coords
+
+
+def make_PMMA_SAW_chain(chain_len):
+
+    step = 0.28
     step_2 = step**2
     
-    chain_len = 200
+    chain_len = 1000000
     
     chain_coords = np.zeros((chain_len, 3))
     chain_coords[0, :] = 0, 0, 0
@@ -60,7 +94,7 @@ def make_PMMA_chain(chain_len):
     
     while i < chain_len:
         
-        mf.upd_progress_bar(i, chain_len)
+        mu.upd_progress_bar(i, chain_len)
         
         while True:
             

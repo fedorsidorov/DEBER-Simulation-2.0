@@ -111,10 +111,6 @@ def get_ion_On_O2nd(E, E_prime, E_bind, O_prev):
 
 def get_ion_dE_E2nd_On_O2nd(layer_ind, proc_ind, E, E_ind, O_prev):
     
-#    print('layer_ind =', layer_ind)
-#    print('proc_ind =', proc_ind)
-#    print('E_ind =', E_ind)
-    
     E_bind = ma.E_bind[layer_ind][proc_ind][E_ind]
     
     int_array = ma.processes_int_U[layer_ind][proc_ind][E_ind, :]

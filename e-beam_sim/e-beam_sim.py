@@ -5,28 +5,30 @@ import importlib
 
 import matplotlib.pyplot as plt
 
-import MC_functions as mcf
 import my_constants as mc
+import my_utilities as mu
+import MC_functions as mcf
 
 mc = importlib.reload(mc)
+mu = importlib.reload(mu)
 mcf = importlib.reload(mcf)
-
-os.chdir(mc.sim_folder + 'e-beam_sim')
 
 import plot_data as pd
 pd = importlib.reload(pd)
+
+os.chdir(mc.sim_folder + 'e-beam_sim')
 
 
 #%% Harris
 d_PMMA = 500e-7
 E0 = 10e+3
 
-z_cut_Si = 1.5e-4
+z_cut_Si = 1e-4
 
 n_files = 100000
 n_tracks = 10
 
-num = 21
+num = 0
 
 while num < n_files:
     
@@ -34,8 +36,8 @@ while num < n_files:
     DATA_PMMA = DATA[np.where(np.logical_and(DATA[:, 2] == 0,\
                                     np.abs(DATA[:, 3]) == 1))]
     
-    fname = '../e_DATA/e_DATA_Harris/DATA_' + str(num) + '.npy'
-    fname_PMMA = '../e_DATA/e_DATA_Harris/DATA_PMMA_' + str(num) + '.npy'
+    fname = '../e_DATA/e_DATA_Harris_cut/DATA_' + str(num) + '.npy'
+    fname_PMMA = '../e_DATA/e_DATA_Harris_cut/DATA_PMMA_' + str(num) + '.npy'
     
     np.save(fname, DATA)
     np.save(fname_PMMA, DATA_PMMA)
@@ -49,13 +51,17 @@ while num < n_files:
 pd.plot_DATA(DATA, d_PMMA)
 
 
-#%%
-fig, ax = plt.subplots()
+#%% 473 - max
+Z_MAX = np.zeros(1000)
+inds = np.zeros(1000)
+j = 0
 
-for i in range(1):
+for i in range(473):
 #for i in range(860, 870):
     
-    now_DATA = np.load('../e_DATA_FTIAN/e_DATA_Harris/DATA_' + str(i) + '.npy')
+    mu.upd_progress_bar(i, 473)
+    
+    now_DATA = np.load('../e_DATA/e_DATA_Harris/DATA_' + str(i) + '.npy')
     
     for tn in range(int(np.max(now_DATA[:, 0]))):
         
@@ -67,12 +73,40 @@ for i in range(1):
         beg = np.where(now_DATA[:, 0] == tn)[0][0]
         end = np.where(now_DATA[:, 0] == tn)[0][-1] + 1
         
-#        if now_DATA[end-1, 2] == 1:
-#            continue
+        now_TRACK = now_DATA[beg:end, :]
         
-        ax.plot(now_DATA[beg:end, 5], now_DATA[beg:end, 7])
+        if now_TRACK[-1, 2] == 0 and np.max(now_TRACK[:, 7]) > d_PMMA*6/5:
+            Z_MAX[j] = np.max(now_TRACK[:, 7])
+            inds[j] = i
+            j += 1
+        
+#        ax.plot(now_DATA[beg:end, 5], now_DATA[beg:end, 7])
 
 
+#%%
+fig, ax = plt.subplots()
+
+i = 295
+
+now_DATA = np.load('../e_DATA/e_DATA_Harris/DATA_' + str(i) + '.npy')
+
+#for i in range(180, 181):
+    
+#    mu.upd_progress_bar(i, 473)
+    
+#    now_DATA = np.load('../e_DATA/e_DATA_test/DATA_' + str(i) + '.npy')
+    
+for tn in range(int(np.max(now_DATA[:, 0]))):
+        
+    if len(np.where(now_DATA[:, 0] == tn)[0]) == 0:
+        continue
+    
+    beg = np.where(now_DATA[:, 0] == tn)[0][0]
+    end = np.where(now_DATA[:, 0] == tn)[0][-1] + 1
+    
+    ax.plot(now_DATA[beg:end, 5], now_DATA[beg:end, 7])
+
+now_DATA = np.load('../e_DATA/e_DATA_Harris/DATA_' + str(i) + '.npy')
 mult = 5
 
 points = np.linspace(-d_PMMA*mult, d_PMMA*mult, 100)
@@ -88,6 +122,23 @@ plt.grid()
 plt.gca().invert_yaxis()
 
 plt.show()
+
+
+#%%
+for i in range(21):
+    
+    now_DATA = np.load('../e_DATA/e_DATA_Harris_cut_1.5e-4/DATA_' + str(num) + '.npy')
+    
+    now_DATA_PMMA = now_DATA[np.where(np.logical_and(now_DATA[:, 2] == 0,\
+                                    np.abs(now_DATA[:, 3]) == 1))]
+    
+    fname = '../e_DATA/e_DATA_Harris_PMMA_cut_1.5e-4/DATA_PMMA_' + str(i) + '.npy'
+    
+    np.save(fname, now_DATA_PMMA)
+    
+    print('file ' + fname + ' is ready')
+
+    num += 1
 
 
 #%% Si

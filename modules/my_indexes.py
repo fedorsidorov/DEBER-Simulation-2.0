@@ -3,19 +3,9 @@ import numpy as np
 
 #%%
 tr_num, par_num = 0, 1
-atom_id, coll_id = 2, 3
-e_E, e_dE = 4, 8
-e_x, e_y, e_z = 5, 6, 7
-
-elastic, exc = 0, 1
-ion_K = 2
-ion_L1, ion_L2, ion_L3 = 3, 4, 5
-ion_M1, ion_M2, ion_M3 = 6, 7, 8
-
-H = 0
-C = 1
-O = 2
-Si = 3
+layer_ind, coll_id = 2, 3
+E_ind, dE_ind = 4, 8
+x_ind, y_ind, z_ind = 5, 6, 7
 
 #%%
 #sim_path_MAC = '/Users/fedor/Documents/DEBER-Simulation/'

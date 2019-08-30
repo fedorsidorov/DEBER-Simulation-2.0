@@ -5,5 +5,5 @@
 *_H.npy
 
 # Ignore DATA folders
-e_DATA_*/
+e_DATA/
 
