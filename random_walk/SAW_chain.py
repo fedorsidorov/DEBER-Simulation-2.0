@@ -11,6 +11,9 @@ from random import uniform
 
 mc = importlib.reload(mc)
 
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
 os.chdir(mc.sim_folder + 'random_walk')
 
 
@@ -37,8 +40,6 @@ def get_On(phi, theta, O_pre):
 def make_PMMA_chain(chain_len):
 
     step = 0.28
-    
-#    chain_len = 1000000
     
     chain_coords = np.zeros((chain_len, 3))
     chain_coords[0, :] = 0, 0, 0
@@ -170,8 +171,29 @@ def check_angles(chain_arr):
         vector_2 = -(chain_arr[i+2] - chain_arr[i+1])
         
         angles.append(np.rad2deg(angle(vector_1, vector_2)))
-    
-    if np.all(angles==109):
+        
+    if np.all(np.abs(angles-109) < 1e-4):
         return True
     
     return False
+
+
+#%%
+for i in range(100):
+    
+    now_chain = make_PMMA_chain(100)
+    
+    np.save('CHAINS_1M/chain_' + str(i) + '.npy', now_chain)
+    
+    print('chain', i, 'is ready')
+
+
+#%%
+now_chain = np.load('CHAINS_1M/chain_5.npy')
+
+plot_chain(now_chain)
+
+
+#%%
+check_angles(now_chain)
+
