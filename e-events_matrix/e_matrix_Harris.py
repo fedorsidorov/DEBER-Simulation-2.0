@@ -39,7 +39,7 @@ def get_scission(EE):
 #%%
 l_xyz = np.array((100, 100, 500))
 
-x_beg, y_beg, z_beg = -l_xyz[0]/2, -l_xyz[0]/2, 0
+x_beg, y_beg, z_beg = -l_xyz[0]/2, -l_xyz[1]/2, 0
 xyz_beg = np.array((x_beg, y_beg, z_beg))
 xyz_end = xyz_beg + l_xyz
 x_end, y_end, z_end = xyz_end

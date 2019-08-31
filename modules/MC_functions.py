@@ -14,8 +14,6 @@ mu = importlib.reload(mu)
 import matplotlib.pyplot as plt
 #from mpl_toolkits.mplot3d import Axes3D
 
-from math import gamma
-
 
 #%% Simulation functions
 def get_closest_el_ind(array, val):
@@ -418,13 +416,5 @@ def get_n_electrons(dose_C_cm2, square_side_nm):
     return int(np.round(Q_C / q_el_C))
 
 #%%
-def get_schulz_zimm(Mn, Mw, x):
-    
-    z = Mn / (Mw - Mn)
-    l = 1 / (Mw - Mn)
-    
-#    f = l**z / gamma(z) * np.power(x, z-1) * np.exp(-l*x)
-    f = l**z / (gamma(z) * Mn) * np.power(x, z) * np.exp(-l*x)
-    
-    return f
+
 

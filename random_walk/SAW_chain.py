@@ -1,6 +1,6 @@
 #%% Import
 import numpy as np
-from numpy import sin, cos, arccos
+from numpy import sin, cos
 import os
 import importlib
 import my_constants as mc
@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 from random import uniform
 
 mc = importlib.reload(mc)
+mu = importlib.reload(mu)
 
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -152,48 +153,85 @@ def plot_chain(chain_arr, beg=0, end=-1):
     ax.set_zlabel('z, nm')
 
 
-def check_angles(chain_arr):
+#def dotproduct(v1, v2):
+#    
+#    return sum((a*b) for a, b in zip(v1, v2))
+
+
+#def length(v):
+#    
+#    return np.sqrt(dotproduct(v, v))
+
+
+def angle(v1, v2):
     
-    def dotproduct(v1, v2):
-      return sum((a*b) for a, b in zip(v1, v2))
+#    return np.arccos(np.dot(v1, v2) / (np.linalg.norm(v1) * np.linalg.norm(v2)))
+    return np.arccos(np.sum(v1 * v2) / (np.linalg.norm(v1) * np.linalg.norm(v2)))
+
+
+def check_chain_bonds(chain_arr):
     
-    def length(v):
-      return np.sqrt(dotproduct(v, v))
-    
-    def angle(v1, v2):
-        return arccos(dotproduct(v1, v2) / (length(v1) * length(v2)))
-    
-    angles = []
+    step = 0.28
     
     for i in range(len(chain_arr)-2):
-        
-        vector_1 =   chain_arr[i+1] - chain_arr[i]
-        vector_2 = -(chain_arr[i+2] - chain_arr[i+1])
-        
-        angles.append(np.rad2deg(angle(vector_1, vector_2)))
-        
-    if np.all(np.abs(angles-109) < 1e-4):
-        return True
     
-    return False
+        vector_1 = np.array(chain_arr[i+1] - chain_arr[i])
+        vector_2 = np.array(-(chain_arr[i+2] - chain_arr[i+1]))
+        
+#        print(vector_1.shape)
+#        print(vector_2.shape)
+        
+        if np.abs(np.linalg.norm(vector_1) - step) > 1e-4:
+            print(i, 'bond length error')
+            return False
+        
+        now_angle = np.rad2deg(angle(vector_1, vector_2))
+        
+        if np.abs(now_angle - 109) > 1e-4:
+            print(i, 'bond angle error')
+            return False
+        
+    return True
 
 
 #%%
-for i in range(100):
+def rnd_ang():
     
-    now_chain = make_PMMA_chain(100)
+    return 2*np.pi*np.random.random()
+
+
+def rotate_chain(chain):
     
-    np.save('CHAINS_1M/chain_' + str(i) + '.npy', now_chain)
+    a = rnd_ang()
+    b = rnd_ang()
+    g = rnd_ang()
     
-    print('chain', i, 'is ready')
+    M = np.mat([
+        [cos(a)*cos(g)-sin(a)*cos(b)*sin(g), -cos(a)*sin(g)-sin(a)*cos(b)*cos(g),  sin(a)*sin(b)],
+        [sin(a)*cos(g)+cos(a)*cos(b)*sin(g), -sin(a)*sin(g)+cos(a)*cos(b)*cos(g), -cos(a)*sin(b)],
+        [                     sin(b)*sin(g),                       sin(b)*cos(g), cos(b)        ]   
+        ])
+    
+    return np.matmul(M, chain.transpose()).transpose()
+
+
 
 
 #%%
-now_chain = np.load('CHAINS_1M/chain_5.npy')
-
-plot_chain(now_chain)
+#for i in range(100):
+#    
+#    now_chain = make_PMMA_chain(1000000)
+#    
+#    np.save('chains_1M/chain_' + str(i) + '.npy', now_chain)
+#    
+#    print('chain', i, 'is ready')
 
 
 #%%
-check_angles(now_chain)
+chain = np.load('../CHAINS/chains_1M/chain_5.npy')
+
+chain_rot = rotate_chain(chain)
+
+#%%
+check_chain_bonds(chain_rot)
 

@@ -56,26 +56,3 @@ def diff2int(DIFF, V=mc.EE, H=mc.EE):
     
     return INT
 
-
-#%%
-#s = np.linspace(0, 10, 1001)
-#
-#l1 = 6
-#l2 = 3
-#
-#s1 = 5
-#
-#f1 = np.exp(-s/l1)
-#f2 = np.exp(-s1/l1 - (s-s1)/l2)
-#
-#plt.plot(s, f1, label='f1')
-#plt.plot(s, f2, label='f2')
-#
-#plt.xlabel('s')
-#plt.ylabel('P')
-#
-#plt.grid()
-#plt.show()
-
-
-
