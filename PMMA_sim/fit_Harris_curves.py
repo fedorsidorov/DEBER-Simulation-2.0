@@ -34,7 +34,7 @@ plt.semilogx(x, y, 'ro', label='paper data')
 
 popt, pcov = curve_fit(func, x, y)
 
-x_fit = np.logspace(4, 8, 10001) ## before
+x_fit = np.logspace(2, 8, 1001) ## before
 #x_fit = np.logspace(2, 6, 500) ## after
 
 y_fit = func(x_fit, *popt)
@@ -117,3 +117,4 @@ plt.grid()
 plt.show()
 
 #plt.savefig('Harris_integral_before.png', dpi=300)
+

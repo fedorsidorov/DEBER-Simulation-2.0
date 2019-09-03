@@ -12,6 +12,8 @@ mc = importlib.reload(mc)
 
 from math import gamma
 
+from mpl_toolkits.mplot3d import Axes3D
+
 
 #%%
 def schulz_zimm(x, Mn, Mw):
