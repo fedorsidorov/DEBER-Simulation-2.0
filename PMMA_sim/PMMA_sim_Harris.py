@@ -168,6 +168,26 @@ print(part_empty)
 
 
 #%%
+source_dir = '/Volumes/ELEMENTS/Chains_Harris_no_period/'
+
+lens = []
+
+files = os.listdir(source_dir)
+
+for file in files:
+    
+    if 'DS' in file:
+        continue
+    
+    chain = np.load(source_dir + file)
+    
+    lens.append(len(chain))
+
+
+chain_lens = np.array(lens)
+
+
+#%%
 xx = np.load('harris_x_before.npy')
 yy = np.load('harris_y_before_SZ.npy')
 
@@ -178,9 +198,9 @@ bins = np.logspace(2, 7.1, 21)
 plt.hist(mass, bins)
 plt.gca().set_xscale('log')
 
-plt.plot(xx, yy*2.1e+9, label='Schulz-Zimm')
+plt.plot(xx, yy*3.25e+9, label='Schulz-Zimm')
 
-plt.title('Harris chain sample, periodic, 500nm offsets, 6% empty')
+plt.title('Harris chain sample, NO period, 100 nm offser')
 plt.xlabel('molecular weight')
 plt.ylabel('density')
 
@@ -188,7 +208,7 @@ plt.ylabel('density')
 plt.grid()
 plt.show()
 
-#plt.savefig('Harris_sample_period_500nm_offset.png', dpi=300)
+plt.savefig('Harris_sample_NO_period_100nm_offset.png', dpi=300)
 
 
 #%%

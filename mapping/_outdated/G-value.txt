@@ -1,0 +1,27 @@
+G values, 1e-2
+
+2C ion - 0.70
+2C exc - 0.38
+2C all - 1.07
+
+3C ion - 1.05
+3C exc - 0.58
+3C all - 1.61
+
+4C ion - 1.41
+4C exc - 0.77
+4C all - 2.15
+
+2C+2H ion - 0.82
+2C+2H exc - 0.53
+2C+2H all - 1.34
+
+4C+2H ion - 1.54
+4C+2H exc - 0.92
+4C+2H all - 2.43
+
+ALL ion - 2.86
+ALL exc - 1.67
+ALL all - 4.46
+
+All = ion + exc

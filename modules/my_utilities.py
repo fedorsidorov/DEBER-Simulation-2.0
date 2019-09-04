@@ -9,7 +9,7 @@ mc = importlib.reload(mc)
 
 
 #%% Non-simulation functions
-def upd_progress_bar(progress, total):
+def pbar(progress, total):
     
     barLength, status = 20, ''
     progress = float(progress) / float(total)

@@ -7,3 +7,4 @@
 # Ignore DATA folders
 e_DATA/
 Chains_Harris/
+MATRIX_*
