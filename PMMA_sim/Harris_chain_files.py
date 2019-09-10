@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import os
 import importlib
 
+from itertools import product
+
 import my_constants as mc
 import my_utilities as mu
 import MC_functions as mcf
@@ -20,42 +22,14 @@ os.chdir(mc.sim_folder + 'PMMA_sim')
 
 
 #%%
-source_dir = '/Volumes/ELEMENTS/Chains_Harris_period_500nm_offset/'
+source_dir = '/Volumes/ELEMENTS/Chains_Harris/'
 
 #print(os.listdir(source_dir))
 
 
-#%%
-lens = []
-
-files = os.listdir(source_dir)
-
-for file in files:
-    
-    if 'chain' not in file:
-        continue
-    
-    chain = np.load(source_dir + file)
-    
-    lens.append(len(chain))
-
-
-chain_lens = np.array(lens)
-
-
-#%%
-print(np.max(chain_lens))
-
-
-#%%
-hist_2nm = np.load(source_dir + 'hist_2nm.npy')
-
-print('n_mon_max =', np.max(hist_2nm))
-
-
 #%% constants
-N_chains_total = 6236
-N_mon_cell_max = 550
+N_chains_total = 6111
+N_mon_cell_max = 520
 
 l_xyz = np.array((100, 100, 500))
 
@@ -78,22 +52,29 @@ z_grid_2nm = (z_bins_2nm[:-1] + z_bins_2nm[1:]) / 2
 
 resist_shape = len(x_grid_2nm), len(y_grid_2nm), len(z_grid_2nm)
 
+xs = len(x_grid_2nm)
+ys = len(y_grid_2nm)
+zs = len(z_grid_2nm)
+
 
 #%%
-pos_matrix = np.zeros(resist_shape, dtype=np.uint16)
-resist_matrix = - np.ones((*resist_shape, N_mon_cell_max, 3), dtype=np.uint16)
+pos_matrix = np.zeros(resist_shape, dtype=np.uint32)
 
-chain_table = []
+resist_matrix = -np.ones((*resist_shape, N_mon_cell_max, 3), dtype=np.uint32)
+
+chain_tables = []
+
+uint32_max = 4294967295
 
 
 #%%
 for chain_num in range(N_chains_total):
     
-    mu.upd_progress_bar(chain_num, N_chains_total)
+    mu.pbar(chain_num, N_chains_total)
     
     now_chain = np.load(source_dir + 'chain_shift_' + str(chain_num) + '.npy')
     
-    now_chain_table = np.zeros((len(now_chain), 5))
+    chain_table = np.zeros((len(now_chain), 5), dtype=np.uint32)
     
     for n_mon, mon_line in enumerate(now_chain):
         
@@ -104,38 +85,85 @@ for chain_num in range(N_chains_total):
         else:
             mon_type = 1
         
-#        if not (np.all(mon_line >= xyz_beg) and np.all(mon_line <= xyz_end)):
-#            chain_table[chain_num, n_mon, -1] = mon_type
-#            continue
-        
         now_x, now_y, now_z = mon_line
         
-        x_ind = mcf.get_closest_el_ind(x_grid_2nm, now_x)
-        y_ind = mcf.get_closest_el_ind(y_grid_2nm, now_y)
-        z_ind = mcf.get_closest_el_ind(z_grid_2nm, now_z)
+        xi = mcf.get_closest_el_ind(x_grid_2nm, now_x)
+        yi = mcf.get_closest_el_ind(y_grid_2nm, now_y)
+        zi = mcf.get_closest_el_ind(z_grid_2nm, now_z)
         
-        mon_line_pos = pos_matrix[x_ind, y_ind, z_ind]
+        mon_line_pos = pos_matrix[xi, yi, zi]
         
-        resist_matrix[x_ind, y_ind, z_ind, mon_line_pos] = chain_num, n_mon, mon_type
+        resist_matrix[xi, yi, zi, mon_line_pos] = chain_num, n_mon, mon_type
+        chain_table[n_mon] = xi, yi, zi, mon_line_pos, mon_type
         
-        now_chain_table[n_mon] = x_ind, y_ind, z_ind, mon_line_pos, mon_type
-        
-        pos_matrix[x_ind, y_ind, z_ind] += 1
+        pos_matrix[xi, yi, zi] += 1
     
-    chain_table.append(now_chain_table)
-        
-        
-#%%        
+    
+    chain_tables.append(chain_table)
+
+
+#%%
 print('resist_matrix size, Gb:', resist_matrix.nbytes / 1024**3)
 np.save('MATRIX_resist_Harris.npy', resist_matrix)
+
+        
+#%%        
+#print('resist_matrix size, Gb:', resist_matrix.nbytes / 1024**3)
+#np.save('/Volumes/ELEMENTS/Chains_Harris/MATRIX_resist_Harris.npy', resist_matrix)
+
+#dest_folder = '/Volumes/ELEMENTS/Harris_resist_matrix/'
+#
+#max_end_ind = 0
+#
+#for xi, yi, zi in product(range(xs), range(ys), range(zs)):
+#    
+#    mu.pbar(xi, xs)
+#    
+#    now_arr = resist_matrix[xi, yi, zi]
+#    
+#    end_ind = np.where(now_arr[:-1]==uint32_max)[0][0]
+#    
+#    if end_ind > max_end_ind:
+#        max_end_ind = end_ind
+    
+#    now_arr = now_arr[:end_ind]
+    
+#    name = 'resist_matrix_' + str(xi) + '_' + str(yi) + '_' + str(zi) + '.npy'
+    
+#    np.save(dest_folder + name, now_arr)
 
 
 #%%
 dest_folder = '/Volumes/ELEMENTS/Harris_chain_tables/'
 
-for i, ct in enumerate(chain_table):
+for i, ct in enumerate(chain_tables):
     
-    mu.upd_progress_bar(i, len(chain_table))
+    mu.pbar(i, len(chain_tables))
     
     np.save(dest_folder + 'chain_table_' + str(i) + '.npy', ct)
+
+
+#%%
+for i, chain in enumerate(chain_tables):
+    
+    mu.pbar(i, len(chain_tables))
+    
+    for j, line in enumerate(chain):
+        
+        x, y, z, pos, mon_t = line.astype(int)
+        
+        mat_cn, n_mon, mat_type = resist_matrix[x, y, z, pos]
+        
+        if mat_cn != i or n_mon != j or mat_type != mon_t:
+            print('ERROR!', i, j)
+            print('chain_num:', mat_cn, i)
+            print('n_mon', n_mon, j)
+            print('mon_type', mon_t, mat_type)
+
+
+
+
+
+
+
 

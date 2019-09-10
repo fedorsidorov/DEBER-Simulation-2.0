@@ -71,7 +71,7 @@ DATA = [None] * len(folders)
 
 for now_ind in list(range(len(folders))):
     
-    mu.upd_progress_bar(now_ind, len(folders))
+    mu.pbar(now_ind, len(folders))
 
     mult = int(100 / sizes[now_ind])
     print(mult)
@@ -96,7 +96,7 @@ for now_ind in list(range(len(folders))):
         for _ in range(mult-1):
             
             add_DATA_PMMA = np.load(now_folder + '/' + 'DATA_PMMA_' + str(pos) + '.npy')
-            add_DATA_PMMA = add_DATA_PMMA[np.where(add_DATA_PMMA[:, 3] == 1)]
+#            add_DATA_PMMA = add_DATA_PMMA[np.where(add_DATA_PMMA[:, 3] == 1)]
             
             now_DATA_PMMA = np.vstack((now_DATA_PMMA, add_DATA_PMMA))
             
@@ -120,7 +120,7 @@ n_electrons = 0
 
 while n_electrons < n_electrons_required:
 
-    mu.upd_progress_bar(n_electrons, n_electrons_required)
+    mu.pbar(n_electrons, n_electrons_required)
     
     now_folder_ind = rnd.randint(len(folders))
     
@@ -144,51 +144,8 @@ while n_electrons < n_electrons_required:
     
     n_electrons += 100
 
-            
-#%%
-data = np.load('../e_DATA/Harris_cut_PMMA/DATA_PMMA_102.npy')
-
 
 #%%
-#sum_C = np.sum(e_matrix_C)
-sum_C_ion = np.sum(e_matrix_C_ion)
-sum_C_exc = np.sum(e_matrix_C_exc)
+np.save('Harris_e_matrix_val_+-1.npy', e_matrix_val)
 
-sum_dE = np.sum(e_matrix_dE)
-        
-#%%
-#e_matrix_C = np.array(e_matrix_C, dtype=np.uint8)
-e_matrix_C_exc = np.array(e_matrix_C_exc, dtype=np.uint8)
-e_matrix_C_ion = np.array(e_matrix_C_ion, dtype=np.uint8)
 
-print('e_matrix size, Mb:', e_matrix_C_exc.nbytes / 1024**2)
-
-#%%
-#np.save('MATRIX_Harris_100uC_C.npy', e_matrix_C)
-np.save('MATRIX_Harris_100uC_C_exc_bad.npy', e_matrix_C_exc)
-np.save('MATRIX_Harris_100uC_C_ion_bad.npy', e_matrix_C_ion)
-
-np.save('MATRIX_dE_Harris_100uC_bad.npy', e_matrix_dE)
-
-#%%
-#e_matrix = np.load(mv.sim_path_MAC + 'MATRIXES/MATRIX_6e-5_pC_cm2_C_exc.npy')
-
-#%% drawing
-plt.figure()
-plt.semilogy(x_grid_2nm, np.sum(e_matrix_dE[:, 25, :], axis=1))
-
-plt.xlabel('x, nm')
-plt.ylabel('N events')
-plt.title('Event coordinate distribution, 2 nm')
-plt.legend()
-plt.grid()
-plt.show()
-#plt.savefig('LOG events 2nm.png', dpi=300)
-
-#%% Test E development (kyser1975)
-e_matrix_dE_avg = np.sum(e_matrix_dE[:, :, :], axis=1)/50
-e_matrix_dE_avg_develop = e_matrix_dE_avg - 6.8 * 2**3
-e_matrix_dE_avg_develop_mono = e_matrix_dE_avg_develop / np.abs(e_matrix_dE_avg_develop)
-
-plt.imshow(e_matrix_dE_avg_develop_mono.transpose())
-plt.show()

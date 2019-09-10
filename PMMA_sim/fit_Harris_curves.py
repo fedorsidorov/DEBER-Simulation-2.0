@@ -23,15 +23,15 @@ def func(x, a, b, c):
 
 #%%
 ## before
-#Mn = 5.63e+5
-#Mw = 2.26e+6
+Mn = 5.63e+5
+Mw = 2.26e+6
 
 ## after
-Mn = 2370
-Mw = 8160
+#Mn = 2370
+#Mw = 8160
 
-#mat = np.loadtxt('curves/harris_before.txt')
-mat = np.loadtxt('curves/harris_after.txt')
+mat = np.loadtxt('curves/harris_before.txt')
+#mat = np.loadtxt('curves/harris_after.txt')
 
 x = mat[:, 0]
 y = mat[:, 1]
@@ -40,8 +40,8 @@ plt.semilogx(x, y, 'ro', label='paper data')
 
 popt, pcov = curve_fit(func, x, y)
 
-#x_fit = np.logspace(2, 8, 1001) ## before
-x_fit = np.logspace(2, 6, 500) ## after
+x_fit = np.logspace(2, 8, 1001) ## before
+#x_fit = np.logspace(2, 6, 500) ## after
 
 y_fit = func(x_fit, *popt)
 
@@ -71,7 +71,7 @@ y_SZ_n = y_SZ / np.max(y_SZ)
 
 plt.semilogx(x_diff, y_SZ_n, label='Schulz-Zimm')
 
-plt.title('Harris final molecular weight distribution')
+plt.title('Harris initial molecular weight distribution')
 plt.xlabel('molecular weight')
 plt.ylabel('density')
 
@@ -114,7 +114,7 @@ plt.semilogx(x_diff, y_SZ_int, label='Schulz-Zimm')
 plt.semilogx(x, y, 'o', label='paper data')
 plt.semilogx(x_fit, y_fit, '-', label='fit')
 
-plt.title('Harris final integral molecular weight distribution')
+plt.title('Harris initial integral molecular weight distribution')
 plt.xlabel('molecular weight')
 plt.ylabel('Distribution function')
 

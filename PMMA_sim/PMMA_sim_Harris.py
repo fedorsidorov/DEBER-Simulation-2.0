@@ -107,7 +107,7 @@ while True:
         print('Needed density is achieved')
         break
     
-    mu.upd_progress_bar(n_mon_now, n_mon_required)
+    mu.pbar(n_mon_now, n_mon_required)
     
     chain_ind = np.random.randint(len(chains))
     now_chain = chains[chain_ind]
@@ -167,24 +167,36 @@ part_empty = n_empty / (50*50*250)
 print(part_empty)
 
 
+#%% save chains to files
+source_dir = '/Volumes/ELEMENTS/Chains_Harris'
+
+i = 0
+
+for chain in chain_list:
+    
+    mu.pbar(i, len(chain_list))
+    np.save(os.path.join(source_dir, 'chain_shift_' + str(i) + '.npy'), chain)
+    i += 1
+
+
 #%%
-source_dir = '/Volumes/ELEMENTS/Chains_Harris_no_period/'
-
-lens = []
-
-files = os.listdir(source_dir)
-
-for file in files:
-    
-    if 'DS' in file:
-        continue
-    
-    chain = np.load(source_dir + file)
-    
-    lens.append(len(chain))
-
-
-chain_lens = np.array(lens)
+#source_dir = '/Volumes/ELEMENTS/Chains_Harris/'
+#
+#lens = []
+#
+#files = os.listdir(source_dir)
+#
+#for file in files:
+#    
+#    if 'DS' in file:
+#        continue
+#    
+#    chain = np.load(source_dir + file)
+#    
+#    lens.append(len(chain))
+#
+#
+#chain_lens = np.array(lens)
 
 
 #%%
@@ -198,7 +210,7 @@ bins = np.logspace(2, 7.1, 21)
 plt.hist(mass, bins)
 plt.gca().set_xscale('log')
 
-plt.plot(xx, yy*3.25e+9, label='Schulz-Zimm')
+plt.plot(xx, yy*2.25e+9, label='Schulz-Zimm')
 
 plt.title('Harris chain sample, NO period, 100 nm offser')
 plt.xlabel('molecular weight')
@@ -208,11 +220,7 @@ plt.ylabel('density')
 plt.grid()
 plt.show()
 
-plt.savefig('Harris_sample_NO_period_100nm_offset.png', dpi=300)
-
-
-#%%
-
+#plt.savefig('Harris_sample_NO_period_100nm_offset.png', dpi=300)
 
 
 #%% check density
@@ -224,18 +232,6 @@ density_total = hist_total[0][0][0] * m_mon / V
 #%%
 n_mon_max = hist_2nm.max()
 print(np.sum(hist_2nm) * m_mon / V)
-
-
-#%% save chains to files
-source_dir = '/Volumes/ELEMENTS/Chains_Harris_period_500nm_offset'
-
-i = 0
-
-for chain in chain_list:
-    
-    mu.upd_progress_bar(i, len(chain_list))
-    np.save(os.path.join(source_dir, 'chain_shift_' + str(i) + '.npy'), chain)
-    i += 1
 
 
 #%% cut chains to cube shape
