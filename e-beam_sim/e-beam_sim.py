@@ -7,16 +7,16 @@ import matplotlib.pyplot as plt
 
 import my_constants as mc
 import my_utilities as mu
-import MC_functions as mcf
+import MC_functions_Dapor as mcf
 
 mc = importlib.reload(mc)
 mu = importlib.reload(mu)
 mcf = importlib.reload(mcf)
 
+os.chdir(mc.sim_folder + 'e-beam_sim')
+
 import plot_data as pd
 pd = importlib.reload(pd)
-
-os.chdir(mc.sim_folder + 'e-beam_sim')
 
 
 #%% Harris
@@ -25,24 +25,24 @@ E0 = 10e+3
 
 z_cut_Si = 1e-4
 
-n_files = 100000
-n_tracks = 10
+n_files = 1000
+n_tracks = 1
 
-num = 179
+num = 0
 
 while num < n_files:
     
     DATA = mcf.get_DATA(d_PMMA, E0, n_tracks, z_cut_Si)
-    DATA_PMMA = DATA[np.where(np.logical_and(DATA[:, 2] == 0,\
+    DATA_PMMA_1 = DATA[np.where(np.logical_and(DATA[:, 2] == 0,\
                                     np.abs(DATA[:, 3]) == 1))]
     
-    fname = '../e_DATA/e_DATA_Harris_cut_1e-4/DATA_' + str(num) + '.npy'
-    fname_PMMA = '../e_DATA/e_DATA_Harris_PMMA_cut_1e-4/DATA_PMMA_' + str(num) + '.npy'
+#    fname = '../e_DATA/e_DATA_Harris_cut_1e-4/DATA_' + str(num) + '.npy'
+    fname_PMMA_1 = '../e_DATA/e_Data_Harris_PMMA_Dapor/DATA_PMMA_1_' + str(num) + '.npy'
     
-    np.save(fname, DATA)
-    np.save(fname_PMMA, DATA_PMMA)
+#    np.save(fname, DATA)
+    np.save(fname_PMMA_1, DATA_PMMA_1)
     
-    print('file ' + fname + ' is ready')
+    print('file ' + fname_PMMA_1 + ' is ready')
 
     num += 1
 

@@ -81,7 +81,8 @@ binding_O_1S = 538
 occupancy_1S = 2
 
 ##              1s    2s   2p   3s     3p
-binding_Si   = [1844, 154, 104, 13.46, 8.15]
+#binding_Si   = [1844, 154, 104, 13.46, 8.15 ]
+binding_Si   = [1849, 159, 109, 18   , 12.67]
 occupancy_Si = [2,    2,   6,   2,     2]
 
 n_val_PMMA = 40
@@ -89,7 +90,7 @@ n_val_Si = 4
 
 
 #%%
-E_cut_PMMA = 5
+E_cut_PMMA = 2
 E_cut_Si = 20
 
 #%%

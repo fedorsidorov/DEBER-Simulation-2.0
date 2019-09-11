@@ -71,15 +71,15 @@ def write_log_var(mon_type, n_next_mon, next_mon_type, next_mon_new_type):
 
 #%%
 e_matrix = np.load(mc.sim_folder + 'e-events_matrix/Harris_e_matrix_val_+-1.npy')
-resist_matrix = np.load(mc.sim_folder + 'PMMA_sim/MATRIX_resist_Harris.npy')
+resist_matrix = np.load(mc.sim_folder + 'PMMA_sim/MATRIX_resist_Harris_fit.npy')
 
 
-chain_tables_folder = '/Volumes/ELEMENTS/Harris_chain_tables/'
+chain_tables_folder = '/Volumes/ELEMENTS/Harris_chain_tables_fit/'
 files = os.listdir(chain_tables_folder)
 
 chain_tables = []
 
-N_chains_total = 6111
+N_chains_total = 1606
 
 for i in range(N_chains_total):
     
@@ -145,7 +145,7 @@ for xi, yi, zi in product(range(resist_shape[0]), range(resist_shape[1]), range(
         if len(chain_table) == 1:
             continue
         
-        write_log_table(chain_table, n_chain, n_mon, before_msg)
+#        write_log_table(chain_table, n_chain, n_mon, before_msg)
         
         
 ############################################################################### 
@@ -168,8 +168,8 @@ for xi, yi, zi in product(range(resist_shape[0]), range(resist_shape[1]), range(
                 
                 rewrite_mon_type(resist_matrix, chain_table, n_next_mon, next_mon_new_type)
                 
-                write_log_var(mon_type, n_next_mon, next_mon_type, next_mon_new_type)
-                write_log_table(chain_table, n_chain, n_mon, after_msg)
+#                write_log_var(mon_type, n_next_mon, next_mon_type, next_mon_new_type)
+#                write_log_table(chain_table, n_chain, n_mon, after_msg)
             
             
             ## if next monomer is full bonded
@@ -179,8 +179,8 @@ for xi, yi, zi in product(range(resist_shape[0]), range(resist_shape[1]), range(
                 
                 rewrite_mon_type(resist_matrix, chain_table, n_next_mon, next_mon_new_type)
                 
-                write_log_var(mon_type, n_next_mon, next_mon_type, next_mon_new_type)
-                write_log_table(chain_table, n_chain, n_mon, after_msg)
+#                write_log_var(mon_type, n_next_mon, next_mon_type, next_mon_new_type)
+#                write_log_table(chain_table, n_chain, n_mon, after_msg)
             
             else:
                 print('\nerror!')
@@ -188,7 +188,7 @@ for xi, yi, zi in product(range(resist_shape[0]), range(resist_shape[1]), range(
                 print('n_mon', n_mon)
                 print('next_mon_type', next_mon_type)
                 
-                write_log_table(chain_table, n_chain, n_mon, 'Pizdos!\n' + after_msg)
+#                write_log_table(chain_table, n_chain, n_mon, 'Pizdos!\n' + after_msg)
                 
                 
 ###############################################################################
@@ -210,8 +210,8 @@ for xi, yi, zi in product(range(resist_shape[0]), range(resist_shape[1]), range(
                 
                 rewrite_mon_type(resist_matrix, chain_table, n_next_mon, next_mon_new_type)
                 
-                write_log_var(mon_type, n_next_mon, next_mon_type, next_mon_new_type)
-                write_log_table(chain_table, n_chain, n_mon, after_msg)
+#                write_log_var(mon_type, n_next_mon, next_mon_type, next_mon_new_type)
+#                write_log_table(chain_table, n_chain, n_mon, after_msg)
             
             ## if next monomer is full bonded !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             elif next_mon_type == mid_mon:
@@ -220,13 +220,13 @@ for xi, yi, zi in product(range(resist_shape[0]), range(resist_shape[1]), range(
                 
                 rewrite_mon_type(resist_matrix, chain_table, n_next_mon, next_mon_new_type)
                 
-                write_log_var(mon_type, n_next_mon, next_mon_type, next_mon_new_type)
-                write_log_table(chain_table, n_chain, n_mon, after_msg)
+#                write_log_var(mon_type, n_next_mon, next_mon_type, next_mon_new_type)
+#                write_log_table(chain_table, n_chain, n_mon, after_msg)
                 
             else:
                 print('error 2', next_mon_type)
                 
-                write_log_table(chain_table, n_chain, n_mon, 'Pizdos2' + after_msg)
+#                write_log_table(chain_table, n_chain, n_mon, 'Pizdos2' + after_msg)
         
         else:
             continue
@@ -264,10 +264,11 @@ chain_lens = np.array(lens)
 
 
 #%%
-chain_lens_new = np.load('mapping_chain_lens_+-1.npy')
+chain_lens_new = np.load('mapping_chain_lens_+-1_fit.npy')
 
 xx = np.load('../PMMA_sim/harris_x_after.npy')
-yy = np.load('../PMMA_sim/harris_y_after_SZ.npy')
+#yy = np.load('../PMMA_sim/harris_y_after_SZ.npy')
+yy = np.load('../PMMA_sim/harris_y_after_fit.npy')
 
 mass = np.array(chain_lens_new)*100
 
@@ -276,7 +277,7 @@ bins = np.logspace(2, 7.1, 21)
 plt.hist(mass, bins, label='simulation')
 plt.gca().set_xscale('log')
 
-plt.plot(xx, yy*2.8e+8, label='Harris (paper)')
+plt.plot(xx, yy*3.5e+6, label='Harris (paper)')
 
 plt.title('Harris final molecular weight distribution FIT')
 plt.xlabel('molecular weight')
@@ -286,5 +287,15 @@ plt.legend()
 plt.grid()
 plt.show()
 
-#plt.savefig('Harris_final_weight_distr++-1.png', dpi=300)
+#plt.savefig('Harris_final_weight_distr++-1_fit.png', dpi=300)
+
+
+#%% Test integral distributions
+yy_int = np.cumsum(yy)
+
+plt.hist(mass, bins, cumulative=True, label='simulation')
+
+plt.plot(xx, yy_int*157000)
+
+plt.gca().set_xscale('log')
 

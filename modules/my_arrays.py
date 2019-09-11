@@ -28,6 +28,8 @@ Si_el_int_U = np.load(mc.sim_folder + 'elastic/Si_elastic_int_CS.npy')
 PMMA_total_inel_U = np.load(mc.sim_folder + 'E_loss/diel_responce/Dapor/PMMA_U_Dapor.npy')
 PMMA_diff_inel_U = np.load(mc.sim_folder +\
                            'E_loss/diel_responce/Dapor/PMMA_diff_U_Dapor_Ashley.npy')
+PMMA_int_inel_U = np.load(mc.sim_folder +\
+                           'E_loss/diel_responce/Dapor/PMMA_int_U_Dapor_Ashley.npy')
 
 ## Si
 Si_total_inel_U = np.load(mc.sim_folder + 'E_loss/diel_responce/Palik/Si_U_Palik.npy')
@@ -110,6 +112,7 @@ Si_processes_int_U = [Si_el_int_U, Si_val_int_U, Si_1S_int_U, Si_2S_int_U, Si_2P
 #%%
 processes_U = [PMMA_processes_U, Si_processes_U]
 
+
 processes_int_U = [PMMA_processes_int_U, Si_processes_int_U]
 
 
@@ -121,6 +124,7 @@ PMMA_O_1S_E_bind = np.ones(len(EE)) * mc.binding_O_1S
 
 PMMA_E_bind = [PMMA_el_E_bind, PMMA_val_E_bind, PMMA_C_1S_E_bind, PMMA_O_1S_E_bind]
 
+
 Si_el_E_bind = np.zeros(len(EE)) ## dummy!!!
 Si_val_E_bind = np.load(mc.sim_folder + 'E_loss/E_bind_Si/Si_E_bind.npy')
 Si_1S_E_bind = np.ones(len(EE)) * mc.binding_Si[0]
@@ -129,8 +133,6 @@ Si_2P_E_bind = np.ones(len(EE)) * mc.binding_Si[2]
 
 Si_E_bind = [Si_el_E_bind, Si_val_E_bind, Si_1S_E_bind, Si_2S_E_bind, Si_2P_E_bind]
 
+
 E_bind = [PMMA_E_bind, Si_E_bind]
-
-
-
 

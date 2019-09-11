@@ -69,8 +69,8 @@ bins_2nm = [x_bins_2nm, y_bins_2nm, z_bins_2nm]
 #%% create chain_list and check density
 
 m = np.load('harris_x_before.npy')
-#mw = np.load('harris_y_before_fit.npy')
-mw = np.load('harris_y_before_SZ.npy')
+mw = np.load('harris_y_before_fit.npy')
+#mw = np.load('harris_y_before_SZ.npy')
 
 #plt.semilogx(m, mw, 'ro')
 
@@ -168,7 +168,7 @@ print(part_empty)
 
 
 #%% save chains to files
-source_dir = '/Volumes/ELEMENTS/Chains_Harris'
+source_dir = '/Volumes/ELEMENTS/Chains_Harris_fit'
 
 i = 0
 
@@ -201,7 +201,8 @@ for chain in chain_list:
 
 #%%
 xx = np.load('harris_x_before.npy')
-yy = np.load('harris_y_before_SZ.npy')
+#yy = np.load('harris_y_before_SZ.npy')
+yy = np.load('harris_y_before_fit.npy')
 
 mass = np.array(chain_lens)*100
 
@@ -210,7 +211,7 @@ bins = np.logspace(2, 7.1, 21)
 plt.hist(mass, bins)
 plt.gca().set_xscale('log')
 
-plt.plot(xx, yy*2.25e+9, label='Schulz-Zimm')
+plt.plot(xx, yy*0.6e+5, label='Schulz-Zimm')
 
 plt.title('Harris chain sample, NO period, 100 nm offser')
 plt.xlabel('molecular weight')

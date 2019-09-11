@@ -22,14 +22,15 @@ os.chdir(mc.sim_folder + 'PMMA_sim')
 
 
 #%%
-source_dir = '/Volumes/ELEMENTS/Chains_Harris/'
+source_dir = '/Volumes/ELEMENTS/Chains_Harris_fit/'
 
 #print(os.listdir(source_dir))
 
 
 #%% constants
-N_chains_total = 6111
-N_mon_cell_max = 520
+#N_chains_total = 6111
+N_chains_total = 1606
+N_mon_cell_max = 700
 
 l_xyz = np.array((100, 100, 500))
 
@@ -104,7 +105,7 @@ for chain_num in range(N_chains_total):
 
 #%%
 print('resist_matrix size, Gb:', resist_matrix.nbytes / 1024**3)
-np.save('MATRIX_resist_Harris.npy', resist_matrix)
+np.save('MATRIX_resist_Harris_fit.npy', resist_matrix)
 
         
 #%%        
@@ -134,7 +135,7 @@ np.save('MATRIX_resist_Harris.npy', resist_matrix)
 
 
 #%%
-dest_folder = '/Volumes/ELEMENTS/Harris_chain_tables/'
+dest_folder = '/Volumes/ELEMENTS/Harris_chain_tables_fit/'
 
 for i, ct in enumerate(chain_tables):
     
@@ -159,11 +160,4 @@ for i, chain in enumerate(chain_tables):
             print('chain_num:', mat_cn, i)
             print('n_mon', n_mon, j)
             print('mon_type', mon_t, mat_type)
-
-
-
-
-
-
-
 
