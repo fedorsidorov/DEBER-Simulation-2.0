@@ -25,10 +25,11 @@ E0 = 10e+3
 
 z_cut_Si = 1e-4
 
-n_files = 1000
+n_files = 10000
 n_tracks = 1
 
-num = 0
+num = 3099
+
 
 while num < n_files:
     
@@ -40,12 +41,12 @@ while num < n_files:
     fname_PMMA_1 = '../e_DATA/e_Data_Harris_PMMA_Dapor/DATA_PMMA_1_' + str(num) + '.npy'
     
 #    np.save(fname, DATA)
-    np.save(fname_PMMA_1, DATA_PMMA_1)
+#    np.save(fname_PMMA_1, DATA_PMMA_1)
     
     print('file ' + fname_PMMA_1 + ' is ready')
 
     num += 1
-
+    
 
 #%%
 pd.plot_DATA(DATA, d_PMMA)

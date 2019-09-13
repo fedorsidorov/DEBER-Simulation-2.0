@@ -202,13 +202,18 @@ def get_TT_and_sim_data(TT, n_TT, d_PMMA, tr_num, par_num, E0, x0y0z0, O_prev, z
     
     E = E0
     
-    sim_data = np.zeros((mc.TT_len, 9))*np.nan
+    sim_data = np.ones((mc.DATA_tr_len, 9)) * -100
     
     pos = 0
     
-    sim_data[pos, :] = np.hstack((tr_num, par_num, np.nan, np.nan, E0, x0y0z0, np.nan))
+    sim_data[pos, :] = np.array((tr_num, par_num, np.nan, np.nan, E0, x0y0z0[0],\
+            x0y0z0[1], x0y0z0[2], np.nan))
     
-    while E > mc.E_cut_PMMA:
+    ###########################################################################
+    E_cut_PMMA = mc.E_cut_PMMA
+    ###########################################################################
+    
+    while E > E_cut_PMMA:
         
         x = sim_data[pos, 5]
         z = sim_data[pos, 7]
@@ -232,12 +237,32 @@ def get_TT_and_sim_data(TT, n_TT, d_PMMA, tr_num, par_num, E0, x0y0z0, O_prev, z
         
         if E2nd > 0:
             new_task = [tr_num, E2nd, sim_data[pos, 5:-1], O2nd]
+            
+            if n_TT >= len(TT):
+                
+#                print('len TT before =', len(TT))
+                
+                TT += [None] * mc.TT_len
+                
+                print('Add TT len')
+#                print('len TT after =', len(TT))
+                
+            
             TT[n_TT] = new_task
             n_TT += 1
-            
+        
         else:
             sim_data[pos, 3] = proc_ind*(-1)
         
+        
+        if pos+1 >= len(sim_data):
+            
+#            print('len sim_data before =', len(sim_data))
+            
+            sim_data = np.vstack((sim_data, np.zeros((mc.DATA_tr_len, 9)) * -100))
+            
+            print('Add sim_data len')
+#            print('len sim_data after =', len(sim_data))
         
         sim_data[pos + 1, :] = np.concatenate(([[tr_num]], [[par_num]], [[np.nan]],\
                  [[np.nan]], [[E]], sim_data[pos, 5:-1] + dxdydz, [[np.nan]]), axis=1)
@@ -245,7 +270,7 @@ def get_TT_and_sim_data(TT, n_TT, d_PMMA, tr_num, par_num, E0, x0y0z0, O_prev, z
         O_prev = On
         pos += 1
     
-    sim_data = np.delete(sim_data, np.where(np.isnan(sim_data[:, 0])), axis=0)
+    sim_data = np.delete(sim_data, np.where(sim_data[:, 0] == -100), axis=0)
     
     return TT, n_TT, sim_data
 
@@ -253,7 +278,8 @@ def get_TT_and_sim_data(TT, n_TT, d_PMMA, tr_num, par_num, E0, x0y0z0, O_prev, z
 def create_TT(E0, n_tracks):
     
     O0 = np.eye(3)
-    TT = [None] * (n_tracks*1000)
+    
+    TT = [None] * mc.TT_len * n_tracks
     n_TT = 0
     
     for i in range(n_tracks):
@@ -268,11 +294,12 @@ def create_TT(E0, n_tracks):
     return TT, n_TT
 
 
+## SUPER VAZHNO
 def get_DATA(d_PMMA, E0, n_tracks, z_cut_Si):
     
     TT, n_TT = create_TT(E0, n_tracks)
     
-    DATA = np.zeros((mc.TT_len*n_tracks, 9))*np.nan
+    DATA = np.ones((mc.DATA_tr_len*n_tracks, 9)) * -100
     
     dataline_pos = 0
     track_num = 0
@@ -286,6 +313,18 @@ def get_DATA(d_PMMA, E0, n_tracks, z_cut_Si):
         TT, n_TT, tr_data = get_TT_and_sim_data(TT, n_TT, d_PMMA, track_num,\
                                                 par_num, E0, coords, O0, z_cut_Si)
         
+        if dataline_pos + len(tr_data) >= len(DATA):
+            
+#            print(tr_data)
+#            print('len tr_data =', len(tr_data))
+#            print('len DATA before =', len(DATA))
+            
+            DATA = np.vstack((DATA, np.ones((mc.DATA_tr_len*n_tracks, 9)) * -100))
+            
+            print('Add DATA len')
+#            print('len DATA after =', len(DATA))
+        
+        
         DATA[dataline_pos:dataline_pos + len(tr_data), :] = tr_data
         
         dataline_pos += len(tr_data)
@@ -293,8 +332,9 @@ def get_DATA(d_PMMA, E0, n_tracks, z_cut_Si):
         mu.pbar(track_num + 1, n_TT)
         
         track_num += 1
+        
 
-    DATA = np.delete(DATA, np.where(np.isnan(DATA[:, 2])), axis=0)
+    DATA = np.delete(DATA, np.where(DATA[:, 2] == -100), axis=0)
     
     return DATA
 
@@ -334,77 +374,4 @@ def print_chains_list(chains_list, end=-1):
 def delete_nan_rows(array):
     result_arr = np.delete(array, np.where(np.isnan(array[:, 0])), axis=0)
     return result_arr
-
-#def add_xy_rotation(arr, phi):
-#    rot_mat = np.mat([[np.cos(phi), -np.sin(phi)],
-#                      [np.sin(phi),  np.cos(phi)]])
-#    result = np.dot(rot_mat, np.mat(arr).transpose())
-#    return np.array(result.transpose())
-#
-#
-#def rotate_DATA(DATA, phi=2*np.pi*random()):
-##    DATA[:, 5:7] = add_xy_rotation(DATA[:, 5:7], 2 * np.pi * random())
-#    DATA[:, 5:7] = add_xy_rotation(DATA[:, 5:7], phi)
-#    return DATA
-#
-#
-#def add_xy_shift(DATA, tr_num, x_shift, y_shift):
-#    
-#    ## get indices wuth current track
-#    inds = np.where(DATA[:, 0] == tr_num)
-#    
-#    ## make primary shift
-#    for i in inds[0]:
-#        DATA[i, 5] += x_shift
-#        DATA[i, 6] += y_shift
-#    
-#    ## get indices with 1st gen of 2nd electrons
-#    inds_2nd = np.where(DATA[:, 1] == tr_num)[0]
-#    
-#    ## if no 2ndaries, return DATA
-#    if len(inds_2nd) == 0:
-#        return
-##        return DATA
-#    
-#    ## else RECURSION!
-#    else:
-#        ## find tr_nums with 2ndaries as primaries
-#        tr_nums_2nd = np.unique(DATA[inds_2nd, 0])
-#        
-#        ## for every tr_num make recursive call
-#        for tr_num_2nd in tr_nums_2nd:
-##            DATA = add_xy_shift(DATA, tr_num_2nd, x_shift, y_shift)
-#            add_xy_shift(DATA, tr_num_2nd, x_shift, y_shift)
-#        
-##        return DATA
-#
-#
-#def shift_DATA(DATA, xlim, ylim):
-#    n_tr_prim = int(DATA[np.where(np.isnan(DATA[:, 1]))][-1, 0] + 1)
-#    for track_num in range(n_tr_prim):
-#        
-#        x0, y0 = uniform(*xlim), uniform(*ylim)          
-#        add_xy_shift(DATA, track_num, x0, y0)
-#        
-#        '''
-#            ## in case of only elastic events in PMMA
-#            if len(np.where(DATA[:, 0] == track_num)[0]) == 0:
-#                continue
-#            ## in normal case
-#            else:
-#                x0, y0 = uniform(*xlim), uniform(*ylim)          
-##                DATA = add_xy_shift(DATA, track_num, x0, y0)
-#                add_xy_shift(DATA, track_num, x0, y0)
-#        '''
-##    return DATA
-#
-#
-def get_n_electrons(dose_C_cm2, square_side_nm):
-    q_el_C = 1.6e-19
-    A_cm2 = (square_side_nm * 1e-7)**2
-    Q_C = dose_C_cm2 * A_cm2
-    return int(np.round(Q_C / q_el_C))
-
-#%%
-
 

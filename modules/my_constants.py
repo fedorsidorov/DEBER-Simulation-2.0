@@ -90,10 +90,10 @@ n_val_Si = 4
 
 
 #%%
-E_cut_PMMA = 2
-E_cut_Si = 20
+TT_len = int(7e+3)
 
-#%%
-TT_len = np.int(1e+6)
-#DATA_len = np.int(1e+5)
+DATA_tr_len = int(3e+4)
+
+E_cut_PMMA = 2
+
 

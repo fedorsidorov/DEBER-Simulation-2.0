@@ -300,7 +300,7 @@ def get_DATA(d_PMMA, E0, n_tracks, z_cut_Si):
         
         dataline_pos += len(tr_data)
         
-        mu.upd_progress_bar(track_num + 1, n_TT)
+        mu.pbar(track_num + 1, n_TT)
         
         track_num += 1
 
