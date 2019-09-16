@@ -25,28 +25,33 @@ E0 = 10e+3
 
 z_cut_Si = 1e-4
 
-n_files = 10000
-n_tracks = 1
+n_files = 244
+n_tracks = 10
 
-num = 3099
+num = 243
 
 
 while num < n_files:
     
     DATA = mcf.get_DATA(d_PMMA, E0, n_tracks, z_cut_Si)
-    DATA_PMMA_1 = DATA[np.where(np.logical_and(DATA[:, 2] == 0,\
-                                    np.abs(DATA[:, 3]) == 1))]
+    
+    DATA_PMMA = DATA[np.where(DATA[:, 2] == 0)]
+    DATA_PMMA_inel = DATA_PMMA[np.where(DATA_PMMA[:, 3] != 0)]
     
 #    fname = '../e_DATA/e_DATA_Harris_cut_1e-4/DATA_' + str(num) + '.npy'
-    fname_PMMA_1 = '../e_DATA/e_Data_Harris_PMMA_Dapor/DATA_PMMA_1_' + str(num) + '.npy'
+    fname_PMMA_inel = '../e_DATA/e_DATA_Harris_my_E_bind_inel/DATA_PMMA_inel_' + str(num) + '.npy'
     
 #    np.save(fname, DATA)
-#    np.save(fname_PMMA_1, DATA_PMMA_1)
+#    np.save(fname_PMMA_inel, DATA_PMMA_inel)
     
-    print('file ' + fname_PMMA_1 + ' is ready')
+    print('file ' + fname_PMMA_inel + ' is ready')
 
     num += 1
-    
+
+
+#%%
+test_DATA = np.load('../e_DATA/e_DATA_Harris_my_E_bind_inel/DATA_PMMA_inel_88.npy')
+
 
 #%%
 pd.plot_DATA(DATA, d_PMMA)

@@ -114,8 +114,20 @@ processes_U_Dapor = [PMMA_processes_U_Dapor, Si_processes_U]
 processes_int_U_Dapor = [PMMA_processes_int_U_Dapor, Si_processes_int_U]
 
 
+#%% stolyarov2003.pdf
+bond_E = np.array((418, 406, 815, 364, 383, 354, 420, 356))
+n_el = np.array((12, 4, 8, 4, 2, 4, 2, 4))
+
+avg_E = np.dot(bond_E, n_el) / 40
+
+avg_E_eV = avg_E / mc.Na / mc.eV * 1000
+
+
 #%%
-PMMA_E_bind_Dapor = [np.zeros(len(EE)), np.zeros(len(EE))]
+#PMMA_E_bind = 3.3
+PMMA_E_bind = avg_E_eV
+
+PMMA_E_bind_Dapor = [np.zeros(len(EE)), np.ones(len(EE)) * PMMA_E_bind]
 
 
 Si_el_E_bind = np.zeros(len(EE)) ## dummy!!!
@@ -128,4 +140,9 @@ Si_E_bind = [Si_el_E_bind, Si_val_E_bind, Si_1S_E_bind, Si_2S_E_bind, Si_2P_E_bi
 
 
 E_bind_Dapor = [PMMA_E_bind_Dapor, Si_E_bind]
+
+
+
+
+
 

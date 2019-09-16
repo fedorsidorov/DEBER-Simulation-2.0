@@ -102,8 +102,8 @@ def get_ion_dE_E2nd_On_O2nd(layer_ind, proc_ind, E, E_ind, O_prev):
     int_array = ma.processes_int_U_Dapor[layer_ind][proc_ind][E_ind, :]
     dE = get_closest_int_el(int_array, ma.EE, rnd.random())
     
-    if layer_ind == 0 and E_bind > 0:
-        print('Error')
+#    if layer_ind == 0 and E_bind > 0:
+#        print('Error')
     
     if dE > E_bind:
         
