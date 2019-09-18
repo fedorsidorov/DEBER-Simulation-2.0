@@ -71,7 +71,7 @@ def write_log_var(mon_type, n_next_mon, next_mon_type, next_mon_new_type):
 
 #%%
 #e_matrix = np.load(mc.sim_folder + 'e-events_matrix/Harris_e_matrix_val_+-1.npy')
-e_matrix = np.load(mc.sim_folder + 'e-events_matrix/Harris_e_matrix_val_Dapor_NEW.npy')
+e_matrix = np.load(mc.sim_folder + 'e-events_matrix/Harris_e_matrix_val_Dapor_4p94.npy')
 resist_matrix = np.load(mc.sim_folder + 'PMMA_sim/MATRIX_resist_Harris_fit.npy')
 
 
@@ -266,28 +266,36 @@ chain_lens = np.array(lens)
 #%%
 #chain_lens_new = np.load('mapping_chain_lens_+-1_fit.npy')
 
+fig, ax = plt.subplots()
+
 xx = np.load('../PMMA_sim/harris_x_after.npy')
-#yy = np.load('../PMMA_sim/harris_y_after_SZ.npy')
+yy_SZ = np.load('../PMMA_sim/harris_y_after_SZ.npy')
 yy = np.load('../PMMA_sim/harris_y_after_fit.npy')
 
 mass = np.array(chain_lens)*100
 
+#bins = np.logspace(2, 7.1, 21)
 bins = np.logspace(2, 7.1, 21)
 
 plt.hist(mass, bins, label='simulation')
 plt.gca().set_xscale('log')
 
-plt.plot(xx, yy*7.1e+7, label='Harris (paper)')
+plt.plot(xx, yy*2.2e+7, label='experiment')
+plt.plot(xx, yy_SZ*1.6e+9, 'r', label='Schilz-Zimm')
 
 plt.title('Harris final molecular weight distribution FIT')
 plt.xlabel('molecular weight')
-plt.ylabel('density')
+plt.ylabel('N$_{entries}$')
+
+ax.yaxis.get_major_formatter().set_powerlimits((0, 1))
+
+plt.xlim(1e+2, 1e+6)
 
 plt.legend()
 plt.grid()
 plt.show()
 
-#plt.savefig('Harris_final_weight_distr_Dapor_E_bind_3p3_fit.png', dpi=300)
+plt.savefig('Harris_final_weight_distr_E_bind_4p94.png', dpi=300)
 
 
 #%% Test integral distributions

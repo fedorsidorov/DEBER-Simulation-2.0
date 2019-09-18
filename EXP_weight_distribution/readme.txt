@@ -1,0 +1,1 @@
+Simulation of PMMA 950K mass distribution. The sum of Flory-Schulz and Gauss functions is used to obtain distribution with required Mn and Mw (271374.7 and 669184.4, correspondingly).

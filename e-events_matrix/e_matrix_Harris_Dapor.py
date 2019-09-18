@@ -3,7 +3,7 @@ import numpy as np
 import os
 import importlib
 import matplotlib.pyplot as plt
-#import copy
+import copy
 
 import numpy.random as rnd
 
@@ -22,35 +22,57 @@ emf = importlib.reload(emf)
 
 
 #%%
-def get_w_scission(EE):
-    
-    result = np.zeros(len(EE))
-    
-    result = (64-EE) * (4/8-4/40) / (64-14) + 4/40
-    result[np.where(EE > 64)] = 4/40
-    result[np.where(EE < 3.6)] = 0
-    
-    return result
+#def get_w_scission(EE):
+#    
+#    result = np.zeros(len(EE))
+#    
+#    result = (64-EE) * (4/8-4/40) / (64-14) + 4/40
+#    result[np.where(EE > 64)] = 4/40
+#    result[np.where(EE < 3.6)] = 0
+#    
+#    return result
 
 
-def get_scission(EE):
-    
-    return rnd.rand(len(EE)) < get_w_scission(EE)
+#def get_scission(EE):
+#    
+#    return rnd.rand(len(EE)) < get_w_scission(EE)
 
 
-def get_w_scission_easy(EE):
+#def get_w_scission_easy(EE):
+#    
+#    result = np.zeros(len(EE))
+#    
+#    result = np.ones(len(EE)) * 4/40
+#    result[np.where(EE < 3.6)] = 0
+#    
+#    return result
+
+
+#def get_scission_easy(EE):
+#    
+#    return rnd.rand(len(EE)) < get_w_scission_easy(EE)
+
+
+def get_w_scission_my(EE):
     
     result = np.zeros(len(EE))
     
     result = np.ones(len(EE)) * 4/40
-    result[np.where(EE < 3.6)] = 0
+    result[np.where(EE < 815 * 0.0103)] = 4/(40 - 8)
+    result[np.where(EE < 420 * 0.0103)] = 4/(40 - 8 - 4)
+    result[np.where(EE < 418 * 0.0103)] = 4/(40 - 8 - 4 - 12)
+    result[np.where(EE < 406 * 0.0103)] = 4/(40 - 8 - 4 - 12 - 4)
+    result[np.where(EE < 383 * 0.0103)] = 4/(40 - 8 - 4 - 12 - 4 - 2)
+    result[np.where(EE < 364 * 0.0103)] = 4/(40 - 8 - 4 - 12 - 4 - 2 - 4)
+    result[np.where(EE < 356 * 0.0103)] = 4/(40 - 8 - 4 - 12 - 4 - 2 - 4 - 2)
+    result[np.where(EE < 354 * 0.0103)] = 0
     
     return result
 
 
-def get_scission_easy(EE):
+def get_scission_my(EE):
     
-    return rnd.rand(len(EE)) < get_w_scission_easy(EE)
+    return rnd.rand(len(EE)) < get_w_scission_my(EE)
 
 
 #%%
@@ -69,18 +91,15 @@ z_bins_2nm = np.arange(z_beg, z_end + 1, step_2nm)
 
 bins_2nm = x_bins_2nm, y_bins_2nm, z_bins_2nm
 
-#x_grid_2nm = (x_bins_2nm[:-1] + x_bins_2nm[1:]) / 2
-#y_grid_2nm = (y_bins_2nm[:-1] + y_bins_2nm[1:]) / 2
-#z_grid_2nm = (z_bins_2nm[:-1] + z_bins_2nm[1:]) / 2
-
 
 #%%
 path = '../e_DATA/'
 
-folders = ['e_DATA_Harris_my_E_bind_inel']
+folders = ['e_DATA_Harris_my_E_bind_4p94_inel']
 
 
 #%%
+DATA_PMMA_list = []
 DATA_PMMA_val_list = []
 DATA_PMMA_dE_list = []
 
@@ -103,21 +122,23 @@ for now_ind in range(len(folders)):
         now_DATA_PMMA = np.load(now_folder + '/' + file)
 
         now_DATA_PMMA[:, 5:8] *= 1e+7
-
+        
+        DATA_PMMA_list.append(now_DATA_PMMA)
+        
         now_DATA_PMMA_val = now_DATA_PMMA[np.where(now_DATA_PMMA[:, 3] == 1)]
         
-#        now_DATA_PMMA_E_loss = now_DATA_PMMA[np.where(now_DATA_PMMA[])]
-        now_DATA_PMMA_dE = now_DATA_PMMA_val
+        DATA_PMMA_val_list.append(now_DATA_PMMA_val)
+        
+        now_DATA_PMMA_dE = copy.deepcopy(now_DATA_PMMA_val)
         
         now_DATA_PMMA_dE[np.where(now_DATA_PMMA_dE[:, 3] == 1)[0], -1] = ma.PMMA_E_bind
         
-        DATA_PMMA_val_list.append(now_DATA_PMMA_val)
         DATA_PMMA_dE_list.append(now_DATA_PMMA_dE)
 
 
 #%%
-e_matrix_val = np.zeros((len(x_bins_2nm)-1, len(y_bins_2nm)-1, len(z_bins_2nm)-1))
-e_matrix_val_easy = np.zeros((len(x_bins_2nm)-1, len(y_bins_2nm)-1, len(z_bins_2nm)-1))
+#e_matrix_val = np.zeros((len(x_bins_2nm)-1, len(y_bins_2nm)-1, len(z_bins_2nm)-1))
+e_matrix_val_my = np.zeros((len(x_bins_2nm)-1, len(y_bins_2nm)-1, len(z_bins_2nm)-1))
 e_matrix_dE = np.zeros((len(x_bins_2nm)-1, len(y_bins_2nm)-1, len(z_bins_2nm)-1))
 
 borders_nm = 250
@@ -152,15 +173,14 @@ while n_electrons < n_electrons_required:
     emf.add_xy_shift_easy(now_DATA_PMMA_val, x_shift, y_shift)
     emf.add_xy_shift_easy(now_DATA_PMMA_dE, x_shift, y_shift)
     
-    scissions = get_scission(now_DATA_PMMA_val[:, 4]).astype(int)
-    scissions_easy = get_scission_easy(now_DATA_PMMA_val[:, 4]).astype(int)
+#    scissions = get_scission(now_DATA_PMMA_val[:, 4]).astype(int)
+    scissions_my = get_scission_my(now_DATA_PMMA_val[:, 4]).astype(int)
     
+#    e_matrix_val += np.histogramdd(now_DATA_PMMA_val[:, 5:8], bins=bins_2nm,
+#                                   weights=scissions)[0]
     
-    e_matrix_val += np.histogramdd(now_DATA_PMMA_val[:, 5:8], bins=bins_2nm,
-                                   weights=scissions)[0]
-    
-    e_matrix_val_easy += np.histogramdd(now_DATA_PMMA_val[:, 5:8], bins=bins_2nm,
-                                   weights=scissions_easy)[0]
+    e_matrix_val_my += np.histogramdd(now_DATA_PMMA_val[:, 5:8], bins=bins_2nm,
+                                   weights=scissions_my)[0]
     
     e_matrix_dE += np.histogramdd(now_DATA_PMMA_dE[:, 5:8], bins=bins_2nm,
                                   weights=now_DATA_PMMA_dE[:, -1])[0]
@@ -169,21 +189,17 @@ while n_electrons < n_electrons_required:
 
 
 #%%
-np.save('Harris_e_matrix_val_Dapor_NEW.npy', e_matrix_val)
-np.save('Harris_e_matrix_val_Dapor_NEW_easy.npy', e_matrix_val_easy)
+#np.save('Harris_e_matrix_val_Dapor_NEW.npy', e_matrix_val)
+np.save('Harris_e_matrix_val_Dapor_4p94.npy', e_matrix_val_my)
 
-np.save('Harris_e_matrix_dE_Dapor_NEW_1.npy', e_matrix_dE)
-
-
-#%%
-e_mat = np.load('Harris_e_matrix_val_Dapor_NEW.npy')
-dE_mat = np.load('Harris_e_matrix_dE_Dapor_NEW.npy')
+np.save('Harris_e_matrix_dE_Dapor_4p94.npy', e_matrix_dE)
 
 
 #%%
-print('G value =', np.sum(e_matrix_val_easy) / np.sum(e_matrix_dE) * 100)
+e_matrix_val_my = np.load('Harris_e_matrix_val_Dapor_4p94.npy')
+e_matrix_dE = np.load('Harris_e_matrix_dE_Dapor_4p94.npy')
 
 
-
-
+#%%
+print('G value =', np.sum(e_matrix_val_my) / np.sum(e_matrix_dE) * 100)
 
