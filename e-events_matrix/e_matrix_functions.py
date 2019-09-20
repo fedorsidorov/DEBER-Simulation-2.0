@@ -50,11 +50,20 @@ def shift_DATA(DATA, x_range, y_range):
         add_xy_shift(DATA, track_num, x0, y0)
 
 
-def get_n_electrons(dose_C_cm2, lx_nm, ly_nm, borders_nm):
+def get_n_electrons_2D(dose_C_cm2, lx_nm, ly_nm, borders_nm):
     
     q_el_C = 1.6e-19
     A_cm2 = (lx_nm + borders_nm*2) * (ly_nm + borders_nm*2) * 1e-14
     Q_C = dose_C_cm2 * A_cm2
+    
+    return int(np.round(Q_C / q_el_C))
+
+
+def get_n_electrons_1D(dose_C_cm, ly_nm, y_borders_nm):
+    
+    q_el_C = 1.6e-19
+    L_cm = (ly_nm + y_borders_nm*2) * 1e-7
+    Q_C = dose_C_cm * L_cm
     
     return int(np.round(Q_C / q_el_C))
 

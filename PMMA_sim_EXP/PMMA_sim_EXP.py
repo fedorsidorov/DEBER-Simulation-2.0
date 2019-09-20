@@ -42,36 +42,71 @@ for folder in os.listdir(source_dir):
 
 
 #%% prepare histograms
-l_xyz = np.array((400, 100, 900))
+l_xyz = np.array((400, 20, 900))
+
+space = np.array((500, 500, 10))
 
 x_min, y_min, z_min = -l_xyz[0]/2, -l_xyz[0]/2, 0
 xyz_min = np.array((x_min, y_min, z_min))
 xyz_max = xyz_min + l_xyz
 x_max, y_max, z_max = xyz_max
 
-step_10nm = 10
+#step_10nm = 10
 step_2nm = 2
 
 bins_total = np.array(np.hstack((xyz_min.reshape(3, 1), xyz_max.reshape(3, 1))))
 
-x_bins_10nm = np.arange(x_min, x_max+1, step_10nm)
-y_bins_10nm = np.arange(y_min, y_max+1, step_10nm)
-z_bins_10nm = np.arange(z_min, z_max+1, step_10nm)
+#x_bins_10nm = np.arange(x_min, x_max+1, step_10nm)
+#y_bins_10nm = np.arange(y_min, y_max+1, step_10nm)
+#z_bins_10nm = np.arange(z_min, z_max+1, step_10nm)
 
 x_bins_2nm = np.arange(x_min, x_max+1, step_2nm)
 y_bins_2nm = np.arange(y_min, y_max+1, step_2nm)
 z_bins_2nm = np.arange(z_min, z_max+1, step_2nm)
 
-bins_10nm = [x_bins_10nm, y_bins_10nm, z_bins_10nm]
+#bins_10nm = [x_bins_10nm, y_bins_10nm, z_bins_10nm]
 bins_2nm = [x_bins_2nm, y_bins_2nm, z_bins_2nm]
 
 
 #%% create chain_list and check density
 
-m = np.load('x_EXP.npy')
-mw = np.load('y_EXP.npy')
+m = np.load('x_EXP_log.npy')
+mw = np.load('y_EXP_log.npy')
 
-#plt.semilogx(m, mw, 'ro')
+plt.semilogx(m, mw, 'ro')
+
+
+#%%
+#lens = np.zeros(10000)
+#
+#for i in range(len(lens)):
+#    
+#    mu.pbar(i, len(lens))
+#    
+#    now_len = cf.get_chain_len(m, mw)
+#    lens[i] = now_len 
+#
+#
+##%%
+#xx = np.load('x_EXP_log.npy')
+#yy = np.load('y_EXP_log.npy')
+#
+#mass = np.array(lens)*100
+#
+#bins = np.logspace(2, 7.1, 21)
+#
+#plt.hist(mass, bins)
+#plt.gca().set_xscale('log')
+#
+#plt.plot(xx, yy*5.3e+2, label='Schulz-Zimm')
+#
+#plt.title('Experiment chain sample')
+#plt.xlabel('molecular weight')
+#plt.ylabel('density')
+#
+##plt.legend()
+#plt.grid()
+#plt.show()
 
 
 #%%
@@ -84,13 +119,13 @@ n_mon_required = rho * V / m_mon
 
 #%%
 hist_total = np.zeros((1, 1, 1))
-hist_10nm = np.zeros((len(x_bins_10nm) - 1, len(y_bins_10nm) - 1, len(z_bins_10nm) - 1))
+#hist_10nm = np.zeros((len(x_bins_10nm) - 1, len(y_bins_10nm) - 1, len(z_bins_10nm) - 1))
 hist_2nm = np.zeros((len(x_bins_2nm) - 1, len(y_bins_2nm) - 1, len(z_bins_2nm) - 1))
 
 chain_list = []
 chain_lens = []
 
-source_dir = '/Volumes/ELEMENTS/Chains_EXP'
+dest_dir = '/Volumes/ELEMENTS/Chains_EXP_20nm/'
 
 t0 = time.time()
 
@@ -99,7 +134,7 @@ i = 0
 n_mon_now = 0
 n_mon_pre = 0
 
-space = np.array((100, 100, 10))
+lens = []
 
 
 while True:
@@ -122,6 +157,8 @@ while True:
     f_max = np.max(fragment, axis=0)
     f_min = np.min(fragment, axis=0)
     
+    lens.append(np.max(f_max - f_min))
+    
     shift = np.random.uniform(xyz_min - f_min - space, xyz_max - f_max + space)
 #    shift = np.random.uniform(xyz_min - f_min, xyz_max - f_max)
     
@@ -134,14 +171,13 @@ while True:
         print(i)
     
     hist_total += np.histogramdd(fragment_f, bins=bins_total)[0]
-    hist_10nm += np.histogramdd(fragment_f, bins=bins_10nm)[0]
+#    hist_10nm += np.histogramdd(fragment_f, bins=bins_10nm)[0]
     hist_2nm += np.histogramdd(fragment_f, bins=bins_2nm)[0]
     
     n_mon_now = np.sum(hist_total)
     
     if n_mon_now > n_mon_pre:
-#        chain_list.append(fragment_f)
-        np.save(os.path.join(source_dir, 'chain_shift_' + str(i) + '.npy'), fragment_f)
+        np.save(dest_dir + 'chain_shift_' + str(i) + '.npy', fragment_f)
         i += 1
     
     n_mon_pre = n_mon_now    
@@ -149,6 +185,9 @@ while True:
 
 t1 = time.time()
 dt = t1 - t0
+
+
+lens_arr = np.array(lens)
 
 
 #%%
@@ -163,48 +202,15 @@ print('total rho =', total_rho)
 
 
 #%%
-n_empty = 50*50*250 - np.count_nonzero(hist_2nm)
-part_empty = n_empty / (50*50*250)
+n_empty = 200*5*450 - np.count_nonzero(hist_2nm)
+part_empty = n_empty / (200*5*450)
 
 print(part_empty)
 
 
-#%% save chains to files
-source_dir = '/Volumes/ELEMENTS/Chains_Harris_fit'
-
-i = 0
-
-for chain in chain_list:
-    
-    mu.pbar(i, len(chain_list))
-    np.save(os.path.join(source_dir, 'chain_shift_' + str(i) + '.npy'), chain)
-    i += 1
-
-
 #%%
-#source_dir = '/Volumes/ELEMENTS/Chains_Harris/'
-#
-#lens = []
-#
-#files = os.listdir(source_dir)
-#
-#for file in files:
-#    
-#    if 'DS' in file:
-#        continue
-#    
-#    chain = np.load(source_dir + file)
-#    
-#    lens.append(len(chain))
-#
-#
-#chain_lens = np.array(lens)
-
-
-#%%
-xx = np.load('harris_x_before.npy')
-#yy = np.load('harris_y_before_SZ.npy')
-yy = np.load('harris_y_before_fit.npy')
+xx = np.load('x_EXP_log.npy')
+yy = np.load('y_EXP_log.npy')
 
 mass = np.array(chain_lens)*100
 
@@ -213,9 +219,9 @@ bins = np.logspace(2, 7.1, 21)
 plt.hist(mass, bins)
 plt.gca().set_xscale('log')
 
-plt.plot(xx, yy*0.6e+5, label='Schulz-Zimm')
+plt.plot(xx, yy*1.3e+3, label='Schulz-Zimm')
 
-plt.title('Harris chain sample, NO period, 100 nm offser')
+plt.title('Experiment chain sample')
 plt.xlabel('molecular weight')
 plt.ylabel('density')
 
@@ -223,7 +229,7 @@ plt.ylabel('density')
 plt.grid()
 plt.show()
 
-#plt.savefig('Harris_sample_NO_period_100nm_offset.png', dpi=300)
+#plt.savefig('EXP_sample_period_100nm_offset.png', dpi=300)
 
 
 #%% check density
