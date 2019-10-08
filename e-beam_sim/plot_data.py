@@ -52,12 +52,14 @@ def plot_DATA(DATA, d_PMMA):
     ax.xaxis.get_major_formatter().set_powerlimits((0, 1))
     ax.yaxis.get_major_formatter().set_powerlimits((0, 1))
     plt.gca().set_aspect('equal', adjustable='box')
-    #    plt.title('Direct Monte-Carlo simulation')
-    #    plt.xlabel('x, nm', fontsize=14)
-    #    plt.ylabel('z, nm', fontsize=14)
-    plt.grid()
-    #    plt.xlim(565, 575)
-    #    plt.ylim(900, 910)
+    
+    plt.title('Direct Monte-Carlo simulation')
+    plt.xlabel('x, nm')
+    plt.ylabel('z, nm')
+    
+    plt.xlim(4.5e-5, 6.5e-5)
+    plt.ylim(2.85e-4, 3.05e-4)
+    
     #    plt.legend(fontsize=14)
     plt.gca().invert_yaxis()
     #    
@@ -67,6 +69,7 @@ def plot_DATA(DATA, d_PMMA):
     #    for tick in ax.yaxis.get_major_ticks():
     #        tick.label.set_fontsize(14)
     
+    plt.grid()    
     plt.show()
 
 

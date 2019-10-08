@@ -14,7 +14,7 @@ cf = importlib.reload(cf)
 
 import time
 
-os.chdir(mc.sim_folder + 'PMMA_sim')
+os.chdir(mc.sim_folder + 'PMMA_sim_Harris')
 
 
 #%%
@@ -30,32 +30,33 @@ for i in range(len(sample)):
     
 
 #%%
-xx = np.load('harris_x_before.npy')
-yy = np.load('harris_y_before_SZ.npy')
+fig, ax = plt.subplots()
 
-plt.semilogx(xx, yy / np.max(yy), label='Schulz-Zimm')
+xx = m
+yy = mw
 
+mass = sample*100
 
-#lens = np.load('Harris_lens_arr.npy')
-lens = sample
-mass = lens*100
+bins = np.logspace(2, 7.1, 21)
 
-bins = np.logspace(2, 7.1, 51)
-#bins = np.linspace(1e+2, 12e+6, 101)
+plt.hist(mass, bins, label='simulation')
+plt.gca().set_xscale('log')
 
-hist, edges = np.histogram(mass, bins)
-
-plt.semilogx(edges[:-1], hist/np.max(hist), label='sample')
+plt.plot(xx, yy*3.4e+11, label='experiment')
 
 plt.title('Harris initial molecular weight distribution')
 plt.xlabel('molecular weight')
-plt.ylabel('density')
+plt.ylabel('N$_{entries}$')
+
+ax.yaxis.get_major_formatter().set_powerlimits((0, 1))
+
+plt.xlim(1e+2, 1e+8)
 
 plt.legend()
 plt.grid()
 plt.show()
 
-
+plt.savefig('Harris_initial_100.png', dpi=300)
 
 
 #%%

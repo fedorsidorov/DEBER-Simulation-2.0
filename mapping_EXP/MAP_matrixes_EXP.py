@@ -22,7 +22,6 @@ free_mon = 10
 n_chain_ind = 0
 mon_line_ind = 3
 mon_type_ind = -1
-#uint16_max = 65535
 uint32_max = 4294967295
 
 
@@ -35,16 +34,27 @@ def rewrite_mon_type(resist_matrix, chain_table, n_mon, new_type):
 
 
 #%%
-e_matrix = np.load(mc.sim_folder + 'e-events_matrix/EXP_1200nm/EXP_e_matrix_val_MY_dose1.npy')
-resist_matrix = np.load(mc.sim_folder + 'PMMA_sim_EXP/MATRIX_resist_EXP_1200nm.npy')
+e_matrix = np.load(mc.sim_folder + 'e-matrix_EXP/EXP_2um/EXP_e_matrix_val_MY_dose3.npy')
+#resist_matrix = np.load(mc.sim_folder + 'PMMA_sim_EXP/MATRIX_resist_EXP_2um.npy')
+
+resist_matrix = np.zeros((1000, 5, 450, 600, 3))
 
 
-chain_tables_folder = '/Volumes/ELEMENTS/Chain_tables_EXP_1200nm/'
+for i in range(resist_matrix.shape[1]):
+    
+    mu.pbar(i, resist_matrix.shape[1])
+    
+    resist_matrix[:, i, :, :, :] = np.load('/Volumes/ELEMENTS/MATRIX_resist_2um/MATRIX_resist_' +\
+                 str(i) + '_2um.npy')
+
+
+chain_tables_folder = '/Volumes/ELEMENTS/Chain_tables_EXP_2um/'
 files = os.listdir(chain_tables_folder)
 
 chain_tables = []
 
-N_chains_total = 76670
+N_chains_total = 128367
+
 
 for i in range(N_chains_total):
     
@@ -53,7 +63,7 @@ for i in range(N_chains_total):
     chain_tables.append(np.load(chain_tables_folder + 'chain_table_' + str(i) + '.npy'))
 
 
-N_chains_total  = len(chain_tables)
+N_chains_total = len(chain_tables)
 
 resist_shape = np.shape(resist_matrix)[:3]
 
@@ -93,7 +103,7 @@ for xi, yi, zi in product(range(resist_shape[0]), range(resist_shape[1]), range(
         
         monomer_pos = np.random.choice(monomer_positions)
         
-        n_chain, n_mon, mon_type = resist_matrix[xi, yi, zi, monomer_pos, :]
+        n_chain, n_mon, mon_type = resist_matrix[xi, yi, zi, monomer_pos, :].astype(int)
         
         chain_table = chain_tables[n_chain]
         
@@ -211,6 +221,7 @@ for ind, chain_table in enumerate(chain_tables):
                 for j in range(i+1, i+1001):
                     
                     if chain_table[j, mon_type_ind] == 2 or j == now_len-1:
+                        
                         rewrite_mon_type(resist_matrix, chain_table, j, free_mon)
                         break
                     
@@ -232,8 +243,12 @@ for xi, yi, zi in product(range(resist_shape[0]), range(resist_shape[1]), range(
 
 
 #%%
-np.save('full_mat_dose1.npy', full_mat)
-np.save('mono_mat_dose1.npy', mono_mat)
+np.sum(full_mat)
+
+
+#%%
+np.save('2um/full_mat_dose0.npy', full_mat)
+np.save('2um/mono_mat_dose0.npy', mono_mat)
 
 
 #%%

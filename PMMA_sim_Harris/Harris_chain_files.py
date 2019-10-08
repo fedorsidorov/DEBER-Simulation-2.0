@@ -34,7 +34,7 @@ N_mon_cell_max = 700
 
 l_xyz = np.array((100, 100, 500))
 
-x_min, y_min, z_min = (-l_xyz[0]/2, -l_xyz[0]/2, 0)
+x_min, y_min, z_min = (-l_xyz[0]/2, -l_xyz[1]/2, 0)
 xyz_min = np.array((x_min, y_min, z_min))
 xyz_max = xyz_min + l_xyz
 x_max, y_max, z_max = xyz_max

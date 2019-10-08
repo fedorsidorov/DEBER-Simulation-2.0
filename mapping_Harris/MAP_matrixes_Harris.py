@@ -12,7 +12,7 @@ mu = importlib.reload(mu)
 import my_constants as mc
 mc = importlib.reload(mc)
 
-os.chdir(mc.sim_folder + 'mapping')
+os.chdir(mc.sim_folder + 'mapping_Harris')
 
 
 #%%
@@ -70,9 +70,8 @@ def write_log_var(mon_type, n_next_mon, next_mon_type, next_mon_new_type):
 
 
 #%%
-#e_matrix = np.load(mc.sim_folder + 'e-events_matrix/Harris_e_matrix_val_+-1.npy')
-e_matrix = np.load(mc.sim_folder + 'e-events_matrix/Harris_e_matrix_val_Dapor_4p94.npy')
-resist_matrix = np.load(mc.sim_folder + 'PMMA_sim/MATRIX_resist_Harris_fit.npy')
+e_matrix = np.load(mc.sim_folder + 'e-events_matrix/Harris/Harris_e_matrix_val_Dapor_4p94.npy')
+resist_matrix = np.load('/Volumes/ELEMENTS/MATRIX_resist_Harris.npy')
 
 
 chain_tables_folder = '/Volumes/ELEMENTS/Harris_chain_tables_fit/'
@@ -268,9 +267,9 @@ chain_lens = np.array(lens)
 
 fig, ax = plt.subplots()
 
-xx = np.load('../PMMA_sim/harris_x_after.npy')
-yy_SZ = np.load('../PMMA_sim/harris_y_after_SZ.npy')
-yy = np.load('../PMMA_sim/harris_y_after_fit.npy')
+xx = np.load('../PMMA_sim_Harris/harris_x_after.npy')
+yy_SZ = np.load('../PMMA_sim_Harris/harris_y_after_SZ.npy')
+yy = np.load('../PMMA_sim_Harris/harris_y_after_fit.npy')
 
 mass = np.array(chain_lens)*100
 
@@ -289,7 +288,7 @@ plt.ylabel('N$_{entries}$')
 
 ax.yaxis.get_major_formatter().set_powerlimits((0, 1))
 
-plt.xlim(1e+2, 1e+6)
+#plt.xlim(1e+2, 1e+6)
 
 plt.legend()
 plt.grid()

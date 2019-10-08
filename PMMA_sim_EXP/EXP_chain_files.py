@@ -22,18 +22,18 @@ os.chdir(mc.sim_folder + 'PMMA_sim_EXP')
 
 
 #%%
-source_dir = '/Volumes/ELEMENTS/Chains_EXP_1200nm/'
+source_dir = '/Volumes/ELEMENTS/Chains_EXP_2um/'
 
 #print(os.listdir(source_dir))
 
 
 #%% constants
-N_chains_total = 76670
+N_chains_total = 128367
 
 N_mon_cell_max = 600 ## 571
 
 #%% prepare histograms
-l_xyz = np.array((1200, 10, 900))
+l_xyz = np.array((2000, 10, 900))
 
 x_min, y_min, z_min = -l_xyz[0]/2, -l_xyz[0]/2, 0
 xyz_min = np.array((x_min, y_min, z_min))
@@ -91,7 +91,7 @@ uint32_max = 4294967295
 
 
 #%%
-dest_folder = '/Volumes/ELEMENTS/Chain_tables_EXP_1200nm/'
+dest_folder = '/Volumes/ELEMENTS/Chain_tables_EXP_2um/'
 
 
 for chain_num in range(N_chains_total):
@@ -106,7 +106,7 @@ for chain_num in range(N_chains_total):
     for n_mon, mon_line in enumerate(now_chain):
         
         if n_mon > uint32_max - 10:
-            print('n_mon over uint16_max !!!')
+            print('n_mon over uint32_max !!!')
         
         if n_mon == 0:
             mon_type = 0
@@ -124,7 +124,7 @@ for chain_num in range(N_chains_total):
         mon_line_pos = pos_matrix[xi, yi, zi]
         
         if mon_line_pos > uint32_max - 10:
-            print('mon_line_pos over uint16_max !!!')
+            print('mon_line_pos over uint32_max !!!')
         
         resist_matrix[xi, yi, zi, mon_line_pos] = chain_num, n_mon, mon_type
         chain_table[n_mon] = xi, yi, zi, mon_line_pos, mon_type
@@ -139,12 +139,12 @@ for chain_num in range(N_chains_total):
 print('resist_matrix size, Gb:', resist_matrix.nbytes / 1024**3)
 #np.save('/Volumes/ELEMENTS/MATRIX_resist_EXP_10nm.npy', resist_matrix)
 
-#%%
-ans = resist_matrix[1, 1, 1]
+##%%
+#ans = resist_matrix[1, 1, 1]
 
 
-#%%
-np.save('MATRIX_resist_EXP_1200nm.npy', resist_matrix)
+##%%
+np.save('MATRIX_resist_EXP_2um.npy', resist_matrix)
 
         
 #%%        
@@ -192,7 +192,33 @@ np.save('MATRIX_resist_EXP_1200nm.npy', resist_matrix)
 
 
 #%%
-rm = np.load('MATRIX_resist_EXP_10nm.npy')
+rm = np.load('MATRIX_resist_EXP_2um.npy')
+
+
+#%%
+dest_folder = '/Volumes/ELEMENTS/MATRIX_resist_2um/'
+
+
+for i in range(rm.shape[1]):
+    
+    mu.pbar(i, rm.shape[1])
+    
+    np.save(dest_folder + 'MATRIX_resist_' + str(i) + '_2um.npy', rm[:, i, :, :, :])
+
+
+#%%
+#rm_test = np.zeros(np.shape(rm))
+#
+#
+#for i in range(rm.shape[1]):
+#    
+#    mu.pbar(i, rm.shape[1])
+#    
+#    rm_test[:, i, :, :, :] = np.load(dest_folder + 'MATRIX_resist_' + str(i) + '_1400nm.npy')
+
+
+#%%
+
 
 
 
