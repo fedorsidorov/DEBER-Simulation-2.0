@@ -65,7 +65,13 @@ bins_2nm = [x_bins_2nm, y_bins_2nm, z_bins_2nm]
 m = np.load('x_EXP_log.npy')
 mw = np.load('y_EXP_log.npy')
 
-#plt.semilogx(m, mw, 'ro')
+plt.semilogx(m, mw, 'ro')
+
+
+#%%
+lens_MAC = np.load('../mapping_EXP/lens_MAC.npy')
+
+plt.hist(lens_MAC)
 
 
 #%%

@@ -82,25 +82,27 @@ mw = np.load('y_EXP_log.npy')
 
 
 #%%
-#xx = np.load('x_EXP_log.npy')
-#yy = np.load('y_EXP_log.npy')
-#
-#mass = np.array(lens)*100
-#
-#bins = np.logspace(2, 7.1, 21)
-#
-#plt.hist(mass, bins)
-#plt.gca().set_xscale('log')
-#
-#plt.plot(xx, yy*5.3e+2, label='Schulz-Zimm')
-#
-#plt.title('Experiment chain sample')
-#plt.xlabel('molecular weight')
-#plt.ylabel('density')
-#
-##plt.legend()
-#plt.grid()
-#plt.show()
+xx = np.load('x_EXP_log.npy')
+yy = np.load('y_EXP_log.npy')
+
+lens_MAC = np.load('../mapping_EXP/lens_MAC.npy')
+
+mass = np.array(lens_MAC)*100
+
+bins = np.logspace(2, 7.1, 21)
+
+plt.hist(mass, bins)
+plt.gca().set_xscale('log')
+
+plt.plot(xx, yy*9e+2, label='Schulz-Zimm')
+
+plt.title('Experiment chain sample')
+plt.xlabel('molecular weight')
+plt.ylabel('density')
+
+#plt.legend()
+plt.grid()
+plt.show()
 
 
 #%%

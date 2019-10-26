@@ -18,12 +18,14 @@ ma = importlib.reload(ma)
 os.chdir(mc.sim_folder + 'DEBER_profile')
 
 
+vols = [0.39, 1.31, 2.05]
+
+
 #%%
-n_dose = 1
+n_dose = 3
 
-full_mat = np.load('../mapping_EXP/2um_mod/full_mat_dose' + str(n_dose) + '.npy')
-mono_mat = np.load('../mapping_EXP/2um_mod/mono_mat_dose' + str(n_dose) + '.npy')
-
+full_mat = np.load('../mapping_EXP/2um_CT/full_mat_dose' + str(n_dose) + '.npy')
+mono_mat = np.load('../mapping_EXP/2um_CT/mono_mat_dose' + str(n_dose) + '.npy')
 
 res_mat = np.zeros(np.shape(full_mat))
 
@@ -35,7 +37,9 @@ for xi, yi, zi in product(range(1000), range(5), range(450)):
         continue
     
     else:
-        res_mat[xi, yi, zi] = (full_mat[xi, yi, zi] - mono_mat[xi, yi, zi]) / full_mat[xi, yi, zi]
+#        res_mat[xi, yi, zi] = (full_mat[xi, yi, zi] - mono_mat[xi, yi, zi]) /\
+#            full_mat[xi, yi, zi]
+        res_mat[xi, yi, zi] = (full_mat[xi, yi, zi] - mono_mat[xi, yi, zi]) / 57
 
 
 #cs_mat = np.average(res_mat, axis=1)
@@ -45,11 +49,16 @@ cs_arr = np.sum(cs_mat, axis=1) / 450
 
 profile = cs_arr*0.9
 
-x_centers = np.arange(-999, 1000, 2)
+x_centers = np.arange(-999, 1000, 2) / 1000
 
-plt.plot(x_centers/1000, profile, label='simulation')
+plt.plot(x_centers, profile, label='simulation')
 
-plt.title('Structure profile after monomer diffusion, dose ' + str(n_dose))
+height = 0.9
+
+volume_um2  = (x_centers[-1] - x_centers[0]) * height - np.trapz(profile, x=x_centers)
+
+plt.title('Structure profile after monomer diffusion, dose ' + str(n_dose) +\
+          ', R = ' + str(int(volume_um2 / vols[n_dose-1] * 100) / 100))
 plt.xlabel('x, $\mu$m')
 plt.ylabel('y, $\mu$m')
 
@@ -59,13 +68,5 @@ plt.legend()
 plt.grid()
 
 
-#plt.savefig('profile_after_diffusion_dose' + str(n_dose) + '_2um.png', dpi=300)
-
-
-#%%
-
-
-volume_um2  = (xx[-1] - xx[0]) * height - np.trapz(yy_900, x=xx)
-
-
+#plt.savefig('profile_after_diffusion_dose' + str(n_dose) + '_2um_CT.png', dpi=300)
 

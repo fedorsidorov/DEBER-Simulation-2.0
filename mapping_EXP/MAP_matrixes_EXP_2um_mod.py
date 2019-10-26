@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import os
 import importlib
 #import copy
+
 from itertools import product
 
 import my_utilities as mu
@@ -51,18 +52,23 @@ for i in range(resist_matrix.shape[1]):
 
 #%%
 chain_tables_folder = '/Volumes/ELEMENTS/Chain_tables_EXP_2um_NEW2/'
-files = os.listdir(chain_tables_folder)
-
-chain_tables = []
 
 N_chains_total = 128330
+
+chain_tables = [None] * N_chains_total
+
+lens = np.zeros(N_chains_total)
 
 
 for i in range(N_chains_total):
     
-    mu.pbar(i, len(files))
+    mu.pbar(i, N_chains_total)
     
-    chain_tables.append(np.load(chain_tables_folder + 'chain_table_' + str(i) + '.npy'))
+    now_chain = np.load(chain_tables_folder + 'chain_table_' + str(i) + '.npy')
+    
+    lens[i] = len(now_chain)
+    
+    chain_tables[i] = now_chain
 
 
 N_chains_total = len(chain_tables)
@@ -71,7 +77,10 @@ resist_shape = np.shape(resist_matrix)[:3]
 
 
 #%%
+zip_lens = []
+
 for xi, yi, zi in product(range(resist_shape[0]), range(resist_shape[1]), range(resist_shape[2])):
+
     
     if yi == zi == 0:
         mu.pbar(xi, resist_shape[0])
@@ -83,9 +92,12 @@ for xi, yi, zi in product(range(resist_shape[0]), range(resist_shape[1]), range(
     
     for i in range(int(n_events)):
         
-        monomer_positions = np.where(resist_matrix[xi, yi, zi, :, n_chain_ind] - 3 < 0)[0]
+        monomer_positions = np.where(resist_matrix[xi, yi, zi, :, mon_type_ind] - 3 < 0)[0]
         
+
         if len(monomer_positions) == 0:
+            
+            e_matrix[xi, yi, zi] = 0
             
             if zi+1 < resist_shape[2]:
                 e_matrix[xi, yi, zi+1] += n_events
@@ -112,11 +124,6 @@ for xi, yi, zi in product(range(resist_shape[0]), range(resist_shape[1]), range(
         now_len = len(chain_table)
         
         
-        if mon_type != chain_table[n_mon, -1]:
-            print('FUKKK!!', n_chain, n_mon)
-            print(mon_type, chain_table[n_mon, -1])
-        
-        
         if len(chain_table) == 1:
             continue
         
@@ -125,24 +132,30 @@ for xi, yi, zi in product(range(resist_shape[0]), range(resist_shape[1]), range(
         
         if side == -1:
                 
-            for j in reversed(range(i-1000, i)):
+            for j in reversed(range(n_mon-1000, n_mon)):
                 
-                if chain_table[j, mon_type_ind] == free_mon or j == 0:
+                if j < 0 or chain_table[j, mon_type_ind] == free_mon:
+                    zip_lens.append(n_mon-j)
                     break
                 
                 rewrite_mon_type(resist_matrix, chain_table, j, free_mon)
             
         else:
                 
-            for j in range(i+1, i+1001):
+            for j in range(n_mon, n_mon+1000):
                 
-                if chain_table[j, mon_type_ind] == free_mon or j == now_len-1:
+                if j >= now_len-1 or chain_table[j, mon_type_ind] == free_mon:
+                    zip_lens.append(j-n_mon)
                     break
                 
                 rewrite_mon_type(resist_matrix, chain_table, j, free_mon)
         
         
         continue
+
+
+#%%
+zips = np.array(zip_lens)
 
 
 #%%
@@ -159,16 +172,10 @@ for xi, yi, zi in product(range(resist_shape[0]), range(resist_shape[1]), range(
     mono_mat[xi, yi, zi] = len(np.where(resist_matrix[xi, yi, zi, :, mon_type_ind] == free_mon)[0])
 
 
-#%%
-for i, ct in enumerate(chain_tables):
-    
-    if len(np.where(ct[:, -1] == 10)[0]) != 0:
-        print(i)
-
 
 #%%
-np.save('2um_mod/full_mat_dose1.npy', full_mat)
-np.save('2um_mod/mono_mat_dose1.npy', mono_mat)
+#np.save('2um_mod/full_mat_dose1.npy', full_mat)
+#np.save('2um_mod/mono_mat_dose1.npy', mono_mat)
 
 
 #%%

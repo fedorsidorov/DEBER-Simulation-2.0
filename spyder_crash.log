@@ -1,0 +1,20 @@
+Traceback (most recent call last):
+  File "/Users/fedor/anaconda3/lib/python3.6/site-packages/spyder/app/mainwindow.py", line 3126, in main
+    mainwindow = run_spyder(app, options, args)
+  File "/Users/fedor/anaconda3/lib/python3.6/site-packages/spyder/app/mainwindow.py", line 3023, in run_spyder
+    main.setup()
+  File "/Users/fedor/anaconda3/lib/python3.6/site-packages/spyder/app/mainwindow.py", line 862, in setup
+    from spyder.plugins.editor import Editor
+  File "/Users/fedor/anaconda3/lib/python3.6/site-packages/spyder/plugins/editor.py", line 41, in <module>
+    from spyder.utils.introspection.manager import IntrospectionManager
+  File "/Users/fedor/anaconda3/lib/python3.6/site-packages/spyder/utils/introspection/manager.py", line 21, in <module>
+    from spyder.utils.introspection.plugin_client import PluginClient
+  File "/Users/fedor/anaconda3/lib/python3.6/site-packages/spyder/utils/introspection/plugin_client.py", line 18, in <module>
+    import zmq
+  File "<frozen importlib._bootstrap>", line 971, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 951, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 894, in _find_spec
+  File "<frozen importlib._bootstrap_external>", line 1157, in find_spec
+  File "<frozen importlib._bootstrap_external>", line 1126, in _get_spec
+  File "<frozen importlib._bootstrap_external>", line 1090, in _path_importer_cache
+PermissionError: [Errno 1] Operation not permitted
