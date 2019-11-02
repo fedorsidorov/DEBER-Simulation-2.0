@@ -18,7 +18,6 @@ os.chdir(mc.sim_folder + 'mapping_EXP')
 
 #%%
 beg_mon, mid_mon, end_mon = 0, 1, 2
-free_mon = 10
 
 n_chain_ind = 0
 mon_line_ind = 3
@@ -27,14 +26,6 @@ uint32_max = 4294967295
 
 
 #%%
-def rewrite_mon_type(resist_matrix, chain_table, n_mon, new_type):
-
-    chain_table[n_mon, mon_type_ind] = new_type
-
-    xi, yi, zi, mon_line_pos = chain_table[n_mon, :mon_type_ind].astype(int)
-    resist_matrix[xi, yi, zi, mon_line_pos, mon_type_ind] = new_type
-
-
 def inc_mon_type(resist_matrix, chain_table, n_mon):
     
     now_type = chain_table[n_mon, mon_type_ind]
@@ -70,7 +61,7 @@ def move_events(e_matrix, xi, yi, zi, n_events):
 
 
 #%%
-e_matrix = np.load(mc.sim_folder + 'e-matrix_EXP/EXP_2um_ones/EXP_e_matrix_val_MY_dose1.npy')
+e_matrix = np.load(mc.sim_folder + 'e-matrix_EXP/EXP_2um_ones/EXP_e_matrix_val_MY_dose3.npy')
 
 
 #%%
@@ -191,7 +182,7 @@ for xi, yi, zi in product(range(resist_shape[0]),\
                         now_xi, now_yi, now_zi = new_coords
                         now_monomer_positions =\
                             np.where(resist_matrix[now_xi, now_yi, now_zi, :, mon_type_ind]\
-                                     - 3 < 0)[0]
+                                     - 1e+6 < 0)[0]
                     
                     cnt += 1
                 
@@ -224,11 +215,13 @@ for xi, yi, zi in product(range(resist_shape[0]),\
     if yi == zi == 0:
         mu.pbar(xi, resist_shape[0])
     
-    full_mat[xi, yi, zi] = len(np.where(resist_matrix[xi, yi, zi, :, 0] != uint32_max)[0])
-    mono_mat[xi, yi, zi] = len(np.where(resist_matrix[xi, yi, zi, :,\
-            mon_type_ind] == free_mon)[0])
+    now_resist_mat = resist_matrix[xi, yi, zi][np.where(resist_matrix[xi, yi, zi, :, 0]\
+                                  != uint32_max)[0]]
+    
+    full_mat[xi, yi, zi] = len(now_resist_mat)
+    mono_mat[xi, yi, zi] = np.sum(now_resist_mat[:, mon_type_ind])
 
 
 #%%
-#np.save('2um_CT/full_mat_dose3.npy', full_mat)
-#np.save('2um_CT/mono_mat_dose3.npy', mono_mat)
+np.save('2um_CT_0/full_mat_dose3.npy', full_mat)
+np.save('2um_CT_0/mono_mat_dose3.npy', mono_mat)

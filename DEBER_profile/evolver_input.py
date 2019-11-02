@@ -22,10 +22,13 @@ vols = [0.39, 1.31, 2.05]
 
 
 #%%
-n_dose = 3
+n_dose = 1
 
-full_mat = np.load('../mapping_EXP/2um_CT/full_mat_dose' + str(n_dose) + '.npy')
-mono_mat = np.load('../mapping_EXP/2um_CT/mono_mat_dose' + str(n_dose) + '.npy')
+full_mat_3 = np.load('../mapping_EXP/2um_CT_0/full_mat_dose' + str(n_dose) + '.npy')
+mono_mat_3 = np.load('../mapping_EXP/2um_CT_0/mono_mat_dose' + str(n_dose) + '.npy')
+
+full_mat = np.average(full_mat_3, axis=1)
+mono_mat = np.average(mono_mat_3, axis=1)
 
 res_mat = np.zeros(np.shape(full_mat))
 
@@ -37,15 +40,15 @@ for xi, yi, zi in product(range(1000), range(5), range(450)):
         continue
     
     else:
-#        res_mat[xi, yi, zi] = (full_mat[xi, yi, zi] - mono_mat[xi, yi, zi]) /\
-#            full_mat[xi, yi, zi]
-        res_mat[xi, yi, zi] = (full_mat[xi, yi, zi] - mono_mat[xi, yi, zi]) / 57
+        res_mat[xi, yi, zi] = (full_mat[xi, yi, zi] - mono_mat[xi, yi, zi]) /\
+            full_mat[xi, yi, zi]
+#        res_mat[xi, yi, zi] = (full_mat[xi, yi, zi] - mono_mat[xi, yi, zi]) / 57
 
 
-#cs_mat = np.average(res_mat, axis=1)
-cs_mat = res_mat[:, 2]
+cs_mat = np.average(res_mat, axis=1)
+#cs_mat = res_mat[:, 4, :]
 
-cs_arr = np.sum(cs_mat, axis=1) / 450
+cs_arr = np.sum(cs_mat, axis=1) / 450 / 2
 
 profile = cs_arr*0.9
 
@@ -62,11 +65,11 @@ plt.title('Structure profile after monomer diffusion, dose ' + str(n_dose) +\
 plt.xlabel('x, $\mu$m')
 plt.ylabel('y, $\mu$m')
 
-plt.ylim(0, 1)
+plt.ylim(0, 1.2)
 
 plt.legend()
 plt.grid()
 
 
-#plt.savefig('profile_after_diffusion_dose' + str(n_dose) + '_2um_CT.png', dpi=300)
+#plt.savefig('profile_after_diffusion_dose' + str(n_dose) + '_2um_CT_0.png', dpi=300)
 

@@ -111,7 +111,8 @@ for now_ind in range(len(folders)):
         DATA_PMMA_list.append(now_DATA_PMMA)
         
         now_DATA_PMMA_dE_total = copy.deepcopy(now_DATA_PMMA)
-        now_DATA_PMMA_dE_total[np.where(now_DATA_PMMA_dE_total[:, 3] == 1)[0], -1] = ma.PMMA_E_bind
+        now_DATA_PMMA_dE_total[np.where(now_DATA_PMMA_dE_total[:, 3] == 1)[0], -1]\
+            = ma.PMMA_E_bind
         DATA_PMMA_dE_total_list.append(now_DATA_PMMA_dE_total)
         
         now_DATA_PMMA_val = now_DATA_PMMA[np.where(now_DATA_PMMA[:, 3] == 1)]
@@ -139,9 +140,9 @@ borders_nm = 250
 
 ## bruk2016.pdf
 
-#dose_C_cm2 = 0.05e-6
+dose_C_cm2 = 0.05e-6
 #dose_C_cm2 = 0.2e-6
-dose_C_cm2 = 0.87e-6
+#dose_C_cm2 = 0.87e-6
 
 dose_C_cm = dose_C_cm2 / 2000
 

@@ -1,0 +1,14 @@
+e_matrix = np.load(mc.sim_folder + 'e-matrix_EXP/EXP_2um_ones/EXP_e_matrix_val_MY_dose1.npy')
+
+np.sum(e_matrix)
+Out[149]: 21431.0
+
+e_matrix = np.load(mc.sim_folder + 'e-matrix_EXP/EXP_2um_ones/EXP_e_matrix_val_MY_dose2.npy')
+
+np.sum(e_matrix)
+Out[151]: 101878.0
+
+e_matrix = np.load(mc.sim_folder + 'e-matrix_EXP/EXP_2um_ones/EXP_e_matrix_val_MY_dose3.npy')
+
+np.sum(e_matrix)
+Out[153]: 425493.0
