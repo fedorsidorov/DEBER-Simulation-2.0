@@ -1,0 +1,44 @@
+!Ver  Ref  Type    Mass      Element  Connections   Comment
+!---- ---  ----  ----------  -------  -----------------------------------------
+ 1.0   1    h      1.007970    H           1        Hydrogen bonded to C. Masses from CRC 1973/74 pages B-250.           
+ 1.0   1    c     12.011150    C           4        Sp3  aliphatic carbon                                  
+ 1.0   1    cg    12.011150    C           4        Sp3 alpha carbon in glycine                                 
+ 1.0   1    c'    12.011150    C           3        Sp2 carbon in carbonyl (C=O) group                          
+ 2.0  21    c*    12.011150    C           3        Carbon in carbonyl  group,   non_amides
+ 2.0  18    c"    12.011150    C           3        Carbon in carbonyl  group,   non_amides
+ 1.0   1    cp    12.011150    C           3        Sp2 aromatic carbon (partial double bonds)                  
+ 1.0   1    cr    12.011150    C           3        Carbon in guanidinium group (HN=C(NH2)2)                    
+ 2.0  18    c+    12.011150    C           3        C in guanidinium group
+ 1.0   1    c-    12.011150    C           3        Carbon in charged carboxylate (COO-) group                  
+ 1.0   1    ca    12.011150    C           4        General amino acid alpha carbon (sp3)                       
+ 1.0   1    c3    12.011150    C           4        Sp3 carbon in methyl (CH3) group                            
+ 1.0   1    cn    12.011150    C           4        Sp3 Carbon bonded to N                                      
+ 1.0   1    c2    12.011150    C           4        Sp3 carbon bonded to 2 H's, 2 heavy atoms                   
+ 1.0   1    c1    12.011150    C           4        Sp3 carbon bonded to 1 H, 3 Heavy atoms                     
+ 1.0   1    c5    12.011150    C           3        Sp2 aromatic carbon in five membered ring                   
+ 1.3   6    cs    12.011150    C           3        Sp2 carbon involved in thiophene                            
+ 1.0   1    c=    12.011150    C           3        Non aromatic end doubly bonded carbon          
+ 2.0  19    c=1   12.011150    C           3        Non aromatic, next to end doubly bonded carbon
+ 2.0  19    c=2   12.011150    C           3        Non aromatic doubly bonded carbon
+ 1.0   1    ct    12.011150    C           2        Sp carbon involved in triple bond                           
+ 1.0   1    ci    12.011150    C           3        Aromatic carbon in a charged imidazole ring (HIS+)          
+ 1.0   1    c$    12.011150    C           4        Carbon atom for automatic parameter assignment              
+ 2.0  18    co    12.011150    C           4        Sp3 carbon in acetals
+ 2.0  18    c3m   12.011150    C           4        Sp3 carbon in 3-membered ring
+ 2.0  18    c4m   12.011150    C           4        Sp3 carbon in 4-membered ring
+ 2.0  18    coh   12.011150    C           4        Sp3 carbon in acetals with hydrogen
+ 2.0  18    c3h   12.011150    C           4        Sp3 carbon in 3-membered ring with hydrogens
+ 2.0  18    c4h   12.011150    C           4        Sp3 carbon in 4-membered ring with hydrogens
+ 2.0  18    ci    12.011150    C           3        Sp2 aromatic carbon in charged imidazole ring
+ 1.0   1    o'    15.999400    O           1        Oxygen in carbonyl (C=O) group                              
+ 1.0   1    o     15.999400    O           2        sp3 oxygen in ether or ester groups                         
+ 1.0   1    o-    15.999400    O           1        Oxygen in charged carboxylate (COO-) group                  
+ 1.0   1    oh    15.999400    O           2        Oxygen in hydroxyl (OH) group                               
+ 1.0   1    o*    15.999400    O           2        Oxygen in water molecule                                    
+ 1.3   8    op    15.999400    O           2        Oxygen in aromatic rings. e.g. furan
+ 1.0   1    of    15.999400    O           2        Oxygen in                                     
+ 1.0   1    o$    15.999400    O           2        Oxygen atom for automatic parameter assignment              
+ 2.0  18    oc    15.999400    O           2        sp3 oxygen in ether or acetals
+ 2.0  18    oe    15.999400    O           2        sp3 oxygen in ester
+ 2.0  18    o3e   15.999400    O           2        sp3 oxygen in three membered ring
+ 2.0  18    o4e   15.999400    O           2        sp3 oxygen in four membered ring

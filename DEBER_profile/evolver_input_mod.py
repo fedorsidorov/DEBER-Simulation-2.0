@@ -19,13 +19,14 @@ os.chdir(mc.sim_folder + 'DEBER_profile')
 
 
 vols = [0.39, 1.31, 2.05]
+vols_07 = [0.2, 0.64, 1.11]
 
 
 #%%
 n_dose = 1
 
-full_mat_3 = np.load('../mapping_EXP/2um_CT_0/full_mat_dose' + str(n_dose) + '.npy')
-mono_mat_3 = np.load('../mapping_EXP/2um_CT_0/mono_mat_dose' + str(n_dose) + '.npy')
+full_mat_3 = np.load('../mapping_EXP/2um_mod/full_mat_dose' + str(n_dose) + '.npy')
+mono_mat_3 = np.load('../mapping_EXP/2um_mod/mono_mat_dose' + str(n_dose) + '.npy')
 
 full_mat = np.average(full_mat_3, axis=1)
 mono_mat = np.average(mono_mat_3, axis=1)
@@ -90,7 +91,7 @@ height = 0.9
 
 volume_um2 = (x_centers[-1] - x_centers[0]) * height - np.trapz(profile, x=x_centers)
 
-vol_ratio = int(volume_um2 / vols[n_dose-1] * 100) / 100
+vol_ratio = int(volume_um2 / vols_07[n_dose-1] * 100) / 100
 
 plt.title('Structure profile after monomer diffusion, dose ' + str(n_dose) +\
           ', R = ' + str(vol_ratio))

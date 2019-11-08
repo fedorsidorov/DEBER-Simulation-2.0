@@ -41,6 +41,22 @@ volume_inv = np.trapz(inv_yy, x=xx)
 print(volume_inv)
 
 
+#%% Volume 0.7
+inv_yy_07 = inv_yy - 0.3*inv_yy.max()
+#plt.plot(xx, inv_yy_07)
+
+inds = np.where(inv_yy_07 >= 0)
+
+yy_07 = inv_yy_07[inds]
+xx_07 = xx[inds]
+
+plt.plot(xx_07, yy_07)
+
+volume_07 = np.trapz(yy_07, x=xx_07)
+
+print(volume_07)
+
+
 #%%
 plt.plot(xx, yy_900, 'ro')
 plt.ylim(0, 1)

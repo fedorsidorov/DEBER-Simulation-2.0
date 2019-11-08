@@ -41,13 +41,34 @@ def get_w_scission_my(EE):
 
 def get_scission_my(EE):
     
-#    return rnd.rand(len(EE)) < get_w_scission_my(EE)
+    return rnd.rand(len(EE)) < get_w_scission_my(EE)
     
-    return np.ones(len(EE))
+
+def get_w_scission_my_ester(EE):
+    
+    result = np.zeros(len(EE))
+    
+    result = np.ones(len(EE)) * 6/40
+    result[np.where(EE < 815 * 0.0103)] = 6/(40 - 8)
+    result[np.where(EE < 420 * 0.0103)] = 6/(40 - 8 - 4)
+    result[np.where(EE < 418 * 0.0103)] = 6/(40 - 8 - 4 - 12)
+    result[np.where(EE < 406 * 0.0103)] = 6/(40 - 8 - 4 - 12 - 4)
+    result[np.where(EE < 383 * 0.0103)] = 4/(40 - 8 - 4 - 12 - 4 - 2)
+    result[np.where(EE < 364 * 0.0103)] = 4/(40 - 8 - 4 - 12 - 4 - 2 - 4)
+    result[np.where(EE < 356 * 0.0103)] = 4/(40 - 8 - 4 - 12 - 4 - 2 - 4 - 2)
+    result[np.where(EE < 354 * 0.0103)] = 0
+    
+    return result
+    
+
+def get_scission_my_ester(EE):
+    
+    return rnd.rand(len(EE)) < get_w_scission_my_ester(EE)
 
 
 #%%
-plt.plot(ma.EE[:237], get_w_scission_my(ma.EE[:237]))
+#plt.plot(ma.EE[:237], get_w_scission_my(ma.EE[:237]))
+plt.plot(ma.EE[:237], get_w_scission_my_ester(ma.EE[:237]))
 
 plt.title('PMMA chain scission probability')
 plt.xlabel('E, eV')
@@ -55,7 +76,7 @@ plt.ylabel('scission probability')
 
 plt.grid()
 
-#plt.savefig('sci_prob.png', dpi=300)
+#plt.savefig('sci_prob_ester.png', dpi=300)
 
 
 #%%
@@ -80,7 +101,7 @@ bins_2nm = x_bins_2nm, y_bins_2nm, z_bins_2nm
 #%%
 path = '../e_DATA/EXP/'
 
-folders = ['e_DATA_EXP_MY_MAC', 'e_DATA_EXP_MY_FTIAN']
+folders = ['e_DATA_EXP_MAC', 'e_DATA_EXP_FTIAN', 'e_DATA_EXP_new', 'e_DATA_EXP_new2']
 
 
 #%%
@@ -140,9 +161,9 @@ borders_nm = 250
 
 ## bruk2016.pdf
 
-dose_C_cm2 = 0.05e-6
+#dose_C_cm2 = 0.05e-6
 #dose_C_cm2 = 0.2e-6
-#dose_C_cm2 = 0.87e-6
+dose_C_cm2 = 0.87e-6
 
 dose_C_cm = dose_C_cm2 / 2000
 
@@ -163,7 +184,7 @@ while n_electrons < n_electrons_required:
     
     now_folder_ind = rnd.randint(len(folders))
     
-    n_files = 10
+    n_files = 1
     
     inds = rnd.choice(len(DATA_PMMA_dE_list), size=n_files, replace=False)
     
@@ -194,8 +215,8 @@ while n_electrons < n_electrons_required:
 
 
 #%%
-np.save('EXP_2um_ones/EXP_e_matrix_val_MY_dose3.npy', e_matrix_val_my)
-np.save('EXP_2um_ones/EXP_e_matrix_dE_MY_dose3.npy', e_matrix_dE)
+np.save('EXP_2um_ester/EXP_e_matrix_val_MY_dose3.npy', e_matrix_val_my)
+np.save('EXP_2um_ester/EXP_e_matrix_dE_MY_dose3.npy', e_matrix_dE)
 
 
 #%%
