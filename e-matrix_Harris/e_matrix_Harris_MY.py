@@ -15,7 +15,7 @@ mc = importlib.reload(mc)
 mu = importlib.reload(mu)
 ma = importlib.reload(ma)
 
-os.chdir(mc.sim_folder + 'e-events_matrix_Harris')
+os.chdir(mc.sim_folder + 'e-matrix_Harris')
 
 import e_matrix_functions as emf
 emf = importlib.reload(emf)
@@ -39,26 +39,14 @@ def get_w_scission(EE):
     return result
 
 
-def get_scission(EE):
+def get_scissions(EE):
     
     return rnd.rand(len(EE)) < get_w_scission(EE)
 
 
-#%%
-l_xyz = np.array((100, 100, 500))
-
-x_beg, y_beg, z_beg = -l_xyz[0]/2, -l_xyz[1]/2, 0
-xyz_beg = np.array((x_beg, y_beg, z_beg))
-xyz_end = xyz_beg + l_xyz
-x_end, y_end, z_end = xyz_end
-
-step_2nm = 2
-
-x_bins_2nm = np.arange(x_beg, x_end + 1, step_2nm)
-y_bins_2nm = np.arange(y_beg, y_end + 1, step_2nm)
-z_bins_2nm = np.arange(z_beg, z_end + 1, step_2nm)
-
-bins_2nm = x_bins_2nm, y_bins_2nm, z_bins_2nm
+def get_scissions_ones(EE):
+    
+    return np.ones(len(EE))
 
 
 #%%
@@ -95,7 +83,8 @@ for now_ind in range(len(folders)):
         DATA_PMMA_list.append(now_DATA_PMMA)
         
         now_DATA_PMMA_dE_total = copy.deepcopy(now_DATA_PMMA)
-        now_DATA_PMMA_dE_total[np.where(now_DATA_PMMA_dE_total[:, 3] == 1)[0], -1] = ma.PMMA_E_bind
+        now_DATA_PMMA_dE_total[np.where(now_DATA_PMMA_dE_total[:, 3] == 1)[0], -1] =\
+            ma.PMMA_E_bind
         DATA_PMMA_dE_total_list.append(now_DATA_PMMA_dE_total)
         
         now_DATA_PMMA_val = now_DATA_PMMA[np.where(now_DATA_PMMA[:, 3] == 1)]
@@ -107,6 +96,23 @@ for now_ind in range(len(folders)):
 
 
 #%%
+l_xyz = np.array((100, 100, 500))
+lx, ly, lz = l_xyz
+
+x_beg, y_beg, z_beg = -lx/2, -ly/2, 0
+xyz_beg = np.array((x_beg, y_beg, z_beg))
+xyz_end = xyz_beg + l_xyz
+x_end, y_end, z_end = xyz_end
+
+step_2nm = 2
+
+x_bins_2nm = np.arange(x_beg, x_end + 1, step_2nm)
+y_bins_2nm = np.arange(y_beg, y_end + 1, step_2nm)
+z_bins_2nm = np.arange(z_beg, z_end + 1, step_2nm)
+
+bins_2nm = x_bins_2nm, y_bins_2nm, z_bins_2nm
+
+##
 e_matrix_shape = (len(x_bins_2nm)-1, len(y_bins_2nm)-1, len(z_bins_2nm)-1)
 
 e_matrix_val = np.zeros(e_matrix_shape)
@@ -118,7 +124,7 @@ borders_nm = 250
 x_min, x_max = x_beg - borders_nm, x_end + borders_nm
 y_min, y_max = y_beg - borders_nm, y_end + borders_nm
 
-n_electrons_required = emf.get_n_electrons_2D(1e-4, 100, 100, 250)
+n_electrons_required = emf.get_n_electrons_2D(1e-4, lx, ly, borders_nm)
 n_electrons = 0
 
 
@@ -128,7 +134,10 @@ while n_electrons < n_electrons_required:
     
     now_folder_ind = rnd.randint(len(folders))
     
-    inds = rnd.choice(len(DATA_PMMA_dE_list), size=100, replace=False)
+    electrons_in_file = 10
+    n_files = 100
+    
+    inds = rnd.choice(len(DATA_PMMA_dE_list), size=n_files, replace=False)
     
     now_DATA_PMMA_val = np.vstack(list(DATA_PMMA_val_list[i] for i in inds))
     now_DATA_PMMA_dE = np.vstack(list(DATA_PMMA_dE_list[i] for i in inds))
@@ -146,7 +155,9 @@ while n_electrons < n_electrons_required:
     emf.add_xy_shift_easy(now_DATA_PMMA_dE, x_shift, y_shift)
     emf.add_xy_shift_easy(now_DATA_PMMA_dE_total, x_shift, y_shift)
     
-    scissions = get_scission(now_DATA_PMMA_val[:, 4]).astype(int)
+    ## !!! ##
+    scissions = get_scissions(now_DATA_PMMA_val[:, 4]).astype(int)
+    ## !!! ##
     
     e_matrix_val += np.histogramdd(now_DATA_PMMA_val[:, 5:8], bins=bins_2nm,
                                    weights=scissions)[0]
@@ -157,7 +168,7 @@ while n_electrons < n_electrons_required:
     e_matrix_dE_total += np.histogramdd(now_DATA_PMMA_dE_total[:, 5:8], bins=bins_2nm,
                                   weights=now_DATA_PMMA_dE_total[:, -1])[0]
     
-    n_electrons += 1000
+    n_electrons += n_files * electrons_in_file
 
 
 #%%

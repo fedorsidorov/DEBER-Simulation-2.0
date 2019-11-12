@@ -14,7 +14,7 @@ cf = importlib.reload(cf)
 
 import time
 
-os.chdir(mc.sim_folder + 'PMMA_sim')
+os.chdir(mc.sim_folder + 'PMMA_sim_Harris')
 
 
 #%%
@@ -121,8 +121,10 @@ while True:
     f_max = np.max(fragment, axis=0)
     f_min = np.min(fragment, axis=0)
     
-    shift = np.random.uniform(xyz_min - f_min - space, xyz_max - f_max + space)
+#    shift = np.random.uniform(xyz_min - f_min - space, xyz_max - f_max + space)
 #    shift = np.random.uniform(xyz_min - f_min, xyz_max - f_max)
+    shift = np.random.uniform(xyz_min, xyz_max)
+    
     fragment_f = fragment + shift
     
     cf.snake_chain(fragment_f, xyz_min, xyz_max)            
@@ -168,7 +170,7 @@ print(part_empty)
 
 
 #%% save chains to files
-source_dir = '/Volumes/ELEMENTS/Chains_Harris_fit'
+source_dir = '/Volumes/ELEMENTS/Chains_Harris_no_space'
 
 i = 0
 
@@ -180,23 +182,23 @@ for chain in chain_list:
 
 
 #%%
-#source_dir = '/Volumes/ELEMENTS/Chains_Harris/'
-#
-#lens = []
-#
-#files = os.listdir(source_dir)
-#
-#for file in files:
-#    
-#    if 'DS' in file:
-#        continue
-#    
-#    chain = np.load(source_dir + file)
-#    
-#    lens.append(len(chain))
-#
-#
-#chain_lens = np.array(lens)
+source_dir = '/Volumes/ELEMENTS/Chains_Harris/'
+
+lens = []
+
+files = os.listdir(source_dir)
+
+for file in files:
+    
+    if 'DS' in file:
+        continue
+    
+    chain = np.load(source_dir + file)
+    
+    lens.append(len(chain))
+
+
+chain_lens = np.array(lens)
 
 
 #%%

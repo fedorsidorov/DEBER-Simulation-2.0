@@ -22,7 +22,7 @@ os.chdir(mc.sim_folder + 'PMMA_sim')
 
 
 #%%
-source_dir = '/Volumes/ELEMENTS/Chains_Harris_fit/'
+source_dir = '/Volumes/ELEMENTS/Chains_Harris_no_space/'
 
 #print(os.listdir(source_dir))
 
