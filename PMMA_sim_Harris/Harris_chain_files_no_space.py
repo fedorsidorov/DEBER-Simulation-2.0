@@ -22,7 +22,8 @@ os.chdir(mc.sim_folder + 'PMMA_sim_Harris')
 
 
 #%%
-source_dir = '/Volumes/ELEMENTS/Chains_Harris_no_space/'
+#source_dir = '/Volumes/ELEMENTS/Chains_Harris_no_space/'
+source_dir = 'Chains_Harris_no_space/'
 
 #print(os.listdir(source_dir))
 
@@ -105,11 +106,11 @@ for chain_num in range(N_chains_total):
 
 #%%
 print('resist_matrix size, Gb:', resist_matrix.nbytes / 1024**3)
-np.save('/Volumes/ELEMENTS/MATRIX_resist_Harris_no_space.npy', resist_matrix)
+np.save('../mapping_Harris/MATRIX_resist_Harris_no_space.npy', resist_matrix)
 
 
 #%%
-dest_folder = '/Volumes/ELEMENTS/Harris_chain_tables_no_space/'
+dest_folder = '../mapping_Harris/Harris_chain_tables_no_space/'
 
 for i, ct in enumerate(chain_tables):
     

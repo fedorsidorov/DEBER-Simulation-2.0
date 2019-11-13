@@ -57,11 +57,6 @@ for now_ind in range(len(folders)):
         
         DATA_PMMA_list.append(now_DATA_PMMA)
         
-        now_DATA_PMMA_dE_total = copy.deepcopy(now_DATA_PMMA)
-        now_DATA_PMMA_dE_total[np.where(now_DATA_PMMA_dE_total[:, 3] == 1)[0], -1] =\
-            ma.PMMA_E_bind
-        DATA_PMMA_dE_total_list.append(now_DATA_PMMA_dE_total)
-        
         now_DATA_PMMA_val = now_DATA_PMMA[np.where(now_DATA_PMMA[:, 3] == 1)]
         DATA_PMMA_val_list.append(now_DATA_PMMA_val)
         
@@ -87,7 +82,8 @@ z_bins_2nm = np.arange(z_beg, z_end + 1, step_2nm)
 
 bins_2nm = x_bins_2nm, y_bins_2nm, z_bins_2nm
 
-##
+
+#%%
 e_matrix_shape = (len(x_bins_2nm)-1, len(y_bins_2nm)-1, len(z_bins_2nm)-1)
 
 e_matrix_val = np.zeros(e_matrix_shape)
@@ -116,23 +112,25 @@ while n_electrons < n_electrons_required:
     
     now_DATA_PMMA_val = np.vstack(list(DATA_PMMA_val_list[i] for i in inds))
     now_DATA_PMMA_dE = np.vstack(list(DATA_PMMA_dE_list[i] for i in inds))
-    now_DATA_PMMA_dE_total = np.vstack(list(DATA_PMMA_dE_total_list[i] for i in inds))
     
     phi=2*np.pi*rnd.random()
     
     emf.rotate_DATA(now_DATA_PMMA_val, phi)
     emf.rotate_DATA(now_DATA_PMMA_dE, phi)
-    emf.rotate_DATA(now_DATA_PMMA_dE_total, phi)
         
     x_shift, y_shift = rnd.uniform(x_min, x_max), rnd.uniform(y_min, y_max)
     
     emf.add_xy_shift_easy(now_DATA_PMMA_val, x_shift, y_shift)
     emf.add_xy_shift_easy(now_DATA_PMMA_dE, x_shift, y_shift)
-    emf.add_xy_shift_easy(now_DATA_PMMA_dE_total, x_shift, y_shift)
     
     ## !!! ##
     now_EE = now_DATA_PMMA_val[:, 4]
-    scissions = rnd.rand(len(now_EE)) < sf.scission_probs_room(now_EE)
+#    scissions = rnd.rand(len(now_EE)) < sf.scission_probs_2CC(now_EE)
+#    scissions = rnd.rand(len(now_EE)) < sf.scission_probs_2CC_ester(now_EE)
+#    scissions = rnd.rand(len(now_EE)) < sf.scission_probs_2CC_ester_H(now_EE)
+#    scissions = rnd.rand(len(now_EE)) < sf.scission_probs_2CC_3H(now_EE)
+#    scissions = rnd.rand(len(now_EE)) < sf.scission_probs_2CC_2H(now_EE)
+    scissions = rnd.rand(len(now_EE)) < sf.scission_probs_2CC_1p5H(now_EE)
     ## !!! ##
     
     e_matrix_val += np.histogramdd(now_DATA_PMMA_val[:, 5:8], bins=bins_2nm,
@@ -141,21 +139,16 @@ while n_electrons < n_electrons_required:
     e_matrix_dE += np.histogramdd(now_DATA_PMMA_dE[:, 5:8], bins=bins_2nm,
                                   weights=now_DATA_PMMA_dE[:, -1])[0]
     
-    e_matrix_dE_total += np.histogramdd(now_DATA_PMMA_dE_total[:, 5:8], bins=bins_2nm,
-                                  weights=now_DATA_PMMA_dE_total[:, -1])[0]
-    
     n_electrons += n_files * electrons_in_file
 
 
 #%%
-folder = 'ONES/'
+folder = '2C-C+1.5H/'
 
-np.save(folder + 'e_matrix_val.npy', e_matrix_val)
-np.save(folder + 'e_matrix_dE.npy', e_matrix_dE)
-np.save(folder + 'e_matrix_dE_total.npy', e_matrix_dE_total)
+np.save(folder + 'e-matrix_val.npy', e_matrix_val)
+np.save(folder + 'e-matrix_dE.npy', e_matrix_dE)
 
 
 #%%
 print('G(S) =', np.sum(e_matrix_val) / np.sum(e_matrix_dE) * 100)
-print('G(S) total =', np.sum(e_matrix_val) / np.sum(e_matrix_dE_total) * 100)
 

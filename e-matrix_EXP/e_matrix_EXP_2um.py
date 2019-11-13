@@ -20,55 +20,15 @@ os.chdir(mc.sim_folder + 'e-matrix_EXP')
 import e_matrix_functions as emf
 emf = importlib.reload(emf)
 
-
-#%%
-def get_w_scission_my(EE):
-    
-    result = np.zeros(len(EE))
-    
-    result = np.ones(len(EE)) * 4/40
-    result[np.where(EE < 815 * 0.0103)] = 4/(40 - 8)
-    result[np.where(EE < 420 * 0.0103)] = 4/(40 - 8 - 4)
-    result[np.where(EE < 418 * 0.0103)] = 4/(40 - 8 - 4 - 12)
-    result[np.where(EE < 406 * 0.0103)] = 4/(40 - 8 - 4 - 12 - 4)
-    result[np.where(EE < 383 * 0.0103)] = 4/(40 - 8 - 4 - 12 - 4 - 2)
-    result[np.where(EE < 364 * 0.0103)] = 4/(40 - 8 - 4 - 12 - 4 - 2 - 4)
-    result[np.where(EE < 356 * 0.0103)] = 4/(40 - 8 - 4 - 12 - 4 - 2 - 4 - 2)
-    result[np.where(EE < 354 * 0.0103)] = 0
-    
-    return result
+import scission_functions as sf
+sf = importlib.reload(sf)
 
 
-def get_scission_my(EE):
-    
-    return rnd.rand(len(EE)) < get_w_scission_my(EE)
-    
-
-def get_w_scission_my_ester(EE):
-    
-    result = np.zeros(len(EE))
-    
-    result = np.ones(len(EE)) * 6/40
-    result[np.where(EE < 815 * 0.0103)] = 6/(40 - 8)
-    result[np.where(EE < 420 * 0.0103)] = 6/(40 - 8 - 4)
-    result[np.where(EE < 418 * 0.0103)] = 6/(40 - 8 - 4 - 12)
-    result[np.where(EE < 406 * 0.0103)] = 6/(40 - 8 - 4 - 12 - 4)
-    result[np.where(EE < 383 * 0.0103)] = 4/(40 - 8 - 4 - 12 - 4 - 2)
-    result[np.where(EE < 364 * 0.0103)] = 4/(40 - 8 - 4 - 12 - 4 - 2 - 4)
-    result[np.where(EE < 356 * 0.0103)] = 4/(40 - 8 - 4 - 12 - 4 - 2 - 4 - 2)
-    result[np.where(EE < 354 * 0.0103)] = 0
-    
-    return result
-    
-
-def get_scission_my_ester(EE):
-    
-    return rnd.rand(len(EE)) < get_w_scission_my_ester(EE)
+n_dose = 0
 
 
 #%%
-#plt.plot(ma.EE[:237], get_w_scission_my(ma.EE[:237]))
-plt.plot(ma.EE[:237], get_w_scission_my_ester(ma.EE[:237]))
+plt.plot(ma.EE[:237], sf.scission_probs_2CC_2H(ma.EE[:237]))
 
 plt.title('PMMA chain scission probability')
 plt.xlabel('E, eV')
@@ -131,11 +91,6 @@ for now_ind in range(len(folders)):
         
         DATA_PMMA_list.append(now_DATA_PMMA)
         
-        now_DATA_PMMA_dE_total = copy.deepcopy(now_DATA_PMMA)
-        now_DATA_PMMA_dE_total[np.where(now_DATA_PMMA_dE_total[:, 3] == 1)[0], -1]\
-            = ma.PMMA_E_bind
-        DATA_PMMA_dE_total_list.append(now_DATA_PMMA_dE_total)
-        
         now_DATA_PMMA_val = now_DATA_PMMA[np.where(now_DATA_PMMA[:, 3] == 1)]
         DATA_PMMA_val_list.append(now_DATA_PMMA_val)
         
@@ -161,9 +116,9 @@ borders_nm = 250
 
 ## bruk2016.pdf
 
-#dose_C_cm2 = 0.05e-6
-#dose_C_cm2 = 0.2e-6
-dose_C_cm2 = 0.87e-6
+doses_C_cm2 = [0.05e-6, 0.2e-6, 0.87e-6]
+
+dose_C_cm2 = doses_C_cm2[n_dose]
 
 dose_C_cm = dose_C_cm2 / 2000
 
@@ -171,7 +126,6 @@ n_electrons_required = get_n_electrons_1D(dose_C_cm, l_xyz[1], borders_nm)
 
 n_electrons = 0
 
-#x_min, x_max = x_beg - borders_nm, x_end + borders_nm
 y_min, y_max = y_beg - borders_nm, y_end + borders_nm
 
 
@@ -191,8 +145,6 @@ while n_electrons < n_electrons_required:
     now_DATA_PMMA_val = np.vstack(list(DATA_PMMA_val_list[i] for i in inds))
     now_DATA_PMMA_dE = np.vstack(list(DATA_PMMA_dE_list[i] for i in inds))
     
-#    now_DATA_PMMA_dE = np.vstack(list(DATA_PMMA_dE_total_list[i] for i in inds))
-    
     phi=2*np.pi*rnd.random()
     
     emf.rotate_DATA(now_DATA_PMMA_val, phi)
@@ -203,10 +155,11 @@ while n_electrons < n_electrons_required:
     emf.add_xy_shift_easy(now_DATA_PMMA_val, x_shift, y_shift)
     emf.add_xy_shift_easy(now_DATA_PMMA_dE, x_shift, y_shift)
     
-    scissions_my = get_scission_my(now_DATA_PMMA_val[:, 4]).astype(int)
+    now_EE = now_DATA_PMMA_val[:, 4]
+    scissions = rnd.rand(len(now_EE)) < sf.scission_probs_2CC_2H(now_EE)
     
     e_matrix_val_my += np.histogramdd(now_DATA_PMMA_val[:, 5:8], bins=bins_2nm,
-                                   weights=scissions_my)[0]
+                                  weights=scissions.astype(int))[0]
     
     e_matrix_dE += np.histogramdd(now_DATA_PMMA_dE[:, 5:8], bins=bins_2nm,
                                   weights=now_DATA_PMMA_dE[:, -1])[0]
@@ -215,8 +168,8 @@ while n_electrons < n_electrons_required:
 
 
 #%%
-np.save('EXP_2um_ester/EXP_e_matrix_val_MY_dose3.npy', e_matrix_val_my)
-np.save('EXP_2um_ester/EXP_e_matrix_dE_MY_dose3.npy', e_matrix_dE)
+np.save('EXP_2um_160/EXP_e_matrix_val_MY_dose' + str(n_dose+1) + '.npy', e_matrix_val_my)
+np.save('EXP_2um_160/EXP_e_matrix_dE_MY_dose'  + str(n_dose+1) + '.npy', e_matrix_dE)
 
 
 #%%
