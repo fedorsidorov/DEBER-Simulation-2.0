@@ -19,10 +19,11 @@ os.chdir(mc.sim_folder + 'DEBER_profile')
 
 
 vols = [0.39, 1.31, 2.05]
+vols_07 = [0.2, 0.64, 1.11]
 
 
 #%%
-n_dose = 1
+n_dose = 0
 
 full_mat_3 = np.load('../mapping_EXP/2um_CT_0/full_mat_dose' + str(n_dose) + '.npy')
 mono_mat_3 = np.load('../mapping_EXP/2um_CT_0/mono_mat_dose' + str(n_dose) + '.npy')

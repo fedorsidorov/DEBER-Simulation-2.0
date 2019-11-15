@@ -17,16 +17,17 @@ ma = importlib.reload(ma)
 
 os.chdir(mc.sim_folder + 'DEBER_profile')
 
-
 vols = [0.39, 1.31, 2.05]
 vols_07 = [0.2, 0.64, 1.11]
 
 
 #%%
-n_dose = 2
+n_dose = 0
 
-full_mat_3 = np.load('../mapping_EXP/2um_CT_160C_reducing_3400/full_mat_dose' + str(n_dose) + '.npy')
-mono_mat_3 = np.load('../mapping_EXP/2um_CT_160C_reducing_3400/mono_mat_dose' + str(n_dose) + '.npy')
+full_mat_3 = np.load('../mapping_EXP/2um_CT_160C_reducing_3400/full_mat_dose' +\
+                     str(n_dose) + '.npy')
+mono_mat_3 = np.load('../mapping_EXP/2um_CT_160C_reducing_3400/mono_mat_dose' +\
+                     str(n_dose) + '.npy')
 
 full_mat = np.average(full_mat_3, axis=1)
 mono_mat = np.average(mono_mat_3, axis=1)
@@ -93,7 +94,7 @@ volume_um2 = (x_centers[-1] - x_centers[0]) * height - np.trapz(profile, x=x_cen
 
 vol_ratio = int(volume_um2 / vols_07[n_dose] * 100) / 100
 
-plt.title('Structure profile after monomer diffusion, dose ' + str(n_dose) +\
+plt.title('Structure profile after monomer diffusion, dose' + str(n_dose) +\
           ', R = ' + str(vol_ratio))
 plt.xlabel('x, $\mu$m')
 plt.ylabel('y, $\mu$m')
@@ -105,5 +106,5 @@ plt.grid()
 
 print(volume_um2)
 
-#plt.savefig('profile_dose' + str(n_dose) + '_2um_CT_160С.png', dpi=300)
+#plt.savefig('profile_dose' + str(n_dose) + '_2um_CT_160С_reducing_3400.png', dpi=300)
 

@@ -58,6 +58,14 @@ plt.legend()
 plt.grid()
 plt.show()
 
+
+#%%
+#plt.plot(xx, func(xx, 0.13, popt[1], 1.14) + 0.057) ## surface evolver 1
+#plt.plot(xx, func(xx, 0.46, popt[1], 0.48) + 0.198) ## surface evolver 2
+#plt.plot(xx, func(xx, 0.43, popt[1], 0.46) + 0.198)
+#plt.plot(xx, func(xx, 0.48, popt[1], 0.36) + 0.198)
+plt.plot(xx, func(xx, 0.69, popt[1], 0.63) + 0.3)
+
 #plt.savefig('profile_fit_dose' + str(n_dose) + '.png', dpi=300)
 
 
@@ -79,13 +87,13 @@ def func(xx, a, b, c):
 #true_depths = 0.9 - np.array([0.0, 0.2, 0.66, 0.9])
 
 ## 0.7
-doses = np.array([0, 0.05, 0.2, 0.87])
-true_depths = 0.9 - np.array([0.0, 0.2, 0.66, 0.92])*0.7
+#doses = np.array([0, 0.05, 0.2, 0.87])
+#true_depths = 0.9 - np.array([0.0, 0.2, 0.66, 0.92])*0.7
 
 ## 0.7 + FIT
-#doses = np.array([0, 0.05, 0.2, 0.87])
-#true_depths = 0.9 - np.array([0.0, 0.14, 0.46, 0.7])
-true_depths = 0.9 - np.array([0.0, 0.14, 0.66, 1])*0.7
+doses = np.array([0, 0.05, 0.2, 0.87])
+#true_depths = 0.9 - np.array([0.0, 0.14, 0.66, 1])
+true_depths = 0.9 - np.array([0.0, 0.19, 0.66, 1])*0.7
 
 
 #p0 = 0.2, 0.18, 0.9
@@ -112,5 +120,5 @@ plt.ylim(0, 1)
 plt.grid()
 plt.show()
 
-plt.savefig('kinetic_curve_FIT_07_FINAL.png', dpi=300)
+#plt.savefig('kinetic_curve_FIT_07_FINAL.png', dpi=300)
 
