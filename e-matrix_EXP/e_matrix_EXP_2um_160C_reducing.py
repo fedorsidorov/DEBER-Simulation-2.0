@@ -24,19 +24,33 @@ import scission_functions as sf
 sf = importlib.reload(sf)
 
 
-n_dose = 2
+#n_dose = 2
 
 
 #%%
-#plt.plot(ma.EE[:237], sf.scission_probs_2CC_2H(ma.EE[:237]))
-#
+plt.figure(figsize=[3.1496, 3.1496])
+font_size = 10
+
+plt.plot(ma.EE[:237], sf.scission_probs_2CC_2H(ma.EE[:237]), label='160$^\circ$C')
+
 #plt.title('PMMA chain scission probability')
-#plt.xlabel('E, eV')
-#plt.ylabel('scission probability')
-#
-#plt.grid()
-#
-#plt.savefig('sci_prob_160C.png', dpi=300)
+plt.xlabel('E, eV')
+plt.ylabel('PMMA scission probability')
+
+plt.grid()
+
+plt.legend(fontsize=font_size)
+
+plt.xlim(2.5, 10)
+plt.ylim(0, 1)
+
+ax = plt.gca()
+for tick in ax.xaxis.get_major_ticks():
+    tick.label.set_fontsize(font_size)
+for tick in ax.yaxis.get_major_ticks():
+    tick.label.set_fontsize(font_size)
+
+plt.savefig('sci_prob_160.jpg', bbox_inches='tight', dpi=1000)
 
 
 #%%

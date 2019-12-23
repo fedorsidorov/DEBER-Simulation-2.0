@@ -4,9 +4,7 @@ import os
 import importlib
 import matplotlib.pyplot as plt
 import copy
-
 import numpy.random as rnd
-
 import my_arrays_Dapor as ma
 
 ma = importlib.reload(ma)

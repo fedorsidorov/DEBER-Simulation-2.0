@@ -2,12 +2,12 @@
 import numpy as np
 #import os
 import importlib
+#import my_arrays as ma
 import my_utilities as mu
 import my_constants as mc
-import my_arrays as ma
 #import matplotlib.pyplot as plt
 
-ma = importlib.reload(ma)
+#ma = importlib.reload(ma)
 mu = importlib.reload(mu)
 mc = importlib.reload(mc)
 
@@ -55,7 +55,7 @@ def get_Gryzinski_CS(EE, Ui, WW=mc.EE):
 
 
 def get_Gryzinski_SP_single(E, Ui, conc, n_el, WW=mc.EE):
-        
+    
     diff_CS = get_Gryzinski_diff_CS_single(E, Ui, WW)
     Gryzinski_SP_single = conc * n_el * np.trapz(diff_CS * WW, x=WW)
     
@@ -76,11 +76,13 @@ def get_Gryzinski_SP(EE, Ui, conc, n_el, WW=mc.EE):
 #%% PMMA
 ## Differential
 def get_PMMA_C_Gryzinski_1S_diff_U(EE):
-    return get_Gryzinski_diff_CS(EE, mc.binding_C_1S) * mc.occupancy_1S * mc.n_PMMA_mon * mc.n_C_PMMA
+    return get_Gryzinski_diff_CS(EE, mc.binding_C_1S) * mc.occupancy_1S *\
+        mc.n_PMMA_mon * mc.n_C_PMMA
 
 
 def get_PMMA_O_Gryzinski_1S_diff_U(EE):
-    return get_Gryzinski_diff_CS(EE, mc.binding_O_1S) * mc.occupancy_1S * mc.n_PMMA_mon * mc.n_O_PMMA
+    return get_Gryzinski_diff_CS(EE, mc.binding_O_1S) * mc.occupancy_1S *\
+        mc.n_PMMA_mon * mc.n_O_PMMA
 
 
 ## Integral
@@ -94,11 +96,13 @@ def get_PMMA_O_Gryzinski_1S_int_U(EE):
 
 ## Total
 def get_PMMA_C_Gryzinski_1S_U(EE):
-    return get_Gryzinski_CS(EE, mc.binding_C_1S) * mc.occupancy_1S * mc.n_PMMA_mon * mc.n_C_PMMA
+    return get_Gryzinski_CS(EE, mc.binding_C_1S) * mc.occupancy_1S * mc.n_PMMA_mon *\
+        mc.n_C_PMMA
 
 
 def get_PMMA_O_Gryzinski_1S_U(EE):
-    return get_Gryzinski_CS(EE, mc.binding_O_1S) * mc.occupancy_1S * mc.n_PMMA_mon * mc.n_O_PMMA
+    return get_Gryzinski_CS(EE, mc.binding_O_1S) * mc.occupancy_1S * mc.n_PMMA_mon *\
+        mc.n_O_PMMA
 
 
 #%% Si
@@ -253,7 +257,8 @@ def Ashley_L(x):
     return f
 
 def Ashley_S(x):
-    f = np.log(1.166/x) - 3/4*x - x/4*np.log(4/x) + 1/2*x**(3/2) - x**2/16*np.log(4/x) - 31/48*x**2
+    f = np.log(1.166/x) - 3/4*x - x/4*np.log(4/x) + 1/2*x**(3/2) - x**2/16*np.log(4/x) -\
+        31/48*x**2
     return f
 
 

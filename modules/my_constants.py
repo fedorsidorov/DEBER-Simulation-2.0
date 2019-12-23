@@ -52,7 +52,7 @@ n_C_PMMA = 5
 n_O_PMMA = 2
 
 n_PMMA_mon =  rho_PMMA * Na/u_PMMA
-n_PMMA_at = n_PMMA_mon * (n_H_PMMA + n_C_PMMA + n_O_PMMA)
+#n_PMMA_at = n_PMMA_mon * (n_H_PMMA + n_C_PMMA + n_O_PMMA)
 
 m_PMMA_mon = u_PMMA / Na
 

@@ -20,19 +20,23 @@ pd = importlib.reload(pd)
 
 
 #%% Harris
-d_PMMA = 500e-7
-E0 = 10e+3
+#d_PMMA = 500e-7
+#E0 = 10e+3
 
 ## EXP
 #d_PMMA = 900e-7
 #E0 = 20e+3
+
+## Aktari
+d_PMMA = 100e-7
+E0 = 10e+3
 
 z_cut_Si = 1
 
 n_files = 10000
 n_tracks = 10
 
-num = 544
+num = 1210
 
 
 while num < n_files:
@@ -42,8 +46,7 @@ while num < n_files:
     DATA_PMMA = DATA[np.where(DATA[:, 2] == 0)]
     DATA_PMMA_inel = DATA_PMMA[np.where(DATA_PMMA[:, 3] != 0)]
     
-#    fname = '../e_DATA/e_DATA_Harris_cut_1e-4/DATA_' + str(num) + '.npy'
-    fname_PMMA_inel = '../e_DATA/Harris/e_DATA_MY/DATA_PMMA_inel_' + str(num) + '.npy'
+    fname_PMMA_inel = '../e_DATA/Aktary/DATA_PMMA_inel_' + str(num) + '.npy'
     
 #    np.save(fname, DATA)
     np.save(fname_PMMA_inel, DATA_PMMA_inel)
