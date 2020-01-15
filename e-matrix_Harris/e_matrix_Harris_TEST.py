@@ -99,6 +99,9 @@ n_electrons_required = emf.get_n_electrons_2D(1e-4, lx, ly, borders_nm)
 n_electrons = 0
 
 
+scission_probs_gryz = np.load('../all_Gryzinski/probs_gryzinski.npy')
+
+
 while n_electrons < n_electrons_required:
 
     mu.pbar(n_electrons, n_electrons_required)
@@ -125,12 +128,16 @@ while n_electrons < n_electrons_required:
     
     ## !!! ##
     now_EE = now_DATA_PMMA_val[:, 4]
+    
+    scission_probs = np.interp(now_EE, mc.EE, scission_probs_gryz)
+    
+    scissions = rnd.rand(len(now_EE)) < scission_probs
 #    scissions = rnd.rand(len(now_EE)) < sf.scission_probs_2CC(now_EE)
 #    scissions = rnd.rand(len(now_EE)) < sf.scission_probs_2CC_ester(now_EE)
 #    scissions = rnd.rand(len(now_EE)) < sf.scission_probs_2CC_ester_H(now_EE)
 #    scissions = rnd.rand(len(now_EE)) < sf.scission_probs_2CC_3H(now_EE)
 #    scissions = rnd.rand(len(now_EE)) < sf.scission_probs_2CC_2H(now_EE)
-    scissions = rnd.rand(len(now_EE)) < sf.scission_probs_2CC_1p5H(now_EE)
+#    scissions = rnd.rand(len(now_EE)) < sf.scission_probs_2CC_1p5H(now_EE)
     ## !!! ##
     
     e_matrix_val += np.histogramdd(now_DATA_PMMA_val[:, 5:8], bins=bins_2nm,

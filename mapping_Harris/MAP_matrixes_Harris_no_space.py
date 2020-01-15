@@ -280,10 +280,20 @@ np.save('lens_final_2C-C.npy', chain_lens_final)
 #%%
 #chain_lens = np.load('chain_lens_no_space.npy')
 
-fig, ax = plt.subplots()
+import matplotlib
+
+plt.figure(figsize=[5., 3.])
+
+font_size = 10
+
+matplotlib.rcParams['font.family'] = 'Times New Roman'
+
+chain_lens_final = np.load('lens_final_2C-C.npy')
+
+#_, ax = plt.subplots()
 
 xx = np.load('../PMMA_sim_Harris/harris_x_after.npy')
-yy_SZ = np.load('../PMMA_sim_Harris/harris_y_after_SZ.npy')
+#yy_SZ = np.load('../PMMA_sim_Harris/harris_y_after_SZ.npy')
 yy = np.load('../PMMA_sim_Harris/harris_y_after_fit.npy')
 
 mass = np.array(chain_lens_final)*100
@@ -291,17 +301,21 @@ mass = np.array(chain_lens_final)*100
 #bins = np.logspace(2, 7.1, 21)
 bins = np.logspace(2, 7.1, 21)
 
-plt.hist(mass, bins, label='simulation')
+#plt.hist(mass, bins, label='simulation')
+plt.hist(mass, bins, label='моделирование')
 plt.gca().set_xscale('log')
 
-plt.plot(xx, yy*2.2e+7, label='experiment')
-plt.plot(xx, yy_SZ*1.6e+9, 'r', label='Schilz-Zimm')
+#plt.plot(xx, yy*2.2e+7, label='experiment')
+plt.plot(xx, yy*2.2e+7, label='эксперимент')
+#plt.plot(xx, yy_SZ*1.6e+9, 'r', label='Schilz-Zimm')
 
-plt.title('Harris final molecular weight distribution FIT')
-plt.xlabel('molecular weight')
-plt.ylabel('N$_{entries}$')
+#plt.title('Harris final molecular weight distribution FIT')
+#plt.xlabel('molecular weight')
+plt.xlabel('молекулярный вес')
+#plt.ylabel('N$_{entries}$')
+plt.ylabel('плотность распределения')
 
-ax.yaxis.get_major_formatter().set_powerlimits((0, 1))
+#ax.yaxis.get_major_formatter().set_powerlimits((0, 1))
 
 plt.xlim(1e+2, 1e+6)
 
@@ -310,6 +324,7 @@ plt.grid()
 plt.show()
 
 #plt.savefig('Harris_final_weight_distr_E_bind_4p94.png', dpi=300)
+plt.savefig('fig2.png', dpi=600)
 
 
 #%% get G(S)

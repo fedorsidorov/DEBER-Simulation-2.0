@@ -20,6 +20,8 @@ os.chdir(mc.sim_folder + 'e-matrix_Harris')
 import e_matrix_functions as emf
 emf = importlib.reload(emf)
 
+import matplotlib
+
 
 #%%
 def get_w_scission(EE):
@@ -47,6 +49,14 @@ def get_scissions(EE):
 def get_scissions_ones(EE):
     
     return np.ones(len(EE))
+
+
+#plt.figure(figsize=[5, 4.])
+#font_size = 10
+
+#matplotlib.rcParams['font.family'] = 'Times New Roman'
+
+#plt.plot()
 
 
 #%%
@@ -173,11 +183,11 @@ while n_electrons < n_electrons_required:
 
 #%%
 #np.save('Harris_e_matrix_val_Dapor_NEW.npy', e_matrix_val)
-np.save('Harris_e_matrix_val_MY.npy', e_matrix_val)
+#np.save('Harris_e_matrix_val_MY.npy', e_matrix_val)
 
-np.save('Harris_e_matrix_dE_MY.npy', e_matrix_dE)
+#np.save('Harris_e_matrix_dE_MY.npy', e_matrix_dE)
 
-np.save('Harris_e_matrix_dE_total_MY.npy', e_matrix_dE_total)
+#np.save('Harris_e_matrix_dE_total_MY.npy', e_matrix_dE_total)
 
 
 #%%
@@ -186,7 +196,7 @@ np.save('Harris_e_matrix_dE_total_MY.npy', e_matrix_dE_total)
 
 
 #%%
-print('G value =', np.sum(e_matrix_val) / np.sum(e_matrix_dE_total) * 100)
+print('G value =', np.sum(e_matrix_val) / np.sum(e_matrix_dE) * 100)
 
 #%%
 G_mat = np.sum(e_matrix_val, axis=1) / np.sum(e_matrix_dE, axis=1) * 100

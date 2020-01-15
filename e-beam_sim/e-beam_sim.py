@@ -24,19 +24,19 @@ pd = importlib.reload(pd)
 #E0 = 10e+3
 
 ## EXP
-#d_PMMA = 900e-7
-#E0 = 20e+3
+d_PMMA = 900e-7
+E0 = 20e+3
 
 ## Aktari
-d_PMMA = 100e-7
-E0 = 10e+3
+#d_PMMA = 100e-7
+#E0 = 10e+3
 
 z_cut_Si = 1
 
-n_files = 10000
+n_files = 1
 n_tracks = 10
 
-num = 1210
+num = 0
 
 
 while num < n_files:
@@ -49,7 +49,7 @@ while num < n_files:
     fname_PMMA_inel = '../e_DATA/Aktary/DATA_PMMA_inel_' + str(num) + '.npy'
     
 #    np.save(fname, DATA)
-    np.save(fname_PMMA_inel, DATA_PMMA_inel)
+#    np.save(fname_PMMA_inel, DATA_PMMA_inel)
     
     print('file ' + fname_PMMA_inel + ' is ready')
 
@@ -57,7 +57,7 @@ while num < n_files:
 
 
 #%%
-test_DATA = np.load('../e_DATA/e_DATA_EXP_E_bind_4p94_inel/DATA_PMMA_inel_5.npy')
+test_DATA = np.load('../e_DATA/Aktary/DATA_PMMA_inel_5.npy')
 
 
 #%%
@@ -176,3 +176,4 @@ plt.loglog(EE, RR)
 
 plt.grid()
 plt.ylim(1e-3, 1e-2)
+#

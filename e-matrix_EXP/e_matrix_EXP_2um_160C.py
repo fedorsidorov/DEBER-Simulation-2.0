@@ -23,20 +23,45 @@ emf = importlib.reload(emf)
 import scission_functions as sf
 sf = importlib.reload(sf)
 
+import matplotlib
+
 
 n_dose = 2
 
 
 #%%
-plt.plot(ma.EE[:237], sf.scission_probs_2CC_2H(ma.EE[:237]))
+def scission_probs_2CC(EE):
+    
+    result = np.ones(len(EE)) * 4/40
 
-plt.title('PMMA chain scission probability')
-plt.xlabel('E, eV')
-plt.ylabel('scission probability')
+    result[np.where(EE < 815 * 0.0103)] = 4/(40 - 8)
+    result[np.where(EE < 420 * 0.0103)] = 4/(40 - 8 - 4)
+    result[np.where(EE < 418 * 0.0103)] = 4/(40 - 8 - 4 - 12)
+    result[np.where(EE < 406 * 0.0103)] = 4/(40 - 8 - 4 - 12 - 4)
+    result[np.where(EE < 383 * 0.0103)] = 4/(40 - 8 - 4 - 12 - 4 - 2)
+    result[np.where(EE < 364 * 0.0103)] = 4/(40 - 8 - 4 - 12 - 4 - 2 - 4)
+    result[np.where(EE < 356 * 0.0103)] = 4/(40 - 8 - 4 - 12 - 4 - 2 - 4 - 2)
+    result[np.where(EE < 354 * 0.0103)] = 0
+    
+    return result
+
+
+#%%
+plt.figure(figsize=[5, 4.])
+
+font_size = 11
+
+matplotlib.rcParams['font.family'] = 'Times New Roman'
+
+plt.plot(ma.EE[:237], scission_probs_2CC(ma.EE[:237]))
+
+#plt.title('PMMA chain scission probability')
+plt.xlabel('энергия налетающего электрона, эВ')
+plt.ylabel('вероятность разрыва')
 
 plt.grid()
 
-plt.savefig('sci_prob_160C.png', dpi=300)
+plt.savefig('fig_1.png', dpi=600)
 
 
 #%%

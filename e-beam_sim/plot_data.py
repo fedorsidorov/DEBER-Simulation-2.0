@@ -57,8 +57,8 @@ def plot_DATA(DATA, d_PMMA):
     plt.xlabel('x, nm')
     plt.ylabel('z, nm')
     
-    plt.xlim(4.5e-5, 6.5e-5)
-    plt.ylim(2.85e-4, 3.05e-4)
+#    plt.xlim(4.5e-5, 6.5e-5)
+#    plt.ylim(2.85e-4, 3.05e-4)
     
     #    plt.legend(fontsize=14)
     plt.gca().invert_yaxis()
