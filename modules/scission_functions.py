@@ -19,16 +19,68 @@ elf = importlib.reload(elf)
 #%%
 MMA_bonds = {}
 
-kJmol_2_eV = 1e+3 / (mc.Na * mc.eV)
+#kJmol_2_eV = 1e+3 / (mc.Na * mc.eV)
+kJmol_2_eV = 0.0103
 
-MMA_bonds['Op-Cp'] = 815 * kJmol_2_eV, 4
-MMA_bonds['O-Cp'] = 420  * kJmol_2_eV, 2
-MMA_bonds['H-C3'] = 418  * kJmol_2_eV, 12
-MMA_bonds['H-C2'] = 406  * kJmol_2_eV, 4
-MMA_bonds['Cp-Cg'] = 383 * kJmol_2_eV, 2
-MMA_bonds['O-C3'] = 364  * kJmol_2_eV, 4
-MMA_bonds['C-C3'] = 356  * kJmol_2_eV, 2
-MMA_bonds['C-C2'] = 354  * kJmol_2_eV, 4
+
+MMA_bonds['Op-Cp'] = 815 * kJmol_2_eV,  8
+MMA_bonds['O-Cp']  = 420 * kJmol_2_eV,  4
+MMA_bonds['H-C3']  = 418 * kJmol_2_eV, 12
+MMA_bonds['H-C2']  = 406 * kJmol_2_eV,  4
+MMA_bonds['Cp-Cg'] = 383 * kJmol_2_eV,  2
+MMA_bonds['O-C3']  = 364 * kJmol_2_eV,  4
+MMA_bonds['C-C3']  = 356 * kJmol_2_eV,  2
+MMA_bonds['C-C2']  = 354 * kJmol_2_eV,  4
+
+Eb_Nel = np.array(list(MMA_bonds.values()))
+
+
+#%%
+def get_stairway(b_map_sc, EE=mc.EE):
+
+#    EE = mc.EE
+#    b_map_sc = {'Op-Cp': 2}
+    
+    Eb_Nel_sc_list = []
+    
+    for val in b_map_sc.keys():
+        Eb_Nel_sc_list.append([MMA_bonds[val][0], b_map_sc[val]])
+    
+    Eb_Nel_sc = np.array(Eb_Nel_sc_list)
+    
+    probs = np.zeros(len(EE))
+    
+    
+    nums = np.zeros(len(EE))
+    dens = np.zeros(len(EE))
+    
+    
+    for i, e in enumerate(EE):
+        
+        num = 0
+            
+        for st in Eb_Nel_sc:
+            if e >= st[0]:
+                num += st[1]
+        
+        if num == 0:
+            continue
+        
+        nums[i] = num
+        
+        den = 0
+        
+        for st in Eb_Nel:
+            if e >= st[0]:
+                den += st[1]
+        
+        dens[i] = den
+        
+        probs[i] = num / den
+        
+    
+    return probs
+
 
 
 #%%
@@ -153,4 +205,15 @@ def scission_probs_2CC_1p5H(EE):
 #
 #plt.grid()
 
+
+#%%
+def get_Gs_charlesby(T):
+    
+    inv_T = 1000 / (T + 273)
+    
+    k = -0.448036
+#    b = 1.98906
+    k = 2.14
+    
+    return np.exp(k*inv_T + b)
 

@@ -17,16 +17,67 @@ os.chdir(mc.sim_folder + 'all_Gryzinski')
 #%%
 MMA_bonds = {}
 
-kJmol_2_eV = 1e+3 / (mc.Na * mc.eV)
+#kJmol_2_eV = 1e+3 / (mc.Na * mc.eV)
+kJmol_2_eV = 0.0103
 
-MMA_bonds['Op-Cp'] = 815 * kJmol_2_eV, 4
-MMA_bonds['O-Cp'] = 420  * kJmol_2_eV, 2
+
+MMA_bonds['Op-Cp'] = 815 * kJmol_2_eV, 8
+MMA_bonds['O-Cp'] = 420  * kJmol_2_eV, 4
 MMA_bonds['H-C3'] = 418  * kJmol_2_eV, 12
 MMA_bonds['H-C2'] = 406  * kJmol_2_eV, 4
 MMA_bonds['Cp-Cg'] = 383 * kJmol_2_eV, 2
 MMA_bonds['O-C3'] = 364  * kJmol_2_eV, 4
 MMA_bonds['C-C3'] = 356  * kJmol_2_eV, 2
 MMA_bonds['C-C2'] = 354  * kJmol_2_eV, 4
+
+Eb_Nel = np.array(list(MMA_bonds.values()))
+
+
+#%%
+def get_stairway(b_map_sc):
+
+#    b_map_sc = dict([('C-C2', 4)])
+    
+    Eb_Nel_sc_list = []
+    
+    for val in b_map_sc.keys():
+        Eb_Nel_sc_list.append([MMA_bonds[val][0], MMA_bonds[val][1]])
+    
+    Eb_Nel_sc = np.array(Eb_Nel_sc_list)
+    
+    probs = np.zeros(len(mc.EE))
+    
+    
+    nums = np.zeros(len(mc.EE))
+    dens = np.zeros(len(mc.EE))
+    
+    
+    for i, e in enumerate(mc.EE):
+        
+        num = 0
+            
+        for st in Eb_Nel_sc:
+            if e >= st[0]:
+                num += st[1]
+        
+        if num == 0:
+            continue
+        
+        nums[i] = num
+        
+        den = 0
+        
+        for st in Eb_Nel:
+            if e >= st[0]:
+                den += st[1]
+        
+        dens[i] = den
+        
+        probs[i] = num / den
+    
+    
+    return probs
+
 
 
 #%%
@@ -121,6 +172,10 @@ probs_easy = get_w_scission(mc.EE)
 
 
 #%%
+new_probs_easy = get_stairway({'C-C2': 4, 'C-C3': 2})
+
+
+#%%
 probs = np.zeros(len(mc.EE))
 
 
@@ -135,6 +190,7 @@ for i in range(len(probs)):
 end_ind = 200
 
 plt.plot(mc.EE[:end_ind], probs_easy[:end_ind], label='basic')
+plt.plot(mc.EE[:end_ind], new_probs_easy[:end_ind], label='new basic')
 plt.plot(mc.EE[:end_ind], probs[:end_ind], label='Gryzinsky')
 
 plt.title('Scission probability')
@@ -144,5 +200,5 @@ plt.ylabel('p')
 plt.legend()
 plt.grid()
 
-plt.savefig('scission_probs.png', dpi=300)
+#plt.savefig('scission_probs.png', dpi=300)
 

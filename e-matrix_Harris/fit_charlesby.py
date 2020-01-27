@@ -39,8 +39,8 @@ plt.plot(x_data, y_data, 'ro')
 #x_data, y_data = mat[:, 0], mat[:, 1]
 
 x_data = 1000 / (np.array([-78, 0, 20, 100]) + 273)
-y_data = np.array([0.75, 1.4, 1.5, 2.3])
-y_data = np.log(y_data)
+#y_data = np.array([0.75, 1.4, 1.5, 2.3])
+y_data = np.log(np.array([0.75, 1.4, 1.5, 2.3]))
 
 popt, pcov = curve_fit(lin_f, x_data, y_data)
 
@@ -53,10 +53,12 @@ xx = np.linspace(0, 5)
 plt.plot(xx, lin_f(xx, *popt))
 
 plt.xlabel('10$^3$/T')
-plt.ylabel('G or log(G) ???')
+plt.ylabel('log(G)')
 
 plt.grid()
 
 
+#%%
+popt_new = np.array((popt[0], 2.14))
 
 
