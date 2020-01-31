@@ -63,8 +63,8 @@ plt.plot(xx, yy * 1000 + 25, label='EXP')
 #popt, pcov = curve_fit(func, xx, yy)
 
 o7_level = (0.9 - (0.9-yy.min())*0.3)
-plt.plot(xx, np.ones(len(xx))*o7_level * 1000 + 25, 'k-.')
-plt.plot(xx, SE(xx, o7_level) * 1000 + 25, '--', label='SE')
+#plt.plot(xx, np.ones(len(xx))*o7_level * 1000 + 25, 'k-.')
+#plt.plot(xx, SE(xx, o7_level) * 1000 + 25, '--', label='SE')
 
 plt.plot(xx, func(xx, *popt) * 1000 + 25, '--', label='SIM')
 
@@ -84,7 +84,8 @@ for tick in ax.xaxis.get_major_ticks():
 for tick in ax.yaxis.get_major_ticks():
     tick.label.set_fontsize(font_size)
 
-plt.savefig('final_' + str(n_dose) + '.jpg', bbox_inches='tight', dpi=1000)
+
+plt.savefig('final_' + str(n_dose) + '_ATT.jpg', bbox_inches='tight', dpi=1000)
 
 
 #%%

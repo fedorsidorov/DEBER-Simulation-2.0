@@ -165,7 +165,7 @@ plt.grid()
 #%%
 #print(get_Gs({'C-C2': 4, 'Cp-Cg': 2}))
 
-weights = np.linspace(0, 2, 50)
+weights = np.linspace(0, 2, 100)
 Gs_array = np.zeros(len(weights))
 
 

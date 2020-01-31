@@ -195,15 +195,25 @@ def scission_probs_2CC_1p5H(EE):
 
 
 #%%
-#end_ind = 200
-#
-#plt.plot(ma.EE[:end_ind], scission_probs_2CC_ester_H(ma.EE[:end_ind]))
-#
-#plt.title('Scission probability')
-#plt.xlabel('E, eV')
-#plt.ylabel('scission probability')
-#
-#plt.grid()
+end_ind = 200
+
+plt.figure()
+
+plt.plot(ma.EE[:end_ind], get_stairway({'C-C2': 4, 'Cp-Cg': 0}, mc.EE[:end_ind]),\
+         label='room')
+plt.plot(ma.EE[:end_ind], get_stairway({'C-C2': 4, 'Cp-Cg': 2}, mc.EE[:end_ind]),\
+         '--', label='160$^\circ$')
+
+plt.title('Scission probability')
+plt.xlabel('E, eV')
+plt.ylabel('scission probability')
+
+plt.xlim(3, 6)
+
+plt.legend()
+
+plt.grid()
+plt.show()
 
 
 #%%
@@ -213,7 +223,7 @@ def get_Gs_charlesby(T):
     
     k = -0.448036
 #    b = 1.98906
-    k = 2.14
+    b = 2.14
     
     return np.exp(k*inv_T + b)
 

@@ -13,7 +13,7 @@ mc = importlib.reload(mc)
 os.chdir(mc.sim_folder + 'diffusion')
 
 
-#%% Free-Volume parameters
+#%% Free-Volume parameters: faldi1994.pdf
 V1 = 0.87
 V2 = 0.757
 K11g = 0.815e-3
@@ -54,24 +54,34 @@ diff_points = np.loadtxt('diff_points.csv')
 
 
 #%%
-plt.plot(diff_points[:, 0], diff_points[:, 1], '--', label='Faldi points')
+#plt.plot(diff_points[:, 0], diff_points[:, 1], '--', label='Faldi points')
 
-plt.semilogy(chen_wp, chen_D, 'ro', label='Chen T = 50$\degree$C')
+#plt.semilogy(chen_wp, chen_D, 'ro', label='Chen T = 50$\degree$C')
 
-wp = np.linspace(0, 0.9, 100)
+wp = np.linspace(0, 0.99, 100)
 
-plt.semilogy(wp, get_Dmma(wp, 50), label='Faldi T = 50$\degree$C')
+#plt.semilogy(wp, get_Dmma(wp, 50), label='Faldi T = 50$\degree$C')
+#plt.semilogy(wp, get_Dmma(wp, 120), label='Faldi T = 120$\degree$C')
+#plt.semilogy(wp, get_Dmma(wp, 160), label='Faldi T = 160$\degree$C')
 
-plt.semilogy(wp, get_Dmma(wp, 120), label='Faldi T = 120$\degree$C')
+plt.semilogy(wp, get_Dmma(wp, 20), label='T = 20$\degree$C')
+plt.semilogy(wp, get_Dmma(wp, 50), label='T = 50$\degree$C')
+plt.semilogy(wp, get_Dmma(wp, 120), label='T = 120$\degree$C')
+plt.semilogy(wp, get_Dmma(wp, 160), label='T = 160$\degree$C')
 
+plt.title('Diffusion coefficient for MMA in PMMA (free volume theory)')
 plt.xlabel('$\omega_p$')
-plt.ylabel('$D_{MMA}$')
+plt.ylabel('$D_{MMA}$, cm$^2$/s')
 
-plt.semilogy(wp, get_Dmma(wp, 20), label='Faldi T = 20$\degree$C')
-plt.semilogy(wp, get_Dmma(wp, -10), label='Faldi T = -10$\degree$C')
-plt.ylim(1e-11, 1e-3)
+#plt.semilogy(wp, get_Dmma(wp, 20), label='Faldi T = 20$\degree$C')
+#plt.semilogy(wp, get_Dmma(wp, -10), label='Faldi T = -10$\degree$C')
+
+plt.xlim(0, 1)
+plt.ylim(1e-8, 1e-4)
+
 plt.legend()
 plt.grid()
 plt.show()
 
+plt.savefig('diffusitivi.png', dpi=300)
 
