@@ -141,10 +141,12 @@ def get_Gs(b_map_sc):
 
 
 #%%
-#b_map_sc = {'C-C2': 4}
-b_map_sc = {'C-C2': 4, 'Cp-Cg': 2}
+b_map_sc = {'C-C2': 4}
+#b_map_sc = {'C-C2': 4, 'Cp-Cg': 2}
 #b_map_sc = {'Cp-Cg': 2}
 #b_map_sc = {'Op-Cp': 2}
+
+print(get_Gs({'C-C2': 4}))
 
 
 #%%

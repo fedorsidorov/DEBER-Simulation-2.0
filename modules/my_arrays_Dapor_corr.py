@@ -115,8 +115,11 @@ processes_int_U_Dapor = [PMMA_processes_int_U_Dapor, Si_processes_int_U]
 
 
 #%% stolyarov2003.pdf
+#bond_E = np.array((418, 406, 815, 364, 383, 354, 420, 356))
+#n_el = np.array((12, 4, 8, 4, 2, 4, 2, 4))
+
 bond_E = np.array((418, 406, 815, 364, 383, 354, 420, 356))
-n_el = np.array((12, 4, 8, 4, 2, 4, 2, 4))
+n_el = np.array((12, 4, 4, 4, 2, 4, 2, 4))
 
 avg_E = np.dot(bond_E, n_el) / 40
 

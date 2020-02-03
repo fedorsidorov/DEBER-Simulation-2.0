@@ -1,4 +1,4 @@
-#%% Import
+3#%% Import
 import numpy as np
 import os
 import importlib
@@ -23,14 +23,25 @@ MMA_bonds = {}
 kJmol_2_eV = 0.0103
 
 
-MMA_bonds['Op-Cp'] = 815 * kJmol_2_eV,  8
-MMA_bonds['O-Cp']  = 420 * kJmol_2_eV,  4
+#MMA_bonds['Op-Cp'] = 815 * kJmol_2_eV,  8
+#MMA_bonds['O-Cp']  = 420 * kJmol_2_eV,  4
+#MMA_bonds['H-C3']  = 418 * kJmol_2_eV, 12
+#MMA_bonds['H-C2']  = 406 * kJmol_2_eV,  4
+#MMA_bonds['Cp-Cg'] = 383 * kJmol_2_eV,  2
+#MMA_bonds['O-C3']  = 364 * kJmol_2_eV,  4
+#MMA_bonds['C-C3']  = 356 * kJmol_2_eV,  2
+#MMA_bonds['C-C2']  = 354 * kJmol_2_eV,  4
+
+MMA_bonds['Op-Cp'] = 815 * kJmol_2_eV,  4
+MMA_bonds['O-Cp']  = 420 * kJmol_2_eV,  2
 MMA_bonds['H-C3']  = 418 * kJmol_2_eV, 12
 MMA_bonds['H-C2']  = 406 * kJmol_2_eV,  4
 MMA_bonds['Cp-Cg'] = 383 * kJmol_2_eV,  2
-MMA_bonds['O-C3']  = 364 * kJmol_2_eV,  4
+MMA_bonds['O-C3']  = 364 * kJmol_2_eV,  2
 MMA_bonds['C-C3']  = 356 * kJmol_2_eV,  2
 MMA_bonds['C-C2']  = 354 * kJmol_2_eV,  4
+MMA_bonds['justO']  =  13.6181,  8
+
 
 Eb_Nel = np.array(list(MMA_bonds.values()))
 
@@ -80,7 +91,6 @@ def get_stairway(b_map_sc, EE=mc.EE):
         
     
     return probs
-
 
 
 #%%
@@ -195,25 +205,28 @@ def scission_probs_2CC_1p5H(EE):
 
 
 #%%
-end_ind = 200
+EE_low = np.linspace(3, 15, 1000)
 
 plt.figure()
 
-plt.plot(ma.EE[:end_ind], get_stairway({'C-C2': 4, 'Cp-Cg': 0}, mc.EE[:end_ind]),\
-         label='room')
-plt.plot(ma.EE[:end_ind], get_stairway({'C-C2': 4, 'Cp-Cg': 2}, mc.EE[:end_ind]),\
-         '--', label='160$^\circ$')
+plt.plot(EE_low, get_stairway({'C-C2': 4, 'Cp-Cg': 0}, EE_low),\
+         label='room', linewidth=3)
+
+plt.plot(EE_low, get_stairway({'C-C2': 4, 'Cp-Cg': 2}, EE_low),\
+         '--', label='160$^\circ$', linewidth=3)
 
 plt.title('Scission probability')
 plt.xlabel('E, eV')
 plt.ylabel('scission probability')
 
-plt.xlim(3, 6)
+plt.xlim(3, 15)
 
 plt.legend()
 
 plt.grid()
 plt.show()
+
+#plt.savefig('two_stairways.png', dpi=300)
 
 
 #%%

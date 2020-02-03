@@ -59,6 +59,13 @@ plt.grid()
 
 
 #%%
+xx = np.linspace(30, 160, 100)
+yy = np.exp(lin_f(1000/(xx+273), k, b))
+
+plt.plot(xx, yy)
+
+
+#%%
 popt_new = np.array((popt[0], 2.14))
 
 
