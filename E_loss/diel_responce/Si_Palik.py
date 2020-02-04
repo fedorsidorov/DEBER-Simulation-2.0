@@ -202,8 +202,31 @@ plt.show()
 
 
 #%%
-Si_INT_U = elf.diff2int(Si_DIFF_U)
+Si_INT_U = mu.diff2int(Si_DIFF_U)
+Si_INT_U_A = mu.diff2int(U_DIFF_A)
 
+
+#%%
+U = np.zeros(len(EE))
+U_A = np.zeros(len(EE))
+
+for i in range(len(EE)):
+    
+    E = EE[i]
+    
+    inds = np.where(EE <= E/2)[0]
+    
+    U[i] = np.trapz(Si_DIFF_U[i, :], x=EE)
+    U_A[i] = np.trapz(U_DIFF_A[i, :], x=EE)
+
+
+plt.loglog(EE, U * 1e+8, label='My')
+plt.loglog(EE, U_A * 1e+8, label='My A')
+
+plt.legend()
+
+
+#%%
 np.save('diel_responce/Palik/Si_U_Palik.npy', Si_U)
 np.save('diel_responce/Palik/Si_SP_Palik.npy', Si_SP)
 np.save('diel_responce/Palik/Si_diff_U_Palik.npy', Si_DIFF_U)
@@ -223,4 +246,41 @@ for i in range(len(EE)):
     for j in range(1, len(EE)):
         
         U_INT_A[i, j] = np.trapz(U_DIFF_A[i, :j], x=EE[:j]) / integral
+
+
+#%%
+Si_1S_diff_U = np.load(mc.sim_folder + 'E_loss/Gryzinski/Si/Si_1S_diff_U.npy')
+Si_2S_diff_U = np.load(mc.sim_folder + 'E_loss/Gryzinski/Si/Si_2S_diff_U.npy')
+Si_2P_diff_U = np.load(mc.sim_folder + 'E_loss/Gryzinski/Si/Si_2P_diff_U.npy')
+
+diff_val = U_DIFF_A - Si_1S_diff_U - Si_2S_diff_U - Si_2P_diff_U
+
+
+val_int_U_A = np.zeros((len(EE), len(EE)))
+
+for i in range(len(EE)):
+    
+    integral = np.trapz(diff_val[i, :], x=EE)
+    
+    if integral == 0:
+        continue
+    
+    for j in range(1, len(EE)):
+        
+        val_int_U_A[i, j] = np.trapz(diff_val[i, :j], x=EE[:j]) / integral
+
+
+#%%
+val_A = np.zeros(len(EE))
+
+for i in range(len(EE)):
+    
+    E = EE[i]
+    
+    inds = np.where(EE <= E/2)[0]
+    
+    val_A[i] = np.trapz(diff_val[i, :], x=EE)
+
+
+
 

@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 import my_constants as mc
 import my_utilities as mu
-import MC_functions_Dapor as mcf
+import MC_functions_2020 as mcf
 
 mc = importlib.reload(mc)
 mu = importlib.reload(mu)
@@ -20,12 +20,12 @@ pd = importlib.reload(pd)
 
 
 #%% Harris
-#d_PMMA = 500e-7
-#E0 = 10e+3
+d_PMMA = 500e-7
+E0 = 10e+3
 
 ## EXP
-d_PMMA = 900e-7
-E0 = 20e+3
+#d_PMMA = 900e-7
+#E0 = 20e+3
 
 ## Aktari
 #d_PMMA = 100e-7
@@ -46,10 +46,10 @@ while num < n_files:
     DATA_PMMA = DATA[np.where(DATA[:, 2] == 0)]
     DATA_PMMA_inel = DATA_PMMA[np.where(DATA_PMMA[:, 3] != 0)]
     
-    fname_PMMA_inel = '../e_DATA/Aktary/DATA_PMMA_inel_' + str(num) + '.npy'
+    fname_PMMA_inel = '../e_DATA/Harris/2020_MAC_0/DATA_PMMA_inel_' + str(num) + '.npy'
     
 #    np.save(fname, DATA)
-#    np.save(fname_PMMA_inel, DATA_PMMA_inel)
+    np.save(fname_PMMA_inel, DATA_PMMA_inel)
     
     print('file ' + fname_PMMA_inel + ' is ready')
 

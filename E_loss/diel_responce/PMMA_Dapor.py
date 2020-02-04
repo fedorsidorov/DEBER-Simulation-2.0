@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 mc = importlib.reload(mc)
 
-os.chdir(mc.sim_path_MAC + 'E_loss/diel_responce')
+os.chdir(mc.sim_folder + 'E_loss/diel_responce')
 
 
 #%%
@@ -179,8 +179,8 @@ plt.show()
 #ind = 682
 ind = 750
 
-plt.loglog(EE, U_DIFF[ind, :])
-plt.loglog(EE, U_DIFF_A[ind, :])
+plt.loglog(EE, U_DIFF[ind, :], label='Dapor')
+plt.loglog(EE, U_DIFF_A[ind, :], label='Ashley')
 
 plt.grid()
 plt.legend()
@@ -189,6 +189,7 @@ plt.show()
 
 #%%
 IMFP_inv_arr_test = np.zeros(len(EE))
+IMFP_inv_arr_test_A = np.zeros(len(EE))
 
 for i in range(len(EE)):
     
@@ -200,12 +201,14 @@ for i in range(len(EE)):
     y_dEds = IM[inds] * S(EE[inds]/EE[i]) * EE[inds]*mc.eV
     
     IMFP_inv_arr_test[i] = np.trapz(U_DIFF[i, :], x=EE)
+    IMFP_inv_arr_test_A[i] = np.trapz(U_DIFF_A[i, :], x=EE)
 
 
-plt.loglog(EE, 1/IMFP_inv_arr_test * 1e+8, label='My 2')
+plt.loglog(EE, IMFP_inv_arr_test * 1e+8, label='My')
+plt.loglog(EE, IMFP_inv_arr_test_A * 1e+8, label='My A')
 
 
-#%% Integrals
+#%% Integrals - from Ashley!!!
 U_INT_A = np.zeros((len(EE), len(EE)))
 
 for i in range(len(EE)):
@@ -218,4 +221,50 @@ for i in range(len(EE)):
     for j in range(1, len(EE)):
         
         U_INT_A[i, j] = np.trapz(U_DIFF_A[i, :j], x=EE[:j]) / integral
+
+
+#%%
+O_core_diff = np.load(mc.sim_folder + 'E_loss/Gryzinski/PMMA/PMMA_O_1S_diff_U.npy')
+C_core_diff = np.load(mc.sim_folder + 'E_loss/Gryzinski/PMMA/PMMA_C_1S_diff_U.npy')
+
+val_diff = U_DIFF - O_core_diff - C_core_diff
+val_diff_A = U_DIFF_A - O_core_diff - C_core_diff
+
+
+#%%
+U_val_INT_A = np.zeros((len(EE), len(EE)))
+
+for i in range(len(EE)):
+    
+    integral = np.trapz(val_diff_A[i, :], x=EE)
+    
+    if integral == 0:
+        continue
+    
+    for j in range(1, len(EE)):
+        
+        U_val_INT_A[i, j] = np.trapz(val_diff_A[i, :j], x=EE[:j]) / integral
+
+
+#%%
+IMFP_inv_val = np.zeros(len(EE))
+IMFP_inv_val_A = np.zeros(len(EE))
+
+U_loaded = np.load(mc.sim_folder + 'E_loss/diel_responce/Dapor/PMMA_val_tot_U_D+G.npy')
+
+for i in range(len(EE)):
+    
+    E = EE[i]
+    
+    inds = np.where(EE <= E/2)[0]
+    
+    IMFP_inv_val[i] = np.trapz(val_diff[i, inds], x=EE[inds])
+    IMFP_inv_val_A[i] = np.trapz(val_diff_A[i, :], x=EE)
+
+
+plt.loglog(EE, IMFP_inv_val, label='Dapor')
+plt.loglog(EE, IMFP_inv_val_A, label='Ashley')
+plt.loglog(EE, U_loaded, '--', label='loaded')
+
+plt.legend()
 
