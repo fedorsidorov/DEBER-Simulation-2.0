@@ -4,10 +4,6 @@ import os
 import importlib
 import matplotlib.pyplot as plt
 import copy
-import numpy.random as rnd
-import my_arrays_Dapor as ma
-
-ma = importlib.reload(ma)
 
 import my_constants as mc
 mc = importlib.reload(mc)
@@ -22,30 +18,20 @@ MMA_bonds = {}
 #kJmol_2_eV = 1e+3 / (mc.Na * mc.eV)
 kJmol_2_eV = 0.0103
 
-
-#MMA_bonds['Op-Cp'] = 815 * kJmol_2_eV,  8
-#MMA_bonds['O-Cp']  = 420 * kJmol_2_eV,  4
-#MMA_bonds['H-C3']  = 418 * kJmol_2_eV, 12
-#MMA_bonds['H-C2']  = 406 * kJmol_2_eV,  4
-#MMA_bonds['Cp-Cg'] = 383 * kJmol_2_eV,  2
-#MMA_bonds['O-C3']  = 364 * kJmol_2_eV,  4
-#MMA_bonds['C-C3']  = 356 * kJmol_2_eV,  2
-#MMA_bonds['C-C2']  = 354 * kJmol_2_eV,  4
-
 MMA_bonds['Op-Cp'] = 815 * kJmol_2_eV,  4
 MMA_bonds['O-Cp']  = 420 * kJmol_2_eV,  2
 MMA_bonds['H-C3']  = 418 * kJmol_2_eV, 12
 MMA_bonds['H-C2']  = 406 * kJmol_2_eV,  4
-MMA_bonds['Cp-Cg'] = 383 * kJmol_2_eV,  2
+MMA_bonds['Cp-C']  = 373 * kJmol_2_eV,  2 ## 383-10 !!!!
 MMA_bonds['O-C3']  = 364 * kJmol_2_eV,  2
 MMA_bonds['C-C3']  = 356 * kJmol_2_eV,  2
 MMA_bonds['C-C2']  = 354 * kJmol_2_eV,  4
-MMA_bonds['justO'] = 13.62,  8
+MMA_bonds['justO'] = 13.62,             8
 
 Eb_Nel = np.array(list(MMA_bonds.values()))
 
 
-#%% mean binding energy = 5.96 eV
+#%% mean binding energy = 6.42 eV
 total_E = 0
 total_N = 0
 
@@ -53,7 +39,7 @@ for key in MMA_bonds.keys():
     total_E += MMA_bonds[key][0]*MMA_bonds[key][1]
     total_N += MMA_bonds[key][1]
 
-Eb_mean = total_E / total_N
+PMMA_Eb_mean = total_E / total_N
 
 
 #%%
@@ -132,26 +118,26 @@ def scission_probs_gryz(EE):
 
 
 #%%
-EE_low = np.linspace(3, 15, 1000)
-
-plt.figure()
-
-plt.plot(EE_low, get_stairway({'C-C2': 4, 'Cp-Cg': 0}, EE_low),\
-         label='room', linewidth=3)
-
-plt.plot(EE_low, get_stairway({'C-C2': 4, 'Cp-Cg': 2}, EE_low),\
-         '--', label='160$^\circ$', linewidth=3)
-
-plt.title('Scission probability')
-plt.xlabel('E, eV')
-plt.ylabel('scission probability')
-
-plt.xlim(3, 15)
-
-plt.legend()
-
-plt.grid()
-plt.show()
+#EE_low = np.linspace(3, 15, 1000)
+#
+#plt.figure()
+#
+#plt.plot(EE_low, get_stairway({'C-C2': 4, 'Cp-Cg': 0}, EE_low),\
+#         label='room', linewidth=3)
+#
+#plt.plot(EE_low, get_stairway({'C-C2': 4, 'Cp-Cg': 2}, EE_low),\
+#         '--', label='160$^\circ$', linewidth=3)
+#
+#plt.title('Scission probability')
+#plt.xlabel('E, eV')
+#plt.ylabel('scission probability')
+#
+#plt.xlim(3, 15)
+#
+#plt.legend()
+#
+#plt.grid()
+#plt.show()
 
 #plt.savefig('two_stairways.png', dpi=300)
 
@@ -162,8 +148,8 @@ def get_Gs_charlesby(T):
     inv_T = 1000 / (T + 273)
     
     k = -0.448036
-#    b = 1.98906
-    b = 2.14
+    b = 1.98906
+#    b = 2.14
     
     return np.exp(k*inv_T + b)
 

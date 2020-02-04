@@ -9,11 +9,9 @@ import numpy.random as rnd
 
 import my_constants as mc
 import my_utilities as mu
-import my_arrays_Dapor as ma
 
 mc = importlib.reload(mc)
 mu = importlib.reload(mu)
-ma = importlib.reload(ma)
 
 os.chdir(mc.sim_folder + 'e-matrix_Harris')
 
@@ -25,9 +23,11 @@ sf = importlib.reload(sf)
 
 
 #%%
+#path = '../e_DATA/Harris/'
 path = '../e_DATA/Harris/'
 
-folders = ['e_DATA_Harris_MY_PRE', 'e_DATA_Harris_MY_MAC', 'e_DATA_Harris_MY_FTIAN']
+#folders = ['e_DATA_Harris_MY_PRE', 'e_DATA_Harris_MY_MAC', 'e_DATA_Harris_MY_FTIAN']
+folders = ['Harris_2020_MAC_0']
 
 
 #%%
@@ -61,7 +61,7 @@ for now_ind in range(len(folders)):
         DATA_PMMA_val_list.append(now_DATA_PMMA_val)
         
         now_DATA_PMMA_dE = copy.deepcopy(now_DATA_PMMA_val)
-        now_DATA_PMMA_dE[np.where(now_DATA_PMMA_dE[:, 3] == 1)[0], -1] = ma.PMMA_E_bind
+        now_DATA_PMMA_dE[np.where(now_DATA_PMMA_dE[:, 3] == 1)[0], -1] = sf.PMMA_Eb_mean
         DATA_PMMA_dE_list.append(now_DATA_PMMA_dE)
 
 
@@ -141,12 +141,17 @@ def get_Gs(b_map_sc):
 
 
 #%%
-b_map_sc = {'C-C2': 4}
-#b_map_sc = {'C-C2': 4, 'Cp-Cg': 2}
+np.save('Harris_e_matrix_val_2020.npy', e_matrix_val)
+np.save('Harris_e_matrix_dE_2020.npy', e_matrix_dE)
+
+
+#%%
+b_map_sc = {'C-C2': 4} # 1.6
+#b_map_sc = {'C-C2': 2, 'Cp-Cg': 2}
 #b_map_sc = {'Cp-Cg': 2}
 #b_map_sc = {'Op-Cp': 2}
 
-print(get_Gs({'C-C2': 4}))
+print(get_Gs(b_map_sc))
 
 
 #%%
@@ -182,7 +187,7 @@ for i, w in enumerate(weights):
 
 
 #%%
-sf.get_Gs_charlesby(160)
+sf.get_Gs_charlesby(27)
 
 
 #%%

@@ -2,12 +2,15 @@
 import numpy as np
 import my_constants as mc
 import my_utilities as mu
+import scission_functions as sf
+import os
 
 import importlib
 mc = importlib.reload(mc)
 mu = importlib.reload(mu)
+sf = importlib.reload(sf)
 
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 
 #%%
@@ -16,32 +19,53 @@ THETA = mc.THETA
 
 
 #%% Elastic scattering
-PMMA_el_U = np.load(mc.sim_folder + 'elastic/PMMA_elastic_U.npy')
-PMMA_el_int_U = np.load(mc.sim_folder + 'elastic/PMMA_elastic_int_CS.npy')
+PMMA_el_U = np.load(os.path.join(mc.sim_folder, 
+        'elastic', 'PMMA_elastic_U.npy'
+        ))
+
+PMMA_el_int_U = np.load(os.path.join(mc.sim_folder,
+        'elastic', 'PMMA_elastic_int_CS.npy'
+        ))
 
 
 #%% Total inelastic U
 ## PMMA
-PMMA_ee_U = np.load(mc.sim_folder +\
-                            'E_loss/diel_responce/Dapor_2020/PMMA_ee_U_Dapor_Ashley.npy')
-PMMA_ee_int_U = np.load(mc.sim_folder +\
-                           'E_loss/diel_responce/Dapor_2020/PMMA_ee_int_U_Dapor_Ashley.npy')
+PMMA_ee_U = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'diel_responce', 'Dapor_2020', 'PMMA_ee_U_Dapor_Ashley.npy'
+        ))
+
+PMMA_ee_int_U = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'diel_responce', 'Dapor_2020', 'PMMA_ee_int_U_Dapor_Ashley.npy'
+        ))
 
 
 #%% Core electron U components
 ## PMMA
-PMMA_C_1S_total_U = np.load(mc.sim_folder + 'E_loss/Gryzinski/PMMA/PMMA_C_1S_U.npy')
-PMMA_C_1S_int_U = np.load(mc.sim_folder + 'E_loss/Gryzinski/PMMA/PMMA_C_1S_int_U.npy')
+PMMA_C_1S_total_U = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'Gryzinski', 'PMMA', 'PMMA_C_1S_U.npy'
+        ))
 
-PMMA_O_1S_total_U = np.load(mc.sim_folder + 'E_loss/Gryzinski/PMMA/PMMA_O_1S_U.npy')
-PMMA_O_1S_int_U = np.load(mc.sim_folder + 'E_loss/Gryzinski/PMMA/PMMA_O_1S_int_U.npy')
+PMMA_C_1S_int_U = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'Gryzinski', 'PMMA', 'PMMA_C_1S_int_U.npy'
+        ))
+
+PMMA_O_1S_total_U = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'Gryzinski', 'PMMA', 'PMMA_O_1S_U.npy'
+        ))
+
+PMMA_O_1S_int_U = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'Gryzinski', 'PMMA', 'PMMA_O_1S_int_U.npy'
+        ))
 
 
 #%%
-PMMA_val_U = np.load(mc.sim_folder +\
-                'E_loss/diel_responce/Dapor_2020/PMMA_val_U_Dapor_Ashley-Gryzinski.npy')
-PMMA_val_int_U = np.load(mc.sim_folder +\
-                'E_loss/diel_responce/Dapor_2020/PMMA_val_int_U_Dapor_Ashley-Gryzinski.npy')
+PMMA_val_U = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'diel_responce', 'Dapor_2020', 'PMMA_val_U_Dapor_Ashley-Gryzinski.npy'
+        ))
+
+PMMA_val_int_U = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'diel_responce', 'Dapor_2020', 'PMMA_val_int_U_Dapor_Ashley-Gryzinski.npy'
+        ))
 
 
 #%%
@@ -61,8 +85,13 @@ PMMA_val_int_U = np.load(mc.sim_folder +\
 
 
 #%% PMMA phonons and polarons
-PMMA_phonon_U = np.load(mc.sim_folder + 'E_loss/phonons_polarons/PMMA_phonon_U.npy')
-PMMA_polaron_U = np.load(mc.sim_folder + 'E_loss/phonons_polarons/PMMA_polaron_U.npy')
+PMMA_phonon_U = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'phonons_polarons', 'PMMA_phonon_U.npy'
+        ))
+
+PMMA_polaron_U = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'phonons_polarons', 'PMMA_polaron_U.npy'
+        ))
 
 
 #%% Combine it all for PMMA
@@ -82,7 +111,7 @@ PMMA_processes_int_U = [PMMA_el_int_U, PMMA_val_int_U, PMMA_C_1S_int_U, PMMA_O_1
 
 
 #%%
-PMMA_Eb_val = 5.96
+PMMA_Eb_val = sf.PMMA_Eb_mean
 
 PMMA_E_bind = [np.zeros(len(EE)), np.ones(len(EE)) * PMMA_Eb_val]
 

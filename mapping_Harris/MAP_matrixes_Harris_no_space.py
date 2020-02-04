@@ -70,7 +70,8 @@ def write_log_var(mon_type, n_next_mon, next_mon_type, next_mon_new_type):
 
 
 #%%
-e_matrix = np.load(mc.sim_folder + 'e-matrix_Harris/2C-C/e-matrix_val.npy')
+#e_matrix = np.load(mc.sim_folder + 'e-matrix_Harris/2C-C/e-matrix_val.npy')
+e_matrix = np.load(mc.sim_folder + 'e-matrix_Harris/2020/Harris_e_matrix_val_2СС.npy')
 
 resist_matrix = np.load('MATRIX_resist_Harris_no_space.npy')
 
@@ -334,7 +335,8 @@ Mn = np.average(chain_lens_final * M0)
 
 ps = (1/Mn - 1/Mn0)*M0
 
-e_matrix_dE = np.load(mc.sim_folder + 'e-matrix_Harris/2C-C/e-matrix_dE.npy')
+#e_matrix_dE = np.load(mc.sim_folder + 'e-matrix_Harris/2C-C/e-matrix_dE.npy')
+e_matrix_dE = np.load(mc.sim_folder + 'e-matrix_Harris/2020/Harris_e_matrix_dE_2СС.npy')
 Gs = (ps*5.95e-5*6.02e+23) / (np.sum(e_matrix_dE)*1e+10)
 
 print('Gs =', Gs)

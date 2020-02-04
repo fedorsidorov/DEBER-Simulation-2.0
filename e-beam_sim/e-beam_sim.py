@@ -33,10 +33,10 @@ E0 = 10e+3
 
 z_cut_Si = 1
 
-n_files = 1
+n_files = 500
 n_tracks = 10
 
-num = 0
+num = 66
 
 
 while num < n_files:

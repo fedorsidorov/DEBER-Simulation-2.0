@@ -9,11 +9,9 @@ from itertools import product
 
 import my_constants as mc
 import my_utilities as mu
-import my_arrays_Dapor as ma
 
 mc = importlib.reload(mc)
 mu = importlib.reload(mu)
-ma = importlib.reload(ma)
 
 from scipy.optimize import curve_fit
 
@@ -30,8 +28,6 @@ mat = np.loadtxt('charlesby1964/electrons.txt')
 #mat = np.loadtxt('charlesby1964/gamma.txt')
 
 x_data, y_data = mat[:, 0], mat[:, 1]
-
-plt.plot(x_data, y_data, 'ro')
 
 
 #%%

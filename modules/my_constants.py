@@ -1,10 +1,11 @@
 import numpy as np
+import os
 
 
 #%%
-sim_folder = '/Users/fedor/Documents/DEBER-Simulation-2.0/'
-#sim_folder = '/home/fedor/DEBER-Simulation-2.0/'
-
+sim_folder = os.path.join('/Users', 'fedor', 'Documents', 'DEBER-Simulation-2.0') ## MAC
+#sim_folder = os.path.join('home', 'fedor', 'DEBER-Simulation-2.0') ## FTIAN
+#sim_folder = os.path.join()
 
 #%% SI!!!
 e = 1.6e-19
