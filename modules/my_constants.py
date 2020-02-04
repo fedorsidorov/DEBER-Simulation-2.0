@@ -3,9 +3,10 @@ import os
 
 
 #%%
-sim_folder = os.path.join('/Users', 'fedor', 'Documents', 'DEBER-Simulation-2.0') ## MAC
+#sim_folder = os.path.join('/Users', 'fedor', 'Documents', 'DEBER-Simulation-2.0') ## MAC
 #sim_folder = os.path.join('home', 'fedor', 'DEBER-Simulation-2.0') ## FTIAN
-#sim_folder = os.path.join()
+sim_folder = os.path.join('C:\\', 'Users', 'User', 'Documents', 'GitHub',
+            'DEBER-Simulation-2.0')
 
 #%% SI!!!
 e = 1.6e-19
