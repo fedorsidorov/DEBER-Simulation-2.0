@@ -36,7 +36,7 @@ z_cut_Si = 1
 n_files = 5000
 n_tracks = 10
 
-num = 0
+num = 1353
 
 
 while num < n_files:
@@ -47,8 +47,7 @@ while num < n_files:
     DATA_PMMA_inel = DATA_PMMA[np.where(DATA_PMMA[:, 3] != 0)]
     
     fname_PMMA_inel = '../e_DATA/Harris/Harris_2020_MAC_0/DATA_PMMA_inel_' + str(num) + '.npy'
-    
-#    np.save(fname, DATA)
+
     np.save(fname_PMMA_inel, DATA_PMMA_inel)
     
     print('file ' + fname_PMMA_inel + ' is ready')
