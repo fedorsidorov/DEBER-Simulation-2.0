@@ -1,5 +1,6 @@
 #%% Import
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
 import os
 import importlib
@@ -12,7 +13,7 @@ mu = importlib.reload(mu)
 import my_constants as mc
 mc = importlib.reload(mc)
 
-os.chdir(mc.sim_folder + 'mapping_Harris')
+os.chdir(os.path.join(mc.sim_folder, 'mapping_Harris'))
 
 
 #%%
@@ -25,10 +26,6 @@ mon_type_ind = -1
 #uint16_max = 65535
 uint32_max = 4294967295
 
-before_msg = '#################################################\n'
-after_msg = 'Result:\n'
-
-
 def rewrite_mon_type(resist_matrix, chain_table, n_mon, new_type):
 
     chain_table[n_mon, mon_type_ind] = new_type
@@ -37,55 +34,27 @@ def rewrite_mon_type(resist_matrix, chain_table, n_mon, new_type):
     resist_matrix[xi, yi, zi, mon_line_pos, mon_type_ind] = new_type
 
 
-def write_log_table(chain_table, n_chain, n_mon, msg=''):
-    
-    msg += 'n_chain = ' + str(n_chain) + '\n\n'
-    msg += 'n_mon = ' + str(n_mon) + '\n'
-    
-    if n_mon-3 >= 0 and n_mon+3 < len(chain_table):
-        msg += 'chain table part:\n' +\
-            str(int(n_mon-3)) + ' ' + str(int(chain_table[n_mon-3, -1])) + '\n' +\
-            str(int(n_mon-2)) + ' ' + str(int(chain_table[n_mon-2, -1])) + '\n' +\
-            str(int(n_mon-1)) + ' ' + str(int(chain_table[n_mon-1, -1])) + '\n' +\
-            str(int(n_mon))   + ' ' + str(int(chain_table[n_mon  , -1])) + '\n' +\
-            str(int(n_mon+1)) + ' ' + str(int(chain_table[n_mon+1, -1])) + '\n' +\
-            str(int(n_mon+2)) + ' ' + str(int(chain_table[n_mon+2, -1])) + '\n' +\
-            str(int(n_mon+3)) + ' ' + str(int(chain_table[n_mon+3, -1])) + '\n'
-    
-    msg += '\n'
-    
-    with open('logfile.txt', 'a') as myfile:
-        myfile.write(msg)
-
-
-def write_log_var(mon_type, n_next_mon, next_mon_type, next_mon_new_type):
-    
-    msg = 'mon_type = ' + str(mon_type) + '\n' +\
-        'n_next_mon = ' + str(n_next_mon) + '\n' +\
-        'next_mon_type = ' + str(next_mon_type) + '\n' +\
-        'next_mon_new_type = ' + str(next_mon_new_type) + '\n'
-    
-    with open('logfile.txt', 'a') as myfile:
-        myfile.write(msg)
-
-
 #%%
-e_matrix = np.load(mc.sim_folder + 'e-matrix_Harris/2020/Harris_e_matrix_val_2СС.npy')
+e_matrix = np.load(os.path.join(mc.sim_folder, 'e-matrix_Harris', '2020',\
+                'Harris_e_matrix_val_2СС+05ester.npy'))
 
-resist_matrix = np.load('MATRIX_resist_Harris_no_space.npy')
+resist_matrix = np.load(os.path.join(mc.sim_folder, 'PMMA_sim_Harris',\
+                'MATRIX_resist_Harris_2020.npy'))
 
-chain_tables_folder = 'Harris_chain_tables_no_space/'
+chain_tables_folder = os.path.join(mc.sim_folder, 'PMMA_sim_Harris', 'Harris_chain_tables_2020')
 files = os.listdir(chain_tables_folder)
 
 chain_tables = []
 
-N_chains_total = 1393
+N_chains_total = 1370
+
 
 for i in range(N_chains_total):
     
     mu.pbar(i, len(files))
     
-    chain_tables.append(np.load(chain_tables_folder + 'chain_table_' + str(i) + '.npy'))
+    chain_tables.append(np.load(os.path.join(chain_tables_folder,
+                'chain_table_' + str(i) + '.npy')))
 
 
 N_chains_total  = len(chain_tables)
@@ -102,12 +71,6 @@ for i in range(len(chain_tables)):
 
 
 #%%
-log_fname = 'logfile.txt'
-
-if os.path.exists(log_fname):
-    os.remove(log_fname)
-
-
 for xi, yi, zi in product(range(resist_shape[0]), range(resist_shape[1]),\
                           range(resist_shape[2])):
     
@@ -154,9 +117,6 @@ for xi, yi, zi in product(range(resist_shape[0]), range(resist_shape[1]),\
         if len(chain_table) == 1:
             continue
         
-#        write_log_table(chain_table, n_chain, n_mon, before_msg)
-        
-        
 ############################################################################### 
         if mon_type == mid_mon: ## bonded monomer #############################
 ###############################################################################
@@ -177,10 +137,6 @@ for xi, yi, zi in product(range(resist_shape[0]), range(resist_shape[1]),\
                 
                 rewrite_mon_type(resist_matrix, chain_table, n_next_mon, next_mon_new_type)
                 
-#                write_log_var(mon_type, n_next_mon, next_mon_type, next_mon_new_type)
-#                write_log_table(chain_table, n_chain, n_mon, after_msg)
-            
-            
             ## if next monomer is full bonded
             elif next_mon_type == mid_mon:
                 
@@ -188,17 +144,11 @@ for xi, yi, zi in product(range(resist_shape[0]), range(resist_shape[1]),\
                 
                 rewrite_mon_type(resist_matrix, chain_table, n_next_mon, next_mon_new_type)
                 
-#                write_log_var(mon_type, n_next_mon, next_mon_type, next_mon_new_type)
-#                write_log_table(chain_table, n_chain, n_mon, after_msg)
-            
             else:
                 print('\nerror!')
                 print('n_chain', n_chain)
                 print('n_mon', n_mon)
                 print('next_mon_type', next_mon_type)
-                
-#                write_log_table(chain_table, n_chain, n_mon, 'Pizdos!\n' + after_msg)
-                
                 
 ###############################################################################
         elif mon_type in [beg_mon, end_mon]: ## half-bonded monomer ###########
@@ -219,9 +169,6 @@ for xi, yi, zi in product(range(resist_shape[0]), range(resist_shape[1]),\
                 
                 rewrite_mon_type(resist_matrix, chain_table, n_next_mon, next_mon_new_type)
                 
-#                write_log_var(mon_type, n_next_mon, next_mon_type, next_mon_new_type)
-#                write_log_table(chain_table, n_chain, n_mon, after_msg)
-            
             ## if next monomer is full bonded !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             elif next_mon_type == mid_mon:
                 
@@ -229,13 +176,8 @@ for xi, yi, zi in product(range(resist_shape[0]), range(resist_shape[1]),\
                 
                 rewrite_mon_type(resist_matrix, chain_table, n_next_mon, next_mon_new_type)
                 
-#                write_log_var(mon_type, n_next_mon, next_mon_type, next_mon_new_type)
-#                write_log_table(chain_table, n_chain, n_mon, after_msg)
-                
             else:
                 print('error 2', next_mon_type)
-                
-#                write_log_table(chain_table, n_chain, n_mon, 'Pizdos2' + after_msg)
         
         else:
             continue
@@ -255,7 +197,6 @@ for i, now_chain in enumerate(chain_tables):
         continue
     
     for line in now_chain:
-        
         mon_type = line[mon_type_ind]
                 
         if mon_type == 0:
@@ -274,48 +215,31 @@ chain_lens_final = np.array(lens_final)
 
 
 #%%
-np.save('lens_final_2C-C.npy', chain_lens_final)
+np.save('lens_final_2CC+05ester_2020.npy', chain_lens_final)
 
 
 #%%
-#chain_lens = np.load('chain_lens_no_space.npy')
+chain_lens_initial = np.load(os.path.join(mc.sim_folder,
+            'PMMA_sim_Harris', 'Harris_chain_lens_2020.npy'))
 
-import matplotlib
+#chain_lens_final = np.load('lens_final_2CC_2020.npy')
 
-plt.figure(figsize=[5., 3.])
-
-font_size = 10
-
-matplotlib.rcParams['font.family'] = 'Times New Roman'
-
-chain_lens_final = np.load('lens_final_2C-C.npy')
-
-#_, ax = plt.subplots()
-
-xx = np.load('../PMMA_sim_Harris/harris_x_after.npy')
+xx = np.load('../PMMA_sim_Harris/PMMA_sim_2019/harris_x_after.npy')
 #yy_SZ = np.load('../PMMA_sim_Harris/harris_y_after_SZ.npy')
-yy = np.load('../PMMA_sim_Harris/harris_y_after_fit.npy')
+yy = np.load('../PMMA_sim_Harris/PMMA_sim_2019/harris_y_after_fit.npy')
 
 mass = np.array(chain_lens_final)*100
 
 #bins = np.logspace(2, 7.1, 21)
 bins = np.logspace(2, 7.1, 21)
 
-#plt.hist(mass, bins, label='simulation')
-plt.hist(mass, bins, label='моделирование')
-plt.gca().set_xscale('log')
+plt.hist(mass, bins, label='simulation')
 
-#plt.plot(xx, yy*2.2e+7, label='experiment')
-plt.plot(xx, yy*2.2e+7, label='эксперимент')
-#plt.plot(xx, yy_SZ*1.6e+9, 'r', label='Schilz-Zimm')
+plt.plot(xx, yy*2.2e+7, label='experiment')
 
-#plt.title('Harris final molecular weight distribution FIT')
-#plt.xlabel('molecular weight')
-plt.xlabel('молекулярный вес')
-#plt.ylabel('N$_{entries}$')
-plt.ylabel('плотность распределения')
-
-#ax.yaxis.get_major_formatter().set_powerlimits((0, 1))
+plt.title('Harris final molecular weight distribution FIT')
+plt.xlabel('molecular weight')
+plt.ylabel('N$_{entries}$')
 
 plt.xlim(1e+2, 1e+6)
 
@@ -324,18 +248,19 @@ plt.grid()
 plt.show()
 
 #plt.savefig('Harris_final_weight_distr_E_bind_4p94.png', dpi=300)
-plt.savefig('fig2.png', dpi=600)
+#plt.savefig('fig2.png', dpi=600)
 
 
 #%% get G(S)
 M0 = 100
-Mn0 = np.average(np.load('lens_initial.npy') * M0)
+Mn0 = np.average(np.load(os.path.join(mc.sim_folder, 'PMMA_sim_Harris',\
+                                      'Harris_chain_lens_2020.npy')) * M0)
 Mn = np.average(chain_lens_final * M0)
 
 ps = (1/Mn - 1/Mn0)*M0
 
-#e_matrix_dE = np.load(mc.sim_folder + 'e-matrix_Harris/2C-C/e-matrix_dE.npy')
-e_matrix_dE = np.load(mc.sim_folder + 'e-matrix_Harris/2020/Harris_e_matrix_dE_2СС.npy')
+e_matrix_dE = np.load(os.path.join(mc.sim_folder,
+            'e-matrix_Harris', '2020', 'Harris_e_matrix_dE_2СС+05ester.npy'))
 Gs = (ps*5.95e-5*6.02e+23) / (np.sum(e_matrix_dE)*1e+10)
 
 print('Gs =', Gs)

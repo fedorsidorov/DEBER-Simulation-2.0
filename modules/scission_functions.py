@@ -18,11 +18,11 @@ MMA_bonds = {}
 #kJmol_2_eV = 1e+3 / (mc.Na * mc.eV)
 kJmol_2_eV = 0.0103
 
-MMA_bonds['Op-Cp'] = 815 * kJmol_2_eV,  4
+MMA_bonds['Cp-Op'] = 815 * kJmol_2_eV,  4
 MMA_bonds['O-Cp']  = 420 * kJmol_2_eV,  2
 MMA_bonds['H-C3']  = 418 * kJmol_2_eV, 12
 MMA_bonds['H-C2']  = 406 * kJmol_2_eV,  4
-MMA_bonds['Cp-C']  = 373 * kJmol_2_eV,  2 ## 383-10 !!!!
+MMA_bonds['C-Cp']  = 373 * kJmol_2_eV,  2 ## 383-10 !!!!
 MMA_bonds['O-C3']  = 364 * kJmol_2_eV,  2
 MMA_bonds['C-C3']  = 356 * kJmol_2_eV,  2
 MMA_bonds['C-C2']  = 354 * kJmol_2_eV,  4

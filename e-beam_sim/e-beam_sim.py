@@ -13,7 +13,7 @@ mc = importlib.reload(mc)
 mu = importlib.reload(mu)
 mcf = importlib.reload(mcf)
 
-os.chdir(mc.sim_folder + 'e-beam_sim')
+os.chdir(os.path.join(mc.sim_folder, 'e-beam_sim'))
 
 import plot_data as pd
 pd = importlib.reload(pd)
@@ -33,10 +33,10 @@ E0 = 10e+3
 
 z_cut_Si = 1
 
-n_files = 500
+n_files = 5000
 n_tracks = 10
 
-num = 66
+num = 0
 
 
 while num < n_files:
@@ -46,7 +46,7 @@ while num < n_files:
     DATA_PMMA = DATA[np.where(DATA[:, 2] == 0)]
     DATA_PMMA_inel = DATA_PMMA[np.where(DATA_PMMA[:, 3] != 0)]
     
-    fname_PMMA_inel = '../e_DATA/Harris/2020_MAC_0/DATA_PMMA_inel_' + str(num) + '.npy'
+    fname_PMMA_inel = '../e_DATA/Harris/Harris_2020_MAC_0/DATA_PMMA_inel_' + str(num) + '.npy'
     
 #    np.save(fname, DATA)
     np.save(fname_PMMA_inel, DATA_PMMA_inel)

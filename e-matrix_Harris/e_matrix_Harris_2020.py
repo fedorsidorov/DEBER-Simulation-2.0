@@ -9,23 +9,21 @@ import numpy.random as rnd
 
 import my_constants as mc
 import my_utilities as mu
+import scission_functions as sf
+import e_matrix_functions as emf
 
 mc = importlib.reload(mc)
 mu = importlib.reload(mu)
-
-os.chdir(mc.sim_folder + 'e-matrix_Harris')
-
-import e_matrix_functions as emf
+sf = importlib.reload(sf)
 emf = importlib.reload(emf)
 
-import scission_functions as sf
-sf = importlib.reload(sf)
+os.chdir(os.path.join(mc.sim_folder, 'e-matrix_Harris'))
 
 
 #%%
-path = '../e_DATA/Harris/'
+path = os.path.join(mc.sim_folder, 'e_DATA', 'Harris')
 
-folders = ['Harris_2020_MAC_0']
+folders = ['Harris_2020_MAC_0', 'Harris_2020_UBU_0']
 
 
 #%%
@@ -38,7 +36,7 @@ for now_ind in range(len(folders)):
     
     mu.pbar(now_ind, len(folders))
     
-    now_folder = path + folders[now_ind]
+    now_folder = os.path.join(path, folders[now_ind])
     now_folder_files = os.listdir(now_folder)
     
     pos = 0
@@ -48,7 +46,7 @@ for now_ind in range(len(folders)):
         if 'DS' in file:
             continue
         
-        now_DATA_PMMA = np.load(now_folder + '/' + file)
+        now_DATA_PMMA = np.load(os.path.join(now_folder, file))
 
         now_DATA_PMMA[:, 5:8] *= 1e+7
         
@@ -81,7 +79,6 @@ bins_2nm = x_bins_2nm, y_bins_2nm, z_bins_2nm
 
 
 #%%
-
 e_matrix_shape = (len(x_bins_2nm)-1, len(y_bins_2nm)-1, len(z_bins_2nm)-1)
 
 e_matrix_val = np.zeros(e_matrix_shape)
@@ -120,7 +117,10 @@ while n_electrons < n_electrons_required:
     
     now_EE = now_DATA_PMMA_val[:, 4]
     
-    b_map_sc = {'C-C2': 4}
+    ##########
+    b_map_sc = {'C-C2': 4, 'C-Cp': 1}
+    ##########
+    
     scission_probs = sf.get_stairway(b_map_sc, now_EE)
     
     scissions = rnd.rand(len(now_EE)) < scission_probs
@@ -135,16 +135,17 @@ while n_electrons < n_electrons_required:
 
 
 #%%
-np.save('2020/Harris_e_matrix_val_2СС.npy', e_matrix_val)
-np.save('2020/Harris_e_matrix_dE_2СС.npy', e_matrix_dE)
+np.save('2020/Harris_e_matrix_val_2СС+05ester.npy', e_matrix_val)
+np.save('2020/Harris_e_matrix_dE_2СС+05ester.npy', e_matrix_dE)
 
 
 #%%
-b_map_sc = {'C-C2': 4} # 1.6
-#b_map_sc = {'C-C2': 2, 'Cp-Cg': 2}
+#b_map_sc = {'C-C2': 4} # 1.6
+#b_map_sc = {'C-C2': 4, 'C-Cp': 1}
 #b_map_sc = {'Cp-Cg': 2}
 #b_map_sc = {'Op-Cp': 2}
 
+print(np.sum(e_matrix_val) / np.sum(e_matrix_dE) * 100)
 
 
 #%%
