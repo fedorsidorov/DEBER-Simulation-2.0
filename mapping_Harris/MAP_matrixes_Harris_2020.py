@@ -13,6 +13,9 @@ mu = importlib.reload(mu)
 import my_constants as mc
 mc = importlib.reload(mc)
 
+import e_matrix_functions as emf
+emf = importlib.reload(emf)
+
 os.chdir(os.path.join(mc.sim_folder, 'mapping_Harris'))
 
 
@@ -26,6 +29,14 @@ mon_type_ind = -1
 #uint16_max = 65535
 uint32_max = 4294967295
 
+
+#deg_path = '2CC'
+#deg_path = '2СС+05ester'
+#deg_path = '2CC+ester'
+#deg_path = 'CC+ester'
+#deg_path = '2СС+ester+3CH'
+
+
 def rewrite_mon_type(resist_matrix, chain_table, n_mon, new_type):
 
     chain_table[n_mon, mon_type_ind] = new_type
@@ -35,13 +46,18 @@ def rewrite_mon_type(resist_matrix, chain_table, n_mon, new_type):
 
 
 #%%
-e_matrix = np.load(os.path.join(mc.sim_folder, 'e-matrix_Harris', '2020',\
-                'Harris_e_matrix_val_2СС+05ester.npy'))
+e_matrix = np.load(os.path.join(mc.sim_folder,
+        'e-matrix_Harris', 'Harris_e_matrix_val_' + deg_path + '.npy'
+        ))
 
-resist_matrix = np.load(os.path.join(mc.sim_folder, 'PMMA_sim_Harris',\
-                'MATRIX_resist_Harris_2020.npy'))
+resist_matrix = np.load(os.path.join(mc.sim_folder,
+        'PMMA_sim_Harris', 'MATRIX_resist_Harris_2020.npy'
+        ))
 
-chain_tables_folder = os.path.join(mc.sim_folder, 'PMMA_sim_Harris', 'Harris_chain_tables_2020')
+chain_tables_folder = os.path.join(mc.sim_folder,
+        'PMMA_sim_Harris', 'Harris_chain_tables_2020'
+        )
+
 files = os.listdir(chain_tables_folder)
 
 chain_tables = []
@@ -54,16 +70,16 @@ for i in range(N_chains_total):
     mu.pbar(i, len(files))
     
     chain_tables.append(np.load(os.path.join(chain_tables_folder,
-                'chain_table_' + str(i) + '.npy')))
+            'chain_table_' + str(i) + '.npy'
+            )))
 
-
-N_chains_total  = len(chain_tables)
 
 resist_shape = np.shape(resist_matrix)[:3]
 
 
 #%%
 lens_before = np.zeros(len(chain_tables))
+
 
 for i in range(len(chain_tables)):
     
@@ -215,29 +231,70 @@ chain_lens_final = np.array(lens_final)
 
 
 #%%
-np.save('lens_final_2CC+05ester_2020.npy', chain_lens_final)
+np.save('lens_final_' + deg_path + '.npy', chain_lens_final)
 
 
 #%%
+#deg_path = '2CC'
+#deg_path = '2CC+05ester'
+#deg_path = '2CC+ester'
+#deg_path = 'CC+ester'
+deg_path = '2CC+ester+3CH'
+
+chain_lens_final = np.load('lens_final_' + deg_path + '.npy')
+
+Mn0 = np.average(np.load(os.path.join(mc.sim_folder,
+        'PMMA_sim_Harris', 'Harris_chain_lens_2020.npy'
+        )) * mc.M0)
+
+Mn = np.average(chain_lens_final * mc.M0)
+
+total_E_loss = np.sum(np.load(os.path.join(mc.sim_folder,
+        'e-matrix_Harris', 'Harris_e_matrix_dE_' + deg_path + '.npy'
+        )))
+
+#E_loss_1e = total_E_loss / emf.get_n_electrons_2D(1e-4, 100, 100, 0)
+ps = (1/Mn - 1/Mn0) * mc.M0 ## probability of chain scission
+#Q = 1e-4 ## exposure dose per cm^2
+d = mc.rho_PMMA * (500e-7) ## sheet density, g/cm^2
+
+#Gs = ( ps * d * mc.Na * (1/M0) ) / ( Q/mc.e * E_loss_1e ) * 100
+Gs = ( ps * d * mc.Na * (1/mc.M0) ) / ( total_E_loss / (100e-7)**2 ) * 100
+
+print('Gs =', Gs)
+
+
+
 chain_lens_initial = np.load(os.path.join(mc.sim_folder,
-            'PMMA_sim_Harris', 'Harris_chain_lens_2020.npy'))
+        'PMMA_sim_Harris', 'Harris_chain_lens_2020.npy'
+        ))
 
-#chain_lens_final = np.load('lens_final_2CC_2020.npy')
+chain_lens_final = np.load('lens_final_' + deg_path + '.npy')
 
-xx = np.load('../PMMA_sim_Harris/PMMA_sim_2019/harris_x_after.npy')
-#yy_SZ = np.load('../PMMA_sim_Harris/harris_y_after_SZ.npy')
-yy = np.load('../PMMA_sim_Harris/PMMA_sim_2019/harris_y_after_fit.npy')
+#distr_i = np.load(os.path.join(mc.sim_folder,
+#        'PMMA_sim_Harris', 'harris_initial_distr.npy'
+#        ))
 
-mass = np.array(chain_lens_final)*100
+distr_f = np.load(os.path.join(mc.sim_folder,
+        'PMMA_sim_Harris', 'harris_final_distr.npy'
+        ))
 
-#bins = np.logspace(2, 7.1, 21)
+mass = np.array(chain_lens_final) * mc.u_PMMA
+
 bins = np.logspace(2, 7.1, 21)
 
+_, ax = plt.subplots()
+
+chain_lens_hist = np.histogram(mass, bins=bins)
+
 plt.hist(mass, bins, label='simulation')
+plt.plot(distr_f[:, 0], distr_f[:, 1]*chain_lens_hist[0].max(), label='experiment')
 
-plt.plot(xx, yy*2.2e+7, label='experiment')
+plt.gca().set_xscale('log')
+ax.yaxis.get_major_formatter().set_powerlimits((0, 1))
 
-plt.title('Harris final molecular weight distribution FIT')
+
+plt.title(deg_path + ', G = ' + str(np.round(Gs*100) / 100))
 plt.xlabel('molecular weight')
 plt.ylabel('N$_{entries}$')
 
@@ -247,22 +304,5 @@ plt.legend()
 plt.grid()
 plt.show()
 
-#plt.savefig('Harris_final_weight_distr_E_bind_4p94.png', dpi=300)
-#plt.savefig('fig2.png', dpi=600)
-
-
-#%% get G(S)
-M0 = 100
-Mn0 = np.average(np.load(os.path.join(mc.sim_folder, 'PMMA_sim_Harris',\
-                                      'Harris_chain_lens_2020.npy')) * M0)
-Mn = np.average(chain_lens_final * M0)
-
-ps = (1/Mn - 1/Mn0)*M0
-
-e_matrix_dE = np.load(os.path.join(mc.sim_folder,
-            'e-matrix_Harris', '2020', 'Harris_e_matrix_dE_2СС+05ester.npy'))
-Gs = (ps*5.95e-5*6.02e+23) / (np.sum(e_matrix_dE)*1e+10)
-
-print('Gs =', Gs)
-
+plt.savefig('Harris_final_' + deg_path + '.png', dpi=300)
 

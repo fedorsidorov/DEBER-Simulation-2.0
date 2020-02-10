@@ -36,7 +36,7 @@ z_cut_Si = 1
 n_files = 5000
 n_tracks = 10
 
-num = 1353
+num = 2166
 
 
 while num < n_files:

@@ -47,6 +47,7 @@ n_Si =  rho_Si * Na/u_Si
 
 Z_PMMA = 3.6
 u_PMMA = 100.12
+M0 = u_PMMA
 rho_PMMA = 1.18
 
 n_H_PMMA = 8

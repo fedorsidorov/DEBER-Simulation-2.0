@@ -23,18 +23,18 @@ def func(x, a, b, c):
 
 #%%
 ## before
-Mn = 5.63e+5
-Mw = 2.26e+6
+#Mn = 5.63e+5
+#Mw = 2.26e+6
 
 ## after
-#Mn = 2370
-#Mw = 8160
+Mn = 2370
+Mw = 8160
 
-mat = np.loadtxt('curves/harris_before.txt')
-x_fit = np.logspace(2, 8, 1001) ## before
+#mat = np.loadtxt('curves/harris_before.txt')
+#x_fit = np.logspace(2, 8, 1001) ## before
 
-#mat = np.loadtxt('curves/harris_after.txt')
-#x_fit = np.logspace(2, 6, 10000) ## after
+mat = np.loadtxt('curves/harris_after.txt')
+x_fit = np.logspace(2, 6, 10000) ## after
 
 x = mat[:, 0]
 y = mat[:, 1]
@@ -69,7 +69,7 @@ plt.semilogx(x_diff, y_diff_n, label='fit')
 y_SZ = cf.schulz_zimm(x_diff, Mn, Mw)
 y_SZ_n = y_SZ / np.max(y_SZ)
 
-plt.semilogx(x_diff, y_SZ_n, label='Schulz-Zimm')
+#plt.semilogx(x_diff, y_SZ_n, label='Schulz-Zimm')
 
 plt.title('Harris initial molecular weight distribution')
 plt.xlabel('molecular weight')
@@ -78,6 +78,11 @@ plt.ylabel('density')
 plt.legend()
 plt.grid()
 plt.show()
+
+
+#%%
+distr = np.array(list(zip(x_diff, y_diff_n)))
+plt.semilogx(distr[:, 0], distr[:, 1])
 
 #plt.savefig('Harris_after.png', dpi=300)
 

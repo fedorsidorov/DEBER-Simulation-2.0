@@ -89,7 +89,7 @@ borders_nm = 250
 x_min, x_max = x_beg - borders_nm, x_end + borders_nm
 y_min, y_max = y_beg - borders_nm, y_end + borders_nm
 
-n_electrons_required = emf.get_n_electrons_2D(1e-4, lx, ly, borders_nm) / 50
+n_electrons_required = emf.get_n_electrons_2D(1e-4, lx, ly, borders_nm)
 n_electrons = 0
 
 
@@ -118,7 +118,10 @@ while n_electrons < n_electrons_required:
     now_EE = now_DATA_PMMA_val[:, 4]
     
     ##########
-    b_map_sc = {'C-C2': 4, 'C-Cp': 1}
+#    b_map_sc = {'C-C2': 4, 'C-Cp': 2}
+#    b_map_sc = {'C-C2': 2, 'C-Cp': 2}
+#    b_map_sc = {'C-C3': 6, 'C-Cp': 2}
+    b_map_sc = {'C-C2': 4, 'C-Cp': 2, 'C-C3': 6}
     ##########
     
     scission_probs = sf.get_stairway(b_map_sc, now_EE)
@@ -135,8 +138,15 @@ while n_electrons < n_electrons_required:
 
 
 #%%
-np.save('2020/Harris_e_matrix_val_2СС+05ester.npy', e_matrix_val)
-np.save('2020/Harris_e_matrix_dE_2СС+05ester.npy', e_matrix_dE)
+np.save('Harris_e_matrix_val_2СС+ester+3CH.npy', e_matrix_val)
+np.save('Harris_e_matrix_dE_2СС+ester+3CH.npy', e_matrix_dE)
+
+#%%
+#e_matrix_val = np.load('Harris_e_matrix_val_2CC.npy')
+#e_matrix_dE = np.load('Harris_e_matrix_dE_2CC.npy')
+
+e_matrix_val = np.load('Harris_e_matrix_val_CC+ester.npy')
+e_matrix_dE = np.load('Harris_e_matrix_dE_CC+ester.npy')
 
 
 #%%

@@ -29,6 +29,10 @@ print(os.listdir(source_dir))
 hist_2nm = np.load(os.path.join(mc.sim_folder, 'Chains', 'Chains_Harris_2020', 'hist_2nm.npy'))
 
 
+#%%
+plt.imshow(np.average(hist_2nm, axis=1))
+
+
 #%% constants
 N_chains_total = 1370
 N_mon_cell_max = 565
