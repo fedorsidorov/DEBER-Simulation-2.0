@@ -2,24 +2,28 @@
 import numpy as np
 import os
 import importlib
-import my_functions as mf
-import my_variables as mv
 import my_constants as mc
 import matplotlib.pyplot as plt
 import E_loss_functions as elf
+import my_utilities as mu
 
-mf = importlib.reload(mf)
-mv = importlib.reload(mv)
+mu = importlib.reload(mu)
 mc = importlib.reload(mc)
 elf = importlib.reload(elf)
 
-os.chdir(mv.sim_path_MAC + 'E_loss/E_bind_Si')
+os.chdir(os.path.join(mc.sim_folder, 'E_loss', 'E_bind_Si'))
+
 
 #%%
-EE = mv.EE
+EE = mc.EE
 
-SP_TOT = np.load('../diel_responce/Palik/Si_SP_Palik.npy')
-SP_CORE = np.load('../Gryzinski/Si_core_SP.npy')
+SP_TOT = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'diel_responce', 'Palik', 'Si_SP_Palik.npy'
+        ))
+
+SP_CORE = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'Gryzinski', 'Si', 'Si_core_SP.npy'
+        ))
 
 plt.loglog(EE, SP_TOT, label='core')
 plt.loglog(EE, SP_CORE, label='total')
@@ -89,7 +93,7 @@ EB = np.linspace(0.01, 25, 5000)
 
 for i in range(len(EE)):
     
-    mf.upd_progress_bar(i, len(EE))
+    mг.upd_progress_bar(i, len(EE))
     
     now_E = EE[i]
     

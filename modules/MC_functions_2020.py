@@ -71,7 +71,7 @@ def get_elastic_On(layer_ind, E_ind, O_prev):
     phi = 2 * np.pi * rnd.random()
     
     int_array = ma.processes_int_U[layer_ind][0][E_ind, :]
-    theta = get_closest_int_el(int_array, ma.THETA, rnd.random())
+    theta = get_closest_int_el(int_array, mc.THETA, rnd.random())
     
     return get_O_matrix(phi, theta, O_prev)
 
@@ -100,7 +100,7 @@ def get_ion_dE_E2nd_On_O2nd(layer_ind, proc_ind, E, E_ind, O_prev):
     E_bind = ma.E_bind[layer_ind][proc_ind][E_ind]
     
     int_array = ma.processes_int_U[layer_ind][proc_ind][E_ind, :]
-    dE = get_closest_int_el(int_array, ma.EE, rnd.random())
+    dE = get_closest_int_el(int_array, mc.EE, rnd.random())
     
 #    if layer_ind == 0 and E_bind > 0:
 #        print('Error')
@@ -184,7 +184,7 @@ def get_coll_data(d_PMMA, E_prev, O_prev, x, z):
     
     ## x - in future!!
     
-    E_ind = get_closest_el_ind(ma.EE, E_prev)
+    E_ind = get_closest_el_ind(mc.EE, E_prev)
     layer_ind = get_layer_ind(d_PMMA, z)
     proc_ind = get_collision_ind(layer_ind, E_ind)
     

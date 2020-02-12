@@ -2,12 +2,12 @@
 import numpy as np
 import os
 import importlib
-
 import matplotlib.pyplot as plt
 
 import my_constants as mc
 import my_utilities as mu
-import MC_functions_2020 as mcf
+#import MC_functions_2020 as mcf
+import MC_functions_2020_G as mcf
 
 mc = importlib.reload(mc)
 mu = importlib.reload(mu)
@@ -33,10 +33,10 @@ E0 = 10e+3
 
 z_cut_Si = 1
 
-n_files = 5000
-n_tracks = 10
+n_files = 1
+n_tracks = 1
 
-num = 2166
+num = 0
 
 
 while num < n_files:
@@ -48,15 +48,20 @@ while num < n_files:
     
     fname_PMMA_inel = '../e_DATA/Harris/Harris_2020_MAC_0/DATA_PMMA_inel_' + str(num) + '.npy'
 
-    np.save(fname_PMMA_inel, DATA_PMMA_inel)
+#    np.save(fname_PMMA_inel, DATA_PMMA_inel)
     
-    print('file ' + fname_PMMA_inel + ' is ready')
+#    print('file ' + fname_PMMA_inel + ' is ready')
 
     num += 1
 
 
 #%%
-test_DATA = np.load('../e_DATA/Aktary/DATA_PMMA_inel_5.npy')
+np.save('WTF.npy', DATA)
+
+
+#%%
+#test_DATA = np.load('../e_DATA/Aktary/DATA_PMMA_inel_5.npy')
+WTF = np.load('WTF.npy')
 
 
 #%%

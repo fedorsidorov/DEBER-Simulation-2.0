@@ -13,21 +13,22 @@ elf = importlib.reload(elf)
 
 
 #%%
-MMA_bonds = {}
-
 #kJmol_2_eV = 1e+3 / (mc.Na * mc.eV)
 kJmol_2_eV = 0.0103
 
-MMA_bonds['Cp-Op'] = 815 * kJmol_2_eV,  4
-MMA_bonds['O-Cp']  = 420 * kJmol_2_eV,  2
-MMA_bonds['H-C3']  = 418 * kJmol_2_eV, 12
-MMA_bonds['H-C2']  = 406 * kJmol_2_eV,  4
-MMA_bonds['C-Cp']  = 373 * kJmol_2_eV,  2 ## 383-10 !!!!
-MMA_bonds['O-C3']  = 364 * kJmol_2_eV,  2
-MMA_bonds['C-C3']  = 356 * kJmol_2_eV,  2
-MMA_bonds['C-C2']  = 354 * kJmol_2_eV,  4
-MMA_bonds['justO'] = 13.62,             8
+MMA_bonds = {}
 
+MMA_bonds['Oval'] = 13.62,             8
+MMA_bonds["C'-O'"] = 815 * kJmol_2_eV,  4
+MMA_bonds["C'-O"]  = 420 * kJmol_2_eV,  2
+MMA_bonds["C3-H"]  = 418 * kJmol_2_eV, 12
+MMA_bonds["C2-H"]  = 406 * kJmol_2_eV,  4
+MMA_bonds["C-C'"]  = 373 * kJmol_2_eV,  2 ## 383-10 !!!!
+MMA_bonds["O-C3"]  = 364 * kJmol_2_eV,  2
+MMA_bonds["C-C3"]  = 356 * kJmol_2_eV,  2
+MMA_bonds["C-C2"]  = 354 * kJmol_2_eV,  4
+
+#bond_names = list(MMA_bonds.keys())
 Eb_Nel = np.array(list(MMA_bonds.values()))
 
 
@@ -44,9 +45,6 @@ PMMA_Eb_mean = total_E / total_N
 
 #%%
 def get_stairway(b_map_sc, EE=mc.EE):
-
-#    EE = mc.EE
-#    b_map_sc = {'Op-Cp': 2}
     
     Eb_Nel_sc_list = []
     
@@ -56,7 +54,6 @@ def get_stairway(b_map_sc, EE=mc.EE):
     Eb_Nel_sc = np.array(Eb_Nel_sc_list)
     
     probs = np.zeros(len(EE))
-    
     
     nums = np.zeros(len(EE))
     dens = np.zeros(len(EE))
@@ -92,29 +89,52 @@ def get_stairway(b_map_sc, EE=mc.EE):
 #%%
 def scission_probs_gryz(EE):
     
-    gryz_bond_U = np.zeros((len(MMA_bonds), len(EE)))
+    gryz_bond_U = np.zeros((len(EE), len(MMA_bonds)))
     
     
     for i in range(len(MMA_bonds)):
         
-        gryz_bond_U[i, :] = elf.get_Gryzinski_CS(EE, MMA_bonds[list(MMA_bonds.keys())[i]][0]) *\
+        gryz_bond_U[:, i] = elf.get_Gryzinski_CS(EE, MMA_bonds[list(MMA_bonds.keys())[i]][0]) *\
             MMA_bonds[list(MMA_bonds.keys())[i]][1] * mc.n_PMMA_mon
         
 #        plt.loglog(EE, gryz_bond_U[i, :], label=list(MMA_bonds.keys())[i])
     
+    gryz_probs = np.zeros(np.shape(gryz_bond_U))
     
-    probs = np.zeros(len(EE))
-
-
-    for i in range(len(probs)):
+    
+    for i in range(len(gryz_probs)):
         
-        if np.sum(gryz_bond_U[:, i]) == 0:
+        now_sum = np.sum(gryz_bond_U[i])
+        
+        if now_sum == 0:
             continue
         
-        probs[i] = np.sum(gryz_bond_U[-2:, i]) / np.sum(gryz_bond_U[:, i])
-    
-    
-    return probs
+        gryz_probs[i] = gryz_bond_U[i] / now_sum
+        
+        
+    return gryz_probs
+
+
+#%%
+#gryz_bond_U = scission_probs_gryz(mc.EE)
+#
+#
+#for i in range(len(gryz_bond_U[0])):
+#    
+#    plt.loglog(mc.EE, gryz_bond_U[:, i], label=list(MMA_bonds.keys())[i])
+#
+#
+#plt.title('Gryzinski cross-sections for PMMA valence electrons')
+#plt.xlabel('E, eV')
+#plt.ylabel('U, $\AA^{-1}$')
+#
+#plt.xlim(1, 1e+4)
+#plt.ylim(1e+4, 1e+8)
+#
+#plt.legend()
+#plt.grid()
+
+#plt.savefig('Gryzinski_val.png', dpi=300)
 
 
 #%%

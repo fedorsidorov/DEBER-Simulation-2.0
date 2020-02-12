@@ -97,7 +97,7 @@ Si_processes_int_U = [Si_el_int_U, Si_val_int_U, Si_1S_int_U, Si_2S_int_U, Si_2P
 
 
 Si_el_E_bind = np.zeros(len(EE)) ## dummy!!!
-Si_val_E_bind = np.load(os.path.join(mc.sim_folder, 'E_loss', 'E_bind_Si', 'Si_E_bind.npy'))
+Si_val_E_bind = np.load(os.path.join(mc.sim_folder, 'E_loss', 'E_bind_Si', 'Si_E_bind_2020.npy'))
 Si_1S_E_bind = np.ones(len(EE)) * mc.binding_Si[0]
 Si_2S_E_bind = np.ones(len(EE)) * mc.binding_Si[1]
 Si_2P_E_bind = np.ones(len(EE)) * mc.binding_Si[2]

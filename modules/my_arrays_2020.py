@@ -5,24 +5,25 @@ import my_utilities as mu
 
 import prepare_PMMA as pp
 import prepare_Si as ps
+import scission_functions as sf
 
 import importlib
 mc = importlib.reload(mc)
 mu = importlib.reload(mu)
 pp = importlib.reload(pp)
 ps = importlib.reload(ps)
+sf = importlib.reload(sf)
 
 #import matplotlib.pyplot as plt
 
 
 #%%
-EE = mc.EE
-THETA = mc.THETA
-
-#%%
 PMMA_processes_U = pp.PMMA_processes_U
 PMMA_processes_int_U = pp.PMMA_processes_int_U
 PMMA_E_bind = pp.PMMA_E_bind
+
+scission_prob_gryz = sf.scission_probs_gryz(mc.EE)
+PMMA_val_Eb = sf.Eb_Nel[:, 0]
 
 
 #%%

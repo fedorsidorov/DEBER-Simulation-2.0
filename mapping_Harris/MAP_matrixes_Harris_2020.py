@@ -32,7 +32,7 @@ uint32_max = 4294967295
 
 #deg_path = '2CC'
 #deg_path = '2СС+05ester'
-#deg_path = '2CC+ester'
+deg_path = '2CC+ester'
 #deg_path = 'CC+ester'
 #deg_path = '2СС+ester+3CH'
 
@@ -239,7 +239,7 @@ np.save('lens_final_' + deg_path + '.npy', chain_lens_final)
 #deg_path = '2CC+05ester'
 #deg_path = '2CC+ester'
 #deg_path = 'CC+ester'
-deg_path = '2CC+ester+3CH'
+#deg_path = '2CC+ester+3CH'
 
 chain_lens_final = np.load('lens_final_' + deg_path + '.npy')
 

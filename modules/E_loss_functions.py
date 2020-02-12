@@ -107,6 +107,17 @@ def get_PMMA_O_Gryzinski_1S_U(EE):
 
 #%% Si
 ## Differential
+def get_Si_Gryzinski_core_diff_U(EE):
+    
+    core_diff_U = np.zeros(len(EE), len(EE))
+    
+    for i in range(len(mc.binding_Si)):
+        
+        result += get_Gryzinski_diff_CS(EE, mc.binding_Si[i]) * mc.occupancy_Si[i] * mc.n_Si
+    
+    
+
+
 def get_Si_Gryzinski_1S_diff_U(EE):
     return get_Gryzinski_diff_CS(EE, mc.binding_Si[0]) * mc.occupancy_Si[0] * mc.n_Si
 
