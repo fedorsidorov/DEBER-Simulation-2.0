@@ -18,7 +18,7 @@ kJmol_2_eV = 0.0103
 
 MMA_bonds = {}
 
-MMA_bonds['Oval'] = 13.62,             8
+MMA_bonds["Oval"] = 13.62,             8
 MMA_bonds["C'-O'"] = 815 * kJmol_2_eV,  4
 MMA_bonds["C'-O"]  = 420 * kJmol_2_eV,  2
 MMA_bonds["C3-H"]  = 418 * kJmol_2_eV, 12
@@ -94,10 +94,10 @@ def scission_probs_gryz(EE):
     
     for i in range(len(MMA_bonds)):
         
-        gryz_bond_U[:, i] = elf.get_Gryzinski_CS(EE, MMA_bonds[list(MMA_bonds.keys())[i]][0]) *\
-            MMA_bonds[list(MMA_bonds.keys())[i]][1] * mc.n_PMMA_mon
+        gryz_bond_U[:, i] = elf.get_Gryzinski_CS(EE, MMA_bonds[list(MMA_bonds.keys())[i]][0],\
+                WW=mc.WW_ext) * MMA_bonds[list(MMA_bonds.keys())[i]][1] * mc.n_PMMA_mon
         
-#        plt.loglog(EE, gryz_bond_U[i, :], label=list(MMA_bonds.keys())[i])
+#        plt.loglog(EE, gryz_bond_U[:, i], label=list(MMA_bonds.keys())[i])
     
     gryz_probs = np.zeros(np.shape(gryz_bond_U))
     
@@ -113,6 +113,36 @@ def scission_probs_gryz(EE):
         
         
     return gryz_probs
+
+
+#%%
+def get_stairway_Gryzinski(bond_dict_sc, EE=mc.EE):
+    
+    gryz_probs = scission_probs_gryz(EE)
+    
+    probs = np.zeros(len(EE))
+    
+    
+    for b in bond_dict_sc:
+        
+        bond_ind = np.where(Eb_Nel[:, 0] == MMA_bonds[b][0])[0][0]    
+        probs += gryz_probs[:, bond_ind] * bond_dict_sc[b] / MMA_bonds[b][1]
+        
+
+    return probs
+
+
+#%%
+bond_dict_sc = {"C-C2": 4}
+#bond_dict_sc = {"C-C2": 4, "C-C'": 2}
+
+end_ind = 300
+
+EE = np.linspace(1, 10, 10000)
+#EE = mc.
+
+plt.plot(EE, get_stairway_Gryzinski(bond_dict_sc, EE), '--')
+
 
 
 #%%
