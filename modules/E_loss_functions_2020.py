@@ -5,7 +5,7 @@ import importlib
 #import my_arrays as ma
 import my_utilities as mu
 import my_constants as mc
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 #ma = importlib.reload(ma)
 mu = importlib.reload(mu)
@@ -105,6 +105,15 @@ def get_PMMA_O_Gryzinski_1S_U(EE):
         mc.n_O_PMMA
 
 
+## Stopping power
+def get_PMMA_C_1S_SP(EE):
+    return get_Gryzinski_SP(EE, mc.binding_C_1S, mc.n_PMMA_mon*mc.n_C_PMMA, mc.occupancy_1S)
+
+
+def get_PMMA_O_1S_SP(EE):
+    return get_Gryzinski_SP(EE, mc.binding_O_1S, mc.n_PMMA_mon*mc.n_O_PMMA, mc.occupancy_1S)
+
+
 #%% Si
 ## Differential
 def get_Si_Gryzinski_core_diff_U(EE):
@@ -157,23 +166,12 @@ def get_Si_Gryzinski_2P_U(EE):
 
 
 #%%
-def get_PMMA_Gryzinski_core_U(EE):
-    
-    CS_C_1S = get_Gryzinski_CS(EE, mc.binding_C_1S) * mc.occupancy_1S
-    U_C_K = CS_C_1S * mc.n_PMMA_mon * mc.n_C_PMMA
-    
-    CS_O_1S = get_Gryzinski_CS(EE, mc.binding_O_1S) * mc.occupancy_1S
-    U_O_K = CS_O_1S * mc.n_PMMA_mon * mc.n_O_PMMA
-    
-    return U_C_K + U_O_K
+def get_PMMA_Gryzinski_core_U(EE):    
+    return get_PMMA_C_Gryzinski_1S_U(EE) + get_PMMA_Щ_Gryzinski_1S_U(EE)
 
 
 def get_PMMA_Gryzinski_core_SP(EE):
-    
-    SP_C_1S = get_Gryzinski_SP(EE, mc.binding_C_1S, mc.n_PMMA_mon*mc.n_C_PMMA, mc.occupancy_1S)
-    SP_O_1S = get_Gryzinski_SP(EE, mc.binding_O_1S, mc.n_PMMA_mon*mc.n_O_PMMA, mc.occupancy_1S)
-    
-    return SP_C_1S + SP_O_1S
+    return get_PMMA_C_1S_SP(EE) + get_PMMA_O_1S_SP(EE)
     
 
 #%% Si
@@ -263,4 +261,32 @@ def get_PMMA_U_polaron(EE):
     U_POL = C * np.exp(-gamma * EE) * 1e+7 ## cm^-1
     
     return U_POL
+
+
+#%% Greeneich E_loss, z in cm
+def get_e_density(E0, Q, z):
+    
+    q = 1.6e-19
+    rho = 1.19
+    
+    RG = 4.6e-6 / rho * (E0 / 1e+3)**1.75
+    f = z / RG
+    lambda_f = 0.74 + 4.7*f - 8.9*f**2 + 3.5*f**3
+    
+    eps = Q/q * E0/RG * lambda_f
+    
+    return eps ## eV/cc
+
+
+#%% Calculate Harris E_loss per 1 cm^2 for 500nm PMMA layer, 10 keV, 100 uC/cm^2
+#z = np.linspace(0, 500e-7, 1000)
+#dE = get_e_density(10e+3, 1e-4, z)
+
+#plt.plot(z, dE)
+
+#E_loss_cm2 = np.trapz(dE, x=z)
+
+
+
+
 

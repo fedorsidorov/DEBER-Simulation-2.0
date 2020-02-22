@@ -32,7 +32,7 @@ uint32_max = 4294967295
 
 #deg_path = '2CC'
 #deg_path = '2СС+05ester'
-deg_path = '2CC+ester'
+#deg_path = '2CC+ester'
 #deg_path = 'CC+ester'
 #deg_path = '2СС+ester+3CH'
 
@@ -47,7 +47,8 @@ def rewrite_mon_type(resist_matrix, chain_table, n_mon, new_type):
 
 #%%
 e_matrix = np.load(os.path.join(mc.sim_folder,
-        'e-matrix_Harris', 'Harris_e_matrix_val_' + deg_path + '.npy'
+#        'e-matrix_Harris', 'Harris_e_matrix_val_' + deg_path + '.npy'
+        
         ))
 
 resist_matrix = np.load(os.path.join(mc.sim_folder,

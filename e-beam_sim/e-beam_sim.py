@@ -20,8 +20,8 @@ pd = importlib.reload(pd)
 
 
 #%% Harris
-d_PMMA = 500e-7
-E0 = 10e+3
+#d_PMMA = 500e-7
+#E0 = 10e+3
 
 ## EXP
 #d_PMMA = 900e-7
@@ -31,10 +31,14 @@ E0 = 10e+3
 #d_PMMA = 100e-7
 #E0 = 10e+3
 
+## PMMA only
+d_PMMA = 1
+E0 = 20e+3
+
 z_cut_Si = 1
 
-n_files = 1000
-n_tracks = 10
+n_files = 3000
+n_tracks = 1
 
 num = 0
 
@@ -44,11 +48,14 @@ while num < n_files:
     DATA = mcf.get_DATA(d_PMMA, E0, n_tracks, z_cut_Si)
     
     DATA_PMMA = DATA[np.where(DATA[:, 2] == 0)]
-    DATA_PMMA_inel = DATA_PMMA[np.where(DATA_PMMA[:, 3] != 0)]
+#    DATA_PMMA_inel = DATA_PMMA[np.where(DATA_PMMA[:, 3] != 0)]
+    DATA_PMMA_prim = DATA_PMMA[np.where(np.isnan(DATA_PMMA[:, 1]))]
     
-    fname_PMMA_inel = '../e_DATA/Harris/Harris_2020_MAC_1_G/DATA_PMMA_inel_' + str(num) + '.npy'
+#    fname_PMMA_inel = '../e_DATA/Harris/Harris_2020_MAC_1_G/DATA_PMMA_inel_' + str(num) + '.npy'
+    fname_PMMA_inel = '../e_DATA/DATA_PMMA_prim_' + str(num) + '.npy'
 
-    np.save(fname_PMMA_inel, DATA_PMMA_inel)
+#    np.save(fname_PMMA_inel, DATA_PMMA_inel)
+    np.save(fname_PMMA_inel, DATA_PMMA_prim)
     
     print('file ' + fname_PMMA_inel + ' is ready')
 

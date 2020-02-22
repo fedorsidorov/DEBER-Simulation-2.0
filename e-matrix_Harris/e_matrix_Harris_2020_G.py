@@ -9,7 +9,7 @@ import numpy.random as rnd
 
 import my_constants as mc
 import my_utilities as mu
-import scission_functions as sf
+import scission_functions_2020 as sf
 import e_matrix_functions as emf
 
 mc = importlib.reload(mc)
@@ -23,13 +23,11 @@ os.chdir(os.path.join(mc.sim_folder, 'e-matrix_Harris'))
 #%%
 path = os.path.join(mc.sim_folder, 'e_DATA', 'Harris')
 
-folders = ['Harris_2020_MAC_0_G', 'Harris_2020_MAC_1_G']
+folders = ['Harris_2020_MAC_0_G', 'Harris_2020_MAC_1_G', 'Harris_2020_UBU_0_G']
 
 
 #%%
 DATA_PMMA_list = []
-DATA_PMMA_val_list = []
-DATA_PMMA_dE_list = []
 
 
 for now_ind in range(len(folders)):
@@ -79,8 +77,8 @@ def get_scissions(b_map_sc, now_DATA_PMMA):
         
         pr_ind = 10 + np.where(sf.Eb_Nel[:, 0] == sf.MMA_bonds[b][0])[0][0]
         
-        inds = np.where(now_DATA_PMMA[:, 3] == pr_ind)[0]
-#        inds = np.where(np.abs(now_DATA_PMMA[:, 3]) == pr_ind)[0]
+#        inds = np.where(now_DATA_PMMA[:, 3] == pr_ind)[0]
+        inds = np.where(np.abs(now_DATA_PMMA[:, 3]) == pr_ind)[0] ## ABS!!
         
         scissions[inds] = rnd.rand(len(inds)) < np.ones(len(inds)) *\
                 b_map_sc[b] / sf.MMA_bonds[b][1]
@@ -105,8 +103,8 @@ n_electrons = 0
 
 
 ##########
-#bond_dict_sc = {"C-C2": 4}
-bond_dict_sc = {"C-C2": 4, "C-C'": 2}
+bond_dict_sc = {"C-C2": 4}
+#bond_dict_sc = {"C-C2": 4, "C-C'": 2}
 #bond_dict_sc = {"C-C3": 6, "C-C'": 2}
 #bond_dict_sc = {"C-C2": 4, "C-Cp": 2, "C-C3": 6}
 ##########

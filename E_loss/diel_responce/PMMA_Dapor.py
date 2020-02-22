@@ -3,11 +3,16 @@ import numpy as np
 import os
 import importlib
 import my_constants as mc
+import my_utilities as mu
+
 import matplotlib.pyplot as plt
 
 mc = importlib.reload(mc)
+mu = importlib.reload(mu)
 
-os.chdir(mc.sim_folder + 'E_loss/diel_responce')
+os.chdir(os.path.join(mc.sim_folder,
+        'E_loss', 'diel_responce'
+        ))
 
 
 #%%
@@ -34,7 +39,8 @@ plt.title('Dapor Im[-1/eps]')
 plt.xlabel('E, eV')
 plt.ylabel('Im[-1/eps]')
 
-plt.ylim(1e-9, 1e+1)
+plt.xlim(1, 1e+4)
+plt.ylim(1e-9, 1e+3)
 
 plt.legend()
 plt.grid()
@@ -47,6 +53,7 @@ plt.show()
 def L(x):
     f = (1-x)*np.log(4/x) - 7/4*x + x**(3/2) - 33/32*x**2
     return f
+
 
 def S(x):
     f = np.log(1.166/x) - 3/4*x - x/4*np.log(4/x) + 1/2*x**(3/2) - x**2/16*np.log(4/x) - 31/48*x**2
@@ -76,15 +83,19 @@ for i in range(len(EE)):
     
     U_DIFF[i, inds] = mc.k_el * mc.m * mc.e**2 / (2 * np.pi * mc.hbar**2 *\
         EE[i]) * IM[inds] * L(EE[inds]/E) * 1e-2 ## eV^-1 cm^-1
-    
+
+
+#%%
+plt.semilogx(EE, SP)
     
 
 #%% Ashley 1990
 U_DIFF_A = np.zeros((len(EE), len(EE)))
 
+
 for i in range(len(EE)):
     
-    print(i)
+    mu.pbar(i, len(EE))
     
     now_E = EE[i]
 
@@ -123,7 +134,6 @@ for i in range(len(EE)):
         
         U_DIFF_A[i, j] = mc.k_el * mc.m * mc.e**2 /\
             (2 * np.pi * mc.hbar**2 * now_E*mc.eV) * np.trapz(Y, x=X) / 1e+2 * mc.eV
-
 
 
 #%%
@@ -213,6 +223,8 @@ U_INT_A = np.zeros((len(EE), len(EE)))
 
 for i in range(len(EE)):
     
+    mu.pbar(i, len(EE))
+    
     integral = np.trapz(U_DIFF_A[i, :], x=EE)
     
     if integral == 0:
@@ -224,8 +236,13 @@ for i in range(len(EE)):
 
 
 #%%
-O_core_diff = np.load(mc.sim_folder + 'E_loss/Gryzinski/PMMA/PMMA_O_1S_diff_U.npy')
-C_core_diff = np.load(mc.sim_folder + 'E_loss/Gryzinski/PMMA/PMMA_C_1S_diff_U.npy')
+O_core_diff = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'Gryzinski', 'PMMA', 'PMMA_O_1S_diff_U.npy'
+        ))
+
+C_core_diff = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'Gryzinski', 'PMMA', 'PMMA_C_1S_diff_U.npy'
+        ))
 
 val_diff = U_DIFF - O_core_diff - C_core_diff
 val_diff_A = U_DIFF_A - O_core_diff - C_core_diff
@@ -235,6 +252,8 @@ val_diff_A = U_DIFF_A - O_core_diff - C_core_diff
 U_val_INT_A = np.zeros((len(EE), len(EE)))
 
 for i in range(len(EE)):
+    
+    mu.pbar(i, len(EE))
     
     integral = np.trapz(val_diff_A[i, :], x=EE)
     
@@ -250,9 +269,14 @@ for i in range(len(EE)):
 IMFP_inv_val = np.zeros(len(EE))
 IMFP_inv_val_A = np.zeros(len(EE))
 
-U_loaded = np.load(mc.sim_folder + 'E_loss/diel_responce/Dapor/PMMA_val_tot_U_D+G.npy')
+U_loaded = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'diel_responce', 'Dapor', 'PMMA_val_tot_U_D+G.npy'
+        ))
+
 
 for i in range(len(EE)):
+    
+    mu.pbar(i, len(EE))
     
     E = EE[i]
     

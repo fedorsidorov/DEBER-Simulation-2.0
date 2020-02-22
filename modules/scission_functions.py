@@ -8,7 +8,7 @@ import copy
 import my_constants as mc
 mc = importlib.reload(mc)
 
-import E_loss_functions as elf
+import E_loss_functions_2020 as elf
 elf = importlib.reload(elf)
 
 
