@@ -16,31 +16,45 @@ os.chdir(os.path.join(mc.sim_folder,
 
 
 #%%
-EE = np.logspace(0, 4.4, 1000)
+#EE_eV = np.logspace(0, 4.4, 1000)
+EE_eV = np.logspace(-1, 4.4, 10000)
+#EE_eV = np.linspace(0.01, 1e+4, 1000)
 
-IM = np.zeros(len(EE))
+EE = EE_eV * mc.eV
+qq = np.sqrt(2*mc.m*EE)
+
+a0 = 5.29e-11 ## m
+
+h2si = mc.k_el * mc.m * mc.e**2 / mc.hbar**2
+
+#WW_ext = np.logspace(-1, 4.5, 5000) * mc.eV
 
 ## En, Gn, An from dapor2015.pdf
 params = [
-        [19.46, 8.770, 100.0],
-        [25.84, 14.75, 286.5],
-        [300.0, 140.0, 80.0],
-        [550.0, 300.0, 55.0],
-        ]
+         [19.46, 8.770, 100.0],
+         [25.84, 14.75, 286.5],
+         [300.0, 140.0, 80.0],
+         [550.0, 300.0, 55.0],
+         ]
+
+
+#%%
+OLF_1d = np.zeros(len(EE))
 
 for arr in params:
     
     E, G, A, = arr
-    IM += A*G*EE / ((E**2 - EE**2)**2 + (G*EE)**2)
+    OLF_1d += A*G*EE_eV / ((E**2 - EE_eV**2)**2 + (G*EE_eV)**2)
 
-plt.loglog(EE, IM, 'r.', label='oscillators')
 
-plt.title('Dapor Im[-1/eps]')
+#%%
+plt.loglog(EE_eV, OLF_1d, 'ro', label='OLF, q = 0')
+
 plt.xlabel('E, eV')
-plt.ylabel('Im[-1/eps]')
+plt.ylabel('Im[-1/$\epsilon(\omega, 0)$]')
 
 plt.xlim(1, 1e+4)
-plt.ylim(1e-9, 1e+3)
+plt.ylim(1e-9, 1e+1)
 
 plt.legend()
 plt.grid()
@@ -49,45 +63,76 @@ plt.show()
 #plt.savefig('oscillators_Dapor.png', dpi=300)
 
 
-#%%
-def L(x):
+#%% Na easichah
+def S(x):
     f = (1-x)*np.log(4/x) - 7/4*x + x**(3/2) - 33/32*x**2
     return f
 
 
-def S(x):
+def G(x):
     f = np.log(1.166/x) - 3/4*x - x/4*np.log(4/x) + 1/2*x**(3/2) - x**2/16*np.log(4/x) - 31/48*x**2
     return f
 
 
 #%% Dapor
-U = np.zeros(len(EE))
-SP = np.zeros(len(EE))
+U_D = np.zeros(len(EE))
+SP_D = np.zeros(len(EE))
+U_D_test = np.zeros(len(EE))
+SP_D_test = np.zeros(len(EE))
+U_DIFF_D = np.zeros((len(EE), len(EE)))
 
-U_DIFF = np.zeros((len(EE), len(EE)))
 
 for i in range(len(EE)):
     
+    mu.pbar(i, len(EE))
+    
     E = EE[i]
     
-    inds = np.where(EE <= E/2)[0]
+    mult = np.heaviside(E/2 - EE, 1)
     
-    y_U = IM[inds] * L(EE[inds]/E)
-    y_SP = IM[inds] * S(EE[inds]/E) * EE[inds]
+    y_U = OLF_1d * S(EE/E) * mult
+    y_SP = OLF_1d * G(EE/E) * EE * mult
     
-    U[i] = mc.k_el * mc.m * mc.e**2 / (2 * np.pi * mc.hbar**2 * E) *\
-        np.trapz(y_U, x=EE[inds]) * 1e-2 ## cm^-1
-        
-    SP[i] = mc.k_el * mc.m * mc.e**2 / (np.pi * mc.hbar**2 * E) *\
-        np.trapz(y_SP, x=EE[inds]) * 1e-2 ## eV/cm
+    U_D[i] = h2si * 1/(2*np.pi*E) * np.trapz(y_U, x=EE)
     
-    U_DIFF[i, inds] = mc.k_el * mc.m * mc.e**2 / (2 * np.pi * mc.hbar**2 *\
-        EE[i]) * IM[inds] * L(EE[inds]/E) * 1e-2 ## eV^-1 cm^-1
+    SP_D[i] = h2si * 1/(np.pi*E) * np.trapz(y_SP, x=EE)
+    
+    U_DIFF_D[i, :] = h2si * 1/(2*np.pi*E) * OLF_1d * G(EE/E)
+    
+    U_D_test[i] = np.trapz(U_DIFF_D[i, :] * mult, x=EE)
+    SP_D_test[i] = np.trapz(U_DIFF_D[i, :] * EE * mult, x=EE)
+
+
+#%% SP
+plt.semilogx(EE_eV, SP_D / mc.eV / 1e+10, 'o', label='my')
+
+SP_D_solid = np.loadtxt('curves/dEds_solid.txt')
+plt.semilogx(SP_D_solid[:, 0], SP_D_solid[:, 1], label='Dapor_solid')
+
+plt.semilogx(EE_eV, SP_D_test * 2 / mc.eV / 1e+10, label='test')
+
+plt.xlim(1, 1e+4)
+plt.ylim(0, 4)
+
+plt.legend()
+plt.grid()
+
 
 
 #%%
-plt.semilogx(EE, SP)
-    
+plt.semilogx(EE_eV, U_D / 1e+10, 'o', label='my')
+
+U_D_solid = np.loadtxt('curves/IMFP_solid.txt')
+plt.semilogx(U_D_solid[:, 0], 1/U_D_solid[:, 1], label='Dapor_solid')
+
+plt.semilogx(EE_eV, U_D_test / 1e+10, label='test')
+
+plt.xlim(1, 1e+4)
+plt.ylim(0, 1.2e-1)
+
+plt.legend()
+plt.grid()
+
 
 #%% Ashley 1990
 U_DIFF_A = np.zeros((len(EE), len(EE)))

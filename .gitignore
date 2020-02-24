@@ -10,3 +10,5 @@ Chains_Harris/
 MATRIX_*
 Chain*
 
+E_loss/diel_responce/tau.npy
+E_loss/diel_responce/OLF_-4_4_10k.npy
