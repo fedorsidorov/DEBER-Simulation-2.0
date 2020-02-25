@@ -19,7 +19,7 @@ os.chdir(os.path.join(mc.sim_folder,
 
 #%%
 #EE_eV = np.logspace(0, 4.4, 1000)
-EE_eV = np.logspace(-1, 4.4, 10000)
+EE_eV = np.logspace(-1, 4.4, 2000)
 #EE_eV = np.linspace(0.01, 1e+4, 1000)
 
 EE = EE_eV * mc.eV
@@ -67,7 +67,7 @@ for arr in params:
 
 
 #%%
-plt.loglog(EE_eV, OLF[:, 400], label='OLF, q = 1')
+plt.loglog(EE_eV, OLF[:, 0], label='OLF, q = 1')
 plt.loglog(EE_eV, OLF_1d, '--', label='OLF, q = 0')
 
 plt.xlabel('E, eV')
@@ -86,7 +86,6 @@ plt.show()
 #%% Dapor
 TT = EE
 tau = np.zeros((len(EE), len(EE)))
-tau_h = np.zeros((len(EE), len(EE)))
 
 
 for i in range(len(TT)):
@@ -109,10 +108,7 @@ for i in range(len(TT)):
         
         Y = 1/qq[inds] * OLF[j, inds]
         tau[i, j] = h2si * 1 / (np.pi * EE[i]) * np.trapz(Y, x=qq[inds])
-        
-        Y_h = 1/qq * OLF[j, :] * np.heaviside(qq - qm, 1) * np.heaviside(qp - qq, 1)
-        tau_h[i, j] = h2si * 1 / (np.pi * EE[i]) * np.trapz(Y_h, x=qq)
-        
+
 
 #%%
 plt.loglog(EE_eV, tau[8000], '.')
@@ -121,74 +117,37 @@ plt.loglog(EE_eV, tau[8000], '.')
 
 
 #%%
-SS = np.zeros(len(EE))
-uu = np.zeros(len(EE))
+S = np.zeros(len(EE))
+u = np.zeros(len(EE))
 
 
 for i in range(len(EE)):
     
-#    inds = np.where(EE <= EE[i]/2)
+    inds = np.where(EE <= EE[i]/2)
     
-#    S[i] = np.trapz(tau[i, inds] * EE[inds], x=EE[inds])
-    
-    SS[i] = np.trapz(tau[i] * EE * \
-         np.heaviside(EE[i]/2 - EE, 1), x=EE)
-    
-    uu[i] = np.trapz(tau[i], x=EE)
-
-
-#%% Na easichah
-def L(x):
-    f = (1-x)*np.log(4/x) - 7/4*x + x**(3/2) - 33/32*x**2
-    return f
-
-
-def S(x):
-    f = np.log(1.166/x) - 3/4*x - x/4*np.log(4/x) + 1/2*x**(3/2) - x**2/16*np.log(4/x) - 31/48*x**2
-    return f
-
-
-#%% Dapor
-U_D = np.zeros(len(EE))
-SP_D = np.zeros(len(EE))
-
-U_DIFF_D = np.zeros((len(EE), len(EE)))
-
-for i in range(len(EE)):
-    
-    mu.pbar(i, len(EE))
-    
-    E = EE[i]
-    
-    inds = np.where(EE <= E/2)[0]
-    
-    y_U = OLF_1d[inds] * L(EE[inds]/E)
-    y_SP = OLF_1d[inds] * S(EE[inds]/E) * EE[inds]
-    
-    U_D[i] = h2si * 1/(2*np.pi*E) * np.trapz(y_U, x=EE[inds])
-        
-    SP_D[i] = h2si * 1/(np.pi*E) * np.trapz(y_SP, x=EE[inds])
-    
-    U_DIFF_D[i, inds] = h2si * 1/(2*np.pi*EE[i]) * OLF_1d[inds] * L(EE[inds]/E)
+    S[i] = np.trapz(tau[i, inds] * EE[inds], x=EE[inds])
+    u[i] = np.trapz(tau[i, inds], x=EE[inds])
 
 
 #%%
-plt.semilogx(EE_eV, SS / mc.eV / 1e+10, label='my')
-plt.semilogx(EE_eV, SP_D / mc.eV / 1e+10, label='my easy')
+plt.semilogx(EE_eV, S / mc.eV / 1e+10, label='my')
 
 S_Dapor = np.loadtxt('curves/S_dapor2015.txt')
 plt.semilogx(S_Dapor[:, 0], S_Dapor[:, 1], label='dapor2015.pdf')
 
-S_Ciappa = np.loadtxt('curves/dEds_solid.txt')
-plt.semilogx(S_Ciappa[:, 0], S_Ciappa[:, 1], label='ciappa2010.pdf')
+#S_Ciappa = np.loadtxt('curves/dEds_solid.txt')
+#plt.semilogx(S_Ciappa[:, 0], S_Ciappa[:, 1], label='ciappa2010.pdf')
+
+EE_eV_Ashley = np.load('ashley1988/EE_eV.npy')
+
+S_Ashley = np.load('ashley1988/SP.npy')
+plt.semilogx(EE_eV_Ashley, S_Ashley / mc.eV / 1e+10, label='ashley1988')
+
+S_exc_Ashley = np.load('ashley1988/SP_exc.npy')
+plt.semilogx(EE_eV_Ashley, S_exc_Ashley / mc.eV / 1e+10, label='ashley1988_exc')
 
 plt.xlim(1, 1e+4)
 plt.ylim(0, 4)
-
-#plt.plot(np.log10(EE_eV), S / mc.eV / 1e+10, label='my')
-#S_Dapor = np.loadtxt('curves/S_dapor2015_log.txt')
-#plt.plot(S_Dapor[:, 0], S_Dapor[:, 1], label='Dapor')
-#plt.xlim(1, 4)
 
 plt.legend()
 plt.grid()
@@ -197,8 +156,7 @@ plt.grid()
 
 
 #%%
-plt.semilogx(EE_eV, 1/uu * 1e+10, label='my')
-plt.semilogx(EE_eV, 1/U_D * 1e+10, label='my easy')
+plt.semilogx(EE_eV, 1/u * 1e+10, label='my')
 
 l_Dapor = np.loadtxt('curves/l_dapor2015.txt')
 plt.semilogx(l_Dapor[:, 0], l_Dapor[:, 1], label='dapor2015.pdf')
@@ -206,11 +164,63 @@ plt.semilogx(l_Dapor[:, 0], l_Dapor[:, 1], label='dapor2015.pdf')
 l_Ciappa = np.loadtxt('curves/IMFP_solid.txt')
 plt.semilogx(l_Ciappa[:, 0], l_Ciappa[:, 1], label='ciappa2010.pdf')
 
+EE_eV_Ashley = np.load('ashley1988/EE_eV.npy')
+
+u_Ashley = np.load('ashley1988/u.npy')
+plt.semilogx(EE_eV_Ashley, 1 / u_Ashley * 1e+10, label='ashley1988')
+
+u_exc_Ashley = np.load('ashley1988/u_exc.npy')
+plt.semilogx(EE_eV_Ashley, 1 / u_exc_Ashley * 1e+10, label='ashley1988_exc')
+
 plt.xlim(20, 1.1e+4)
 plt.ylim(0, 250)
 
 plt.legend()
-
 plt.grid()
 
+
+#%%
+tau_int = mu.diff2int(tau, EE, EE)
+
+
+#%%
+plt.loglog(EE, tau_int[1500, :])
+
+
+#%% Interpolate to common EE
+u_f = mu.log_interp1d(EE_eV, u)(mc.EE)
+S_f = mu.log_interp1d(EE_eV, S)(mc.EE)
+
+#plt.loglog(mc.EE, u_f)
+#plt.loglog(mc.EE, S_f*2e+17)
+
+
+#%%
+tau_pre = np.zeros((len(EE), len(mc.EE)))
+tau_int_pre = np.zeros((len(EE), len(mc.EE)))
+
+
+for i in range(len(EE)):
+    
+    mu.pbar(i, len(EE))
+    
+    tau_pre[i, :] = mu.log_interp1d(EE_eV, tau[i, :])(mc.EE)
+    tau_int_pre[i, :] = mu.log_interp1d(EE_eV, tau_int[i, :])(mc.EE)
+
+
+#%%
+tau_f = np.zeros((len(mc.EE), len(mc.EE)))
+tau_int_f = np.zeros((len(mc.EE), len(mc.EE)))
+
+
+for i in range(len(mc.EE)):
+    
+    mu.pbar(i, len(mc.EE))
+    
+    tau_f[:, i] = mu.log_interp1d(EE_eV, tau_pre[:, i])(mc.EE)
+    tau_int_f[:, i] = mu.log_interp1d(EE_eV, tau_int[:, i])(mc.EE)
+
+
+#%%
+plt.loglog(mc.EE, tau_int_f[500, :])
 

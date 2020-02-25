@@ -12,3 +12,12 @@ Chain*
 
 E_loss/diel_responce/tau.npy
 E_loss/diel_responce/OLF_-4_4_10k.npy
+E_loss/diel_responce/Si_ashley1988/Si_tau_int_ashley1988.npy
+E_loss/diel_responce/Si_ashley1988/final/Si_tau_f_ashley1988.npy
+E_loss/diel_responce/Si_ashley1988/final/Si_tau_int_f_ashley1988.npy
+E_loss/diel_responce/Si_ashley1988/Si_tau_ashley1988.npy
+E_loss/diel_responce/Si_ashley1988/Si_tau_exc_ashley1988.npy
+E_loss/diel_responce/_outdated/OLF_-4_4_10k.npy
+
+E_loss/diel_responce/_outdated/tau.npy
+E_loss/diel_responce/test_ashley1988/u_Si_Palik.npy

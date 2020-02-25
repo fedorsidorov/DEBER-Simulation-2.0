@@ -43,7 +43,7 @@ rho_O = 1.429e-3
 Z_Si = 14
 u_Si = 28.09
 rho_Si = 2.33
-n_Si =  rho_Si * Na/u_Si
+n_Si = rho_Si * Na/u_Si
 
 Z_PMMA = 3.6
 u_PMMA = 100.12
@@ -68,7 +68,8 @@ uint16_max = 65535
 
 
 #%%
-EE = np.logspace(0, 4.4, 1000)
+EE_eV = np.logspace(0, 4.4, 1000)
+EE = EE_eV * eV
 
 THETA_deg = np.linspace(0.1, 180, 1000)
 THETA = np.deg2rad(THETA_deg)

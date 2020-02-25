@@ -45,7 +45,9 @@ def diff2int(DIFF, V=mc.EE, H=mc.EE):
     INT = np.zeros((len(V), len(H)))
 
     for i in range(len(V)):
-
+        
+        pbar(i, len(V))
+        
         integral = np.trapz(DIFF[i, :], x=H)
         
         if integral == 0:
