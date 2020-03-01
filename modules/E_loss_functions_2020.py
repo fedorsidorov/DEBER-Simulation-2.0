@@ -15,7 +15,7 @@ mc = importlib.reload(mc)
 
 
 #%% Gryzinski
-def get_Gryzinski_diff_CS_single(E, Ui, WW=mc.EE):
+def get_Gryzinski_diff_CS_single(E, Ui, WW=mc.EE_eV):
     
     Gryzinski_diff_CS_single = np.zeros(len(WW))
     inds = np.where(np.logical_and(WW>=Ui, WW <= (E+Ui)/2))
@@ -33,7 +33,7 @@ def get_Gryzinski_diff_CS_single(E, Ui, WW=mc.EE):
     return Gryzinski_diff_CS_single
 
 
-def get_Gryzinski_diff_CS(EE, Ui, WW=mc.EE):
+def get_Gryzinski_diff_CS(EE, Ui, WW=mc.EE_eV):
     
     Gryzinski_diff_CS = np.zeros((len(EE), len(WW)))
     
@@ -43,7 +43,7 @@ def get_Gryzinski_diff_CS(EE, Ui, WW=mc.EE):
     return Gryzinski_diff_CS
 
 
-def get_Gryzinski_CS(EE, Ui, WW=mc.EE):
+def get_Gryzinski_CS(EE, Ui, WW=mc.EE_eV):
     
     Gryzinski_CS = np.zeros(len(EE))
     
@@ -54,7 +54,7 @@ def get_Gryzinski_CS(EE, Ui, WW=mc.EE):
     return Gryzinski_CS
 
 
-def get_Gryzinski_SP_single(E, Ui, conc, n_el, WW=mc.EE):
+def get_Gryzinski_SP_single(E, Ui, conc, n_el, WW=mc.EE_eV):
     
     diff_CS = get_Gryzinski_diff_CS_single(E, Ui, WW)
     Gryzinski_SP_single = conc * n_el * np.trapz(diff_CS * WW, x=WW)
@@ -62,7 +62,7 @@ def get_Gryzinski_SP_single(E, Ui, conc, n_el, WW=mc.EE):
     return Gryzinski_SP_single
 
 
-def get_Gryzinski_SP(EE, Ui, conc, n_el, WW=mc.EE):
+def get_Gryzinski_SP(EE, Ui, conc, n_el, WW=mc.EE_eV):
     
     Gryzinski_SP = np.zeros(len(EE))
     diff_CS = get_Gryzinski_diff_CS(EE, Ui, WW)
@@ -75,13 +75,13 @@ def get_Gryzinski_SP(EE, Ui, conc, n_el, WW=mc.EE):
 
 #%% PMMA
 ## Differential
-def get_PMMA_C_Gryzinski_1S_diff_U(EE):
-    return get_Gryzinski_diff_CS(EE, mc.binding_C_1S) * mc.occupancy_1S *\
+def get_PMMA_C_Gryzinski_1S_diff_U(EE, WW):
+    return get_Gryzinski_diff_CS(EE, mc.binding_C_1S, WW) * mc.occupancy_1S *\
         mc.n_PMMA_mon * mc.n_C_PMMA
 
 
-def get_PMMA_O_Gryzinski_1S_diff_U(EE):
-    return get_Gryzinski_diff_CS(EE, mc.binding_O_1S) * mc.occupancy_1S *\
+def get_PMMA_O_Gryzinski_1S_diff_U(EE, WW):
+    return get_Gryzinski_diff_CS(EE, mc.binding_O_1S, WW) * mc.occupancy_1S *\
         mc.n_PMMA_mon * mc.n_O_PMMA
 
 
@@ -167,7 +167,7 @@ def get_Si_Gryzinski_2P_U(EE):
 
 #%%
 def get_PMMA_Gryzinski_core_U(EE):    
-    return get_PMMA_C_Gryzinski_1S_U(EE) + get_PMMA_Щ_Gryzinski_1S_U(EE)
+    return get_PMMA_C_Gryzinski_1S_U(EE) + get_PMMA_O_Gryzinski_1S_U(EE)
 
 
 def get_PMMA_Gryzinski_core_SP(EE):

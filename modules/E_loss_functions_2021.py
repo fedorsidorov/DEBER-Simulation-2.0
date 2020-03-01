@@ -35,7 +35,7 @@ def get_Gr_tau_single(E, Ui, WW=mc.EE):
     return Gr_tau_single
 
 
-def get_Gr_tau(Ui, EE=mc.EE, WW=mc.EE):
+def get_Gr_tau(EE, Ui, WW=mc.EE):
     
     Gr_tau = np.zeros((len(EE), len(WW)))
     
@@ -45,9 +45,9 @@ def get_Gr_tau(Ui, EE=mc.EE, WW=mc.EE):
     return Gr_tau
 
 
-def get_Gryzinski_CS(EE, Ui, WW=mc.EE):
+def get_Gr_CS(EE, Ui, WW=mc.EE):
     
-    Gryzinski_CS = np.zeros(len(EE))
+    Gr_CS = np.zeros(len(EE))
     
     for i in range(len(EE)):
         diff_CS = get_Gryzinski_diff_CS_single(EE[i], Ui, WW)
@@ -56,23 +56,23 @@ def get_Gryzinski_CS(EE, Ui, WW=mc.EE):
     return Gryzinski_CS
 
 
-def get_Gryzinski_SP_single(E, Ui, conc, n_el, WW=mc.EE):
+def get_Gr_S_single(E, Ui, conc, n_el, WW=mc.EE):
     
-    diff_CS = get_Gryzinski_diff_CS_single(E, Ui, WW)
-    Gryzinski_SP_single = conc * n_el * np.trapz(diff_CS * WW, x=WW)
+    tau = get_Gryzinski_tau_single(E, Ui, WW)
+    Gr_S_single = conc * n_el * np.trapz(tau * WW, x=WW)
     
-    return Gryzinski_SP_single
+    return Gr_S_single
 
 
-def get_Gryzinski_SP(EE, Ui, conc, n_el, WW=mc.EE):
+def get_Gr_S(EE, Ui, conc, n_el, WW=mc.EE):
     
-    Gryzinski_SP = np.zeros(len(EE))
-    diff_CS = get_Gryzinski_diff_CS(EE, Ui, WW)
+    Gr_S = np.zeros(len(EE))
+    tau = get_Gr_tau(EE, Ui, WW)
     
     for i in range(len(EE)):
-        Gryzinski_SP[i] = conc * n_el * np.trapz(diff_CS[i, :] * WW, x=WW)
+        Gr_S[i] = conc * n_el * np.trapz(tau[i, :] * WW, x=WW)
     
-    return Gryzinski_SP
+    return Gr_S
 
 
 #%% PMMA

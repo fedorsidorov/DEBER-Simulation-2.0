@@ -6,6 +6,8 @@ import importlib
 import my_constants as mc
 import my_utilities as mu
 
+from scipy import integrate
+
 mc = importlib.reload(mc)
 mu = importlib.reload(mu)
 
@@ -34,8 +36,8 @@ y1 = Im_arr[-2]
 x2 = E_arr[-1]
 y2 = Im_arr[-1]
 
-EE_eV = mc.EE
-EE = EE_eV * mc.eV
+EE_eV = mc.EE_eV
+EE = mc.EE
 
 x3 = EE_eV[-1]
 y3 = y2 * np.exp( np.log(y2/y1) * np.log(x3/x2) / np.log(x2/x1) )
@@ -57,6 +59,38 @@ plt.legend()
 plt.grid()
 plt.show()
 #plt.savefig('Si_OELF_Palik.png', dpi=300)
+
+
+#%%
+#EE_eV = np.logspace(-1, 4.4, 2000)
+#EE = EE_eV * mc.eV
+#
+#
+### A, E, G
+#params = [
+#         [128,  16.127,  3.5],
+#         [126,  17.326,  2.5],
+#         [ 10,  20.875,    5],
+#         [800,  99.699,  120],
+#         [ 70, 146.660,   50],
+#         [200,    1777, 1000]
+#         ]
+#
+#
+#OLF_1d = np.zeros(len(EE))
+#
+#
+#for arr in params[:3]:
+#        
+#    An, En, Gn, = arr
+#    OLF_1d += An * Gn * EE_eV / ((En**2 - EE_eV**2)**2 + (Gn * EE_eV)**2)
+#
+#
+#for arr in params[3:]:
+#        
+#    An, En, Gn, = arr
+#    OLF_1d += An * Gn * EE_eV * np.heaviside(EE_eV - En, 1) /\
+#        ((En**2 - EE_eV**2)**2 + (Gn * EE_eV)**2)
 
 
 #%%
@@ -108,8 +142,8 @@ for i in range(len(EE)):
 #%%
 l_Chan = np.loadtxt('curves/Chan_Si_l.txt')
 
-plt.loglog(EE_eV, u / 1e+2, label='My')
-#plt.loglog(l_Chan[:, 0], 1 / l_Chan[:, 1], label='Chan')
+plt.loglog(EE_eV, u / 1e+2,'ro', label='My')
+plt.loglog(l_Chan[:, 0], 1 / l_Chan[:, 1], label='Chan')
 
 sigma_MuElec = np.loadtxt('curves/Si_MuElec_sigma.txt')
 plt.loglog(sigma_MuElec[:, 0], sigma_MuElec[:, 1] * 1e-18 * mc.n_Si, label='MuElec')
@@ -125,10 +159,10 @@ plt.show()
 
 
 #%%
-plt.loglog(EE_eV, S / mc.eV / 1e+2, label='my')
+plt.loglog(EE_eV, S / mc.eV / 1e+2, 'ro', label='my')
 
 S_Chan = np.loadtxt('curves/Chan_Si_S.txt')
-#plt.loglog(S_Chan[:, 0], S_Chan[:, 1], label='Chan')
+plt.loglog(S_Chan[:, 0], S_Chan[:, 1], label='Chan')
 
 S_MuElec = np.loadtxt('curves/Si_MuElec_S.txt')
 plt.loglog(S_MuElec[:, 0], S_MuElec[:, 1] * 1e+7, label='MuElec')

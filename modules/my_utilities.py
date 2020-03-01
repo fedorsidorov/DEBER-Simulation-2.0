@@ -40,6 +40,11 @@ def log_interp1d(xx, yy, kind='linear'):
     return log_interp
 
 
+def get_closest_el_ind(array, val):
+    
+    return np.argmin(np.abs(array - val))
+
+
 def diff2int(DIFF, V=mc.EE, H=mc.EE):
     
     INT = np.zeros((len(V), len(H)))
