@@ -142,7 +142,7 @@ for i in range(len(EE)):
 #%%
 l_Chan = np.loadtxt('curves/Chan_Si_l.txt')
 
-plt.loglog(EE_eV, u / 1e+2,'ro', label='My')
+plt.loglog(EE_eV, u / 1e+2,'r--', label='My')
 plt.loglog(l_Chan[:, 0], 1 / l_Chan[:, 1], label='Chan')
 
 sigma_MuElec = np.loadtxt('curves/Si_MuElec_sigma.txt')
@@ -155,11 +155,11 @@ plt.legend()
 plt.grid()
 plt.show()
 
-#plt.savefig('Palik_U_Si.png', dpi=300)
+#plt.savefig('Si_ashley_u.png', dpi=300)
 
 
 #%%
-plt.loglog(EE_eV, S / mc.eV / 1e+2, 'ro', label='my')
+plt.loglog(EE_eV, S / mc.eV / 1e+2, 'r--', label='my')
 
 S_Chan = np.loadtxt('curves/Chan_Si_S.txt')
 plt.loglog(S_Chan[:, 0], S_Chan[:, 1], label='Chan')
@@ -174,5 +174,5 @@ plt.legend()
 plt.grid()
 plt.show()
 
-#plt.savefig('Palik_U_Si.png', dpi=300)
+#plt.savefig('Si_ashley_S.png', dpi=300)
 

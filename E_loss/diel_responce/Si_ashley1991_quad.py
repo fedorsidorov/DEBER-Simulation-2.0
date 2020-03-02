@@ -37,7 +37,9 @@ y1 = Im_arr[-2]
 x2 = E_arr[-1]
 y2 = Im_arr[-1]
 
-EE_eV = mc.EE_eV
+#EE_eV = mc.EE_eV
+EE_eV = np.logspace(0, 4.4, 100)
+
 #EE = mc.EE
 
 x3 = EE_eV[-1]
@@ -128,8 +130,8 @@ for i, E_eV in enumerate(EE_eV):
 #%%
 l_Chan = np.loadtxt('curves/Chan_Si_l.txt')
 
-plt.loglog(EE_eV, u / 1e+2,'ro', label='My')
-plt.loglog(l_Chan[:, 0], 1 / l_Chan[:, 1], label='Chan')
+plt.loglog(EE_eV, u / 1e+2,'r--', label='My')
+#plt.loglog(l_Chan[:, 0], 1 / l_Chan[:, 1], label='Chan')
 
 sigma_MuElec = np.loadtxt('curves/Si_MuElec_sigma.txt')
 plt.loglog(sigma_MuElec[:, 0], sigma_MuElec[:, 1] * 1e-18 * mc.n_Si, label='MuElec')
@@ -141,14 +143,14 @@ plt.legend()
 plt.grid()
 plt.show()
 
-#plt.savefig('Palik_U_Si.png', dpi=300)
+#plt.savefig('Si_ashley_quad_u.png', dpi=300)
 
 
 #%%
-plt.loglog(EE_eV, S / mc.eV / 1e+2, 'ro', label='my')
+plt.loglog(EE_eV, S / 1e+2, 'r--', label='my')
 
 S_Chan = np.loadtxt('curves/Chan_Si_S.txt')
-plt.loglog(S_Chan[:, 0], S_Chan[:, 1], label='Chan')
+#plt.loglog(S_Chan[:, 0], S_Chan[:, 1], label='Chan')
 
 S_MuElec = np.loadtxt('curves/Si_MuElec_S.txt')
 plt.loglog(S_MuElec[:, 0], S_MuElec[:, 1] * 1e+7, label='MuElec')
@@ -160,5 +162,5 @@ plt.legend()
 plt.grid()
 plt.show()
 
-#plt.savefig('Palik_U_Si.png', dpi=300)
+#plt.savefig('Si_ashley_quad_S.png', dpi=300)
 

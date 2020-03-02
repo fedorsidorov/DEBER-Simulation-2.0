@@ -121,7 +121,7 @@ for i, E_eV in enumerate(EE_eV):
 plt.semilogx(EE_eV, S / 1e+2, label='my')
 
 S_Chan = np.loadtxt('curves/Chan_Si_S.txt')
-plt.loglog(S_Chan[:, 0], S_Chan[:, 1], label='Chan')
+#plt.loglog(S_Chan[:, 0], S_Chan[:, 1], label='Chan')
 
 S_MuElec = np.loadtxt('curves/Si_MuElec_S.txt')
 plt.loglog(S_MuElec[:, 0], S_MuElec[:, 1] * 1e+7, '--', label='MuElec')
@@ -132,7 +132,7 @@ plt.loglog(S_MuElec[:, 0], S_MuElec[:, 1] * 1e+7, '--', label='MuElec')
 plt.legend()
 plt.grid()
 
-#plt.savefig('S 0.2, 4.4, 1000.png', dpi=300)
+#plt.savefig('Si_valentin2012_quad_S.png', dpi=300)
 
 
 #%%
@@ -140,7 +140,7 @@ plt.semilogx(EE_eV, u / 1e+2, label='no exchange') ## IS BETTER
 #plt.semilogx(EE_eV, u_exc / 1e+2, label='exchange')
 
 l_Chan = np.loadtxt('curves/Chan_Si_l.txt')
-plt.loglog(l_Chan[:, 0], 1 / l_Chan[:, 1], label='Chan')
+#plt.loglog(l_Chan[:, 0], 1 / l_Chan[:, 1], label='Chan')
 
 sigma_MuElec = np.loadtxt('curves/Si_MuElec_sigma.txt')
 plt.loglog(sigma_MuElec[:, 0], sigma_MuElec[:, 1] * 1e-18 * mc.n_Si, '--', label='MuElec')
@@ -151,5 +151,5 @@ plt.ylim(1e+5, 1e+8)
 plt.legend()
 plt.grid()
 
-#plt.savefig('S 0.2, 4.4, 1000.png', dpi=300)
+#plt.savefig('Si_valentin2012_quad_u.png', dpi=300)
 

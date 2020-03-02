@@ -45,19 +45,19 @@ u_Si = 28.09
 rho_Si = 2.33
 n_Si = rho_Si * Na/u_Si
 
-Z_PMMA = 3.6
-u_PMMA = 100.12
-M0 = u_PMMA
+#Z_PMMA = 3.6
+u_MMA = 100.12
+M0 = u_MMA
 rho_PMMA = 1.18
 
-n_H_PMMA = 8
-n_C_PMMA = 5
+N_H_PMMA = 8
+N_C_PMMA = 5
 n_O_PMMA = 2
 
-n_PMMA_mon =  rho_PMMA * Na/u_PMMA
+n_PMMA_mon =  rho_PMMA * Na/u_MMA
 #n_PMMA_at = n_PMMA_mon * (n_H_PMMA + n_C_PMMA + n_O_PMMA)
 
-m_PMMA_mon = u_PMMA / Na
+m_PMMA_mon = u_MMA / Na
 
 #CONC_at = {'H': n_H, 'C': n_C, 'O': n_O, 'Si': n_Si}
 #CONC = [n_PMMA_at, n_PMMA_at, n_PMMA_at, n_Si]
