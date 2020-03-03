@@ -15,7 +15,7 @@ mc = importlib.reload(mc)
 
 
 #%% Gryzinski
-def get_Gryzinski_diff_CS_single(E, Ui, WW=mc.EE_eV):
+def get_Gryzinski_diff_CS_single(E, Ui, WW=mc.EE):
     
     Gryzinski_diff_CS_single = np.zeros(len(WW))
     inds = np.where(np.logical_and(WW>=Ui, WW <= (E+Ui)/2))
@@ -33,7 +33,7 @@ def get_Gryzinski_diff_CS_single(E, Ui, WW=mc.EE_eV):
     return Gryzinski_diff_CS_single
 
 
-def get_Gryzinski_diff_CS(EE, Ui, WW=mc.EE_eV):
+def get_Gryzinski_diff_CS(EE, Ui, WW=mc.EE):
     
     Gryzinski_diff_CS = np.zeros((len(EE), len(WW)))
     
@@ -43,7 +43,7 @@ def get_Gryzinski_diff_CS(EE, Ui, WW=mc.EE_eV):
     return Gryzinski_diff_CS
 
 
-def get_Gryzinski_CS(EE, Ui, WW=mc.EE_eV):
+def get_Gryzinski_CS(EE, Ui, WW=mc.EE):
     
     Gryzinski_CS = np.zeros(len(EE))
     
@@ -54,7 +54,7 @@ def get_Gryzinski_CS(EE, Ui, WW=mc.EE_eV):
     return Gryzinski_CS
 
 
-def get_Gryzinski_SP_single(E, Ui, conc, n_el, WW=mc.EE_eV):
+def get_Gryzinski_SP_single(E, Ui, conc, n_el, WW=mc.EE):
     
     diff_CS = get_Gryzinski_diff_CS_single(E, Ui, WW)
     Gryzinski_SP_single = conc * n_el * np.trapz(diff_CS * WW, x=WW)
@@ -62,7 +62,7 @@ def get_Gryzinski_SP_single(E, Ui, conc, n_el, WW=mc.EE_eV):
     return Gryzinski_SP_single
 
 
-def get_Gryzinski_SP(EE, Ui, conc, n_el, WW=mc.EE_eV):
+def get_Gryzinski_SP(EE, Ui, conc, n_el, WW=mc.EE):
     
     Gryzinski_SP = np.zeros(len(EE))
     diff_CS = get_Gryzinski_diff_CS(EE, Ui, WW)

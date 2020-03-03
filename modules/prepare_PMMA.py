@@ -15,7 +15,6 @@ sf = importlib.reload(sf)
 
 #%%
 EE = mc.EE
-THETA = mc.THETA
 
 
 #%% Elastic scattering

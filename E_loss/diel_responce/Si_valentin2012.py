@@ -76,21 +76,37 @@ def get_u(E_eV):
 
 
 #%%
-#EE = np.logspace(1, 4.4, 100)
+#EE = np.logspace(-1, 4.4, 1000)
+##EE = mc.EE
 #
-#S = np.zeros(len(EE))
-#u = np.zeros(len(EE))
+#tau = np.zeros((len(EE), len(EE)))
 #
 #
 #for i, E in enumerate(EE):
 #    
 #    mu.pbar(i, len(EE))
 #    
-#    S[i] = get_S(E)
-#    u[i] = get_u(E)
-#
-#
-##%%
+#    for j, hw in enumerate(EE):
+#        
+#        tau[i, j] = get_tau(E, hw)
+
+
+#%%
+EE = mc.EE
+
+S = np.zeros(len(EE))
+u = np.zeros(len(EE))
+
+
+for i, E in enumerate(EE):
+    
+    mu.pbar(i, len(EE))
+    
+    S[i] = get_S(E)
+    u[i] = get_u(E)
+
+
+#%%
 #plt.semilogx(EE, S, label='my')
 #
 #S_Chan = np.loadtxt('curves/Chan_Si_S.txt')

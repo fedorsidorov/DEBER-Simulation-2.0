@@ -1,6 +1,6 @@
 #%% Import
 import numpy as np
-#import os
+import os
 import importlib
 
 import my_utilities as mu
@@ -15,7 +15,9 @@ mu = importlib.reload(mu)
 mc = importlib.reload(mc)
 elf = importlib.reload(elf)
 
-#print('E_loss_functions are loaded')
+os.chdir(os.path.join(mc.sim_folder,
+        'E_loss', 'Gryzinski'
+        ))
 
 
 #%%
@@ -184,6 +186,44 @@ def get_Gr_Si_total_S(E):
         get_Gr_S(Si_total_Eb[3], E, n_Si, Si_total_occ[3]) +\
         get_Gr_S(Si_total_Eb[4], E, n_Si, Si_total_occ[4])
         
+
+#%%
+#EE = mc.EE
+#
+##tau = np.zeros((len(EE), len(EE)))
+#u_C_PMMA = np.zeros(len(EE))
+#u_O_PMMA = np.zeros(len(EE))
+#S_C_PMMA = np.zeros(len(EE))
+#S_O_PMMA = np.zeros(len(EE))
+#
+#u_1s_Si = np.zeros(len(EE))
+#u_2s_Si = np.zeros(len(EE))
+#u_2p_Si = np.zeros(len(EE))
+#S_1s_Si = np.zeros(len(EE))
+#S_2s_Si = np.zeros(len(EE))
+#S_2p_Si = np.zeros(len(EE))
+#
+#
+#for i, E in enumerate(EE):
+#    
+#    mu.pbar(i, len(EE))
+#    
+#    u_C_PMMA[i] = get_Gr_PMMA_C_core_u(E)
+#    u_O_PMMA[i] = get_Gr_PMMA_O_core_u(E)
+#    S_C_PMMA[i] = get_Gr_PMMA_C_core_S(E)
+#    S_O_PMMA[i] = get_Gr_PMMA_O_core_S(E)
+#    
+#    u_1s_Si[i] = get_Gr_Si_1s_u(E)
+#    u_2s_Si[i] = get_Gr_Si_2s_u(E)
+#    u_2p_Si[i] = get_Gr_Si_2p_u(E)
+#    S_1s_Si[i] = get_Gr_Si_1s_S(E)
+#    S_2s_Si[i] = get_Gr_Si_2s_S(E)
+#    S_2p_Si[i] = get_Gr_Si_2p_S(E)
+    
+#    for j, hw in enumerate(EE):
+#        tau[i, j] = get_Gr_Si_core_tau(E, hw)
+
+
 
 #%%
 #EE = np.logspace(0, 4.4, 100)

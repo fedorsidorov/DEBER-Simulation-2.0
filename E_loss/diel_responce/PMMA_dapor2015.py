@@ -75,7 +75,8 @@ def get_u(E):
 
 
 #%%
-EE = mc.EE
+EE = np.logspace(-1, 4.4, 1000)
+#EE = mc.EE
 
 tau = np.zeros((len(EE), len(EE)))
 
@@ -89,29 +90,17 @@ for i, E in enumerate(EE):
         tau[i, j] = get_tau(E, hw)
 
 
-#%%
-S = np.zeros(len(EE))
-u = np.zeros(len(EE))
-
-
-for i, E in enumerate(EE):
-    
-    mu.pbar(i, len(EE))
-    
-    S[i] = get_S(E)
-    u[i] = get_u(E)
-
-
-#%%
-tau_int = np.zeros((len(EE), len(EE)))
-
-for i, E in enumerate(EE):
-    
-    mu.pbar(i, len(EE))
-    
-    for j, hw in enumerate(EE):
-        
-        tau_int[i, j] = tau2int(E, hw, u[i])
+##%%
+#S = np.zeros(len(EE))
+#u = np.zeros(len(EE))
+#
+#
+#for i, E in enumerate(EE):
+#    
+#    mu.pbar(i, len(EE))
+#    
+#    S[i] = get_S(E)
+#    u[i] = get_u(E)
 
 
 #%%
