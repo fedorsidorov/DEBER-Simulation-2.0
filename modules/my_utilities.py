@@ -62,4 +62,4 @@ def diff2int(DIFF, V=mc.EE, H=mc.EE):
             INT[i, j] = np.trapz(DIFF[i, :j+1], x=H[:j+1]) / integral
     
     return INT
-
+    

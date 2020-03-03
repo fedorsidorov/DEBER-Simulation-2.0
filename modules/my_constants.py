@@ -23,6 +23,8 @@ c = 3e+8
 
 hw_phonon = 0.1
 
+h2si = k_el * m * e**2 / hbar**2
+
 
 #%% PMMA ans Si
 Z_H = 1
@@ -52,9 +54,9 @@ rho_PMMA = 1.18
 
 N_H_PMMA = 8
 N_C_PMMA = 5
-n_O_PMMA = 2
+N_O_PMMA = 2
 
-n_PMMA_mon =  rho_PMMA * Na/u_MMA
+n_PMMA_mon = rho_PMMA * Na/u_MMA
 #n_PMMA_at = n_PMMA_mon * (n_H_PMMA + n_C_PMMA + n_O_PMMA)
 
 m_PMMA_mon = u_MMA / Na
@@ -68,8 +70,7 @@ uint16_max = 65535
 
 
 #%%
-EE_eV = np.logspace(0, 4.4, 1000)
-EE = EE_eV * eV
+EE = np.logspace(0, 4.4, 1000)
 
 THETA_deg = np.linspace(0.1, 180, 1000)
 THETA = np.deg2rad(THETA_deg)

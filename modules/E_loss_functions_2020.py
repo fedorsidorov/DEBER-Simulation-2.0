@@ -77,12 +77,12 @@ def get_Gryzinski_SP(EE, Ui, conc, n_el, WW=mc.EE_eV):
 ## Differential
 def get_PMMA_C_Gryzinski_1S_diff_U(EE, WW):
     return get_Gryzinski_diff_CS(EE, mc.binding_C_1S, WW) * mc.occupancy_1S *\
-        mc.n_PMMA_mon * mc.n_C_PMMA
+        mc.n_PMMA_mon * mc.N_C_PMMA
 
 
 def get_PMMA_O_Gryzinski_1S_diff_U(EE, WW):
     return get_Gryzinski_diff_CS(EE, mc.binding_O_1S, WW) * mc.occupancy_1S *\
-        mc.n_PMMA_mon * mc.n_O_PMMA
+        mc.n_PMMA_mon * mc.N_O_PMMA
 
 
 ## Integral
@@ -97,21 +97,21 @@ def get_PMMA_O_Gryzinski_1S_int_U(EE):
 ## Total
 def get_PMMA_C_Gryzinski_1S_U(EE):
     return get_Gryzinski_CS(EE, mc.binding_C_1S) * mc.occupancy_1S * mc.n_PMMA_mon *\
-        mc.n_C_PMMA
+        mc.N_C_PMMA
 
 
 def get_PMMA_O_Gryzinski_1S_U(EE):
     return get_Gryzinski_CS(EE, mc.binding_O_1S) * mc.occupancy_1S * mc.n_PMMA_mon *\
-        mc.n_O_PMMA
+        mc.N_O_PMMA
 
 
 ## Stopping power
 def get_PMMA_C_1S_SP(EE):
-    return get_Gryzinski_SP(EE, mc.binding_C_1S, mc.n_PMMA_mon*mc.n_C_PMMA, mc.occupancy_1S)
+    return get_Gryzinski_SP(EE, mc.binding_C_1S, mc.n_PMMA_mon*mc.N_C_PMMA, mc.occupancy_1S)
 
 
 def get_PMMA_O_1S_SP(EE):
-    return get_Gryzinski_SP(EE, mc.binding_O_1S, mc.n_PMMA_mon*mc.n_O_PMMA, mc.occupancy_1S)
+    return get_Gryzinski_SP(EE, mc.binding_O_1S, mc.n_PMMA_mon*mc.N_O_PMMA, mc.occupancy_1S)
 
 
 #%% Si

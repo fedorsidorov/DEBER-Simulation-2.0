@@ -11,7 +11,6 @@ import matplotlib.pyplot as plt
 
 from scipy import integrate
 
-#ma = importlib.reload(ma)
 mu = importlib.reload(mu)
 mc = importlib.reload(mc)
 elf = importlib.reload(elf)
@@ -37,8 +36,8 @@ n_MMA =  mc.rho_PMMA * mc.Na/mc.u_MMA
 Si_core_Eb  = [1844, 154, 104]
 Si_core_occ = [   2,   2,   6]
 
-#Si_total_Eb  = [1849, 159, 109, 18, 12.67]
-#Si_total_occ = [   2,   2,   6,  2,     2]
+Si_total_Eb  = [1849, 159, 109, 18, 12.67]
+Si_total_occ = [   2,   2,   6,  2,     2]
 
 N_val_Si = 4
 
@@ -48,7 +47,7 @@ n_Si = mc.rho_Si * mc.Na/mc.u_Si
 #%% Gryzinski
 def get_Gr_diff_cs(Eb, E, hw):
     
-    if E < hw:
+    if E < hw or hw < Eb:
         return 0
     
     diff_cs = np.pi * mc.k_el**2 * mc.e**4 / np.power(hw*mc.eV, 3) * Eb/E *\
@@ -85,20 +84,24 @@ def get_Gr_S(Eb, E, conc, n_el):
 #%%
 ## PMMA tau
 def get_Gr_PMMA_C_core_tau(E, hw):
-    return get_Gr_tau(MMA_core_Eb[0], E, hw, n_MMA, MMA_core_occ[0])
+    return get_Gr_tau(MMA_core_Eb[0], E, hw, n_MMA, N_C_MMA * MMA_core_occ[0])
 
 
 def get_Gr_PMMA_O_core_tau(E, hw):
-    return get_Gr_tau(MMA_core_Eb[1], E, hw, n_MMA, MMA_core_occ[1])
+    return get_Gr_tau(MMA_core_Eb[1], E, hw, n_MMA, N_O_MMA * MMA_core_occ[1])
+
+
+def get_Gr_PMMA_core_tau(E, hw):
+    return get_Gr_PMMA_C_core_tau(E, hw) + get_Gr_PMMA_O_core_tau(E, hw)
 
 
 ## PMMA u
 def get_Gr_PMMA_C_core_u(E):
-    return get_Gr_u(MMA_core_Eb[0], E, n_MMA, MMA_core_occ[0])
+    return get_Gr_u(MMA_core_Eb[0], E, n_MMA, N_C_MMA * MMA_core_occ[0])
 
 
 def get_Gr_PMMA_O_core_u(E):
-    return get_Gr_u(MMA_core_Eb[1], E, n_MMA, MMA_core_occ[1])
+    return get_Gr_u(MMA_core_Eb[1], E, n_MMA, N_O_MMA * MMA_core_occ[1])
 
 
 def get_Gr_PMMA_core_u(E):
@@ -107,11 +110,11 @@ def get_Gr_PMMA_core_u(E):
 
 ## PMMA S
 def get_Gr_PMMA_C_core_S(E):
-    return get_Gr_S(MMA_core_Eb[0], E, n_MMA, MMA_core_occ[0])
+    return get_Gr_S(MMA_core_Eb[0], E, n_MMA, N_C_MMA * MMA_core_occ[0])
 
 
 def get_Gr_PMMA_O_core_S(E):
-    return get_Gr_S(MMA_core_Eb[1], E, n_MMA, MMA_core_occ[1])
+    return get_Gr_S(MMA_core_Eb[1], E, n_MMA, N_O_MMA * MMA_core_occ[1])
 
 
 def get_Gr_PMMA_core_S(E):
@@ -132,6 +135,10 @@ def get_Gr_Si_2p_tau(E, hw):
     return get_Gr_tau(Si_core_Eb[2], E, hw, n_Si, Si_core_occ[2])
 
 
+def get_Gr_Si_core_tau(E, hw):
+    return get_Gr_Si_1s_tau(E, hw) + get_Gr_Si_2s_tau(E, hw) + get_Gr_Si_2p_tau(E, hw)
+
+
 ## Si u
 def get_Gr_Si_1s_u(E):
     return get_Gr_u(Si_core_Eb[0], E, n_Si, Si_core_occ[0])
@@ -146,7 +153,13 @@ def get_Gr_Si_2p_u(E):
 
 
 def get_Gr_Si_core_u(E):
-    get_Gr_Si_1s_u(E) + get_Gr_Si_2s_u(E) + get_Gr_Si_2p_u(E)
+    return get_Gr_Si_1s_u(E) + get_Gr_Si_2s_u(E) + get_Gr_Si_2p_u(E)
+
+
+def get_Gr_Si_total_u(E):
+    return get_Gr_Si_core_u(E) +\
+        get_Gr_u(Si_total_Eb[3], E, n_Si, Si_total_occ[3]) +\
+        get_Gr_u(Si_total_Eb[4], E, n_Si, Si_total_occ[4])
 
 
 ## Si S
@@ -163,8 +176,14 @@ def get_Gr_Si_2p_S(E):
 
 
 def get_Gr_Si_core_S(E):
-    get_Gr_Si_1s_S(E) + get_Gr_Si_2s_S(E) + get_Gr_Si_2p_S(E)
+    return get_Gr_Si_1s_S(E) + get_Gr_Si_2s_S(E) + get_Gr_Si_2p_S(E)
 
+
+def get_Gr_Si_total_S(E):
+    return get_Gr_Si_core_S(E) +\
+        get_Gr_S(Si_total_Eb[3], E, n_Si, Si_total_occ[3]) +\
+        get_Gr_S(Si_total_Eb[4], E, n_Si, Si_total_occ[4])
+        
 
 #%%
 #EE = np.logspace(0, 4.4, 100)
@@ -178,21 +197,17 @@ def get_Gr_Si_core_S(E):
 #    
 #    mu.pbar(i, len(EE))
 #    
-##    ans[i] = get_Gr_Si_total_S(E)
-#    bns[i] = get_Gr_Si_core_u(E)
+#    ans[i] = get_Gr_PMMA_core_u(E)
+##    bns[i] = get_Gr_Si_2p_S(E)
 #    
-#    ans[i] = elf.get_Si_Gryzinski_core_U(np.array([E]))
+#    cns[i] = elf.get_PMMA_Gryzinski_core_U(np.array([E]))
+##    cns[i] = elf.get_PMMA_C_1S_U(np.array([E]))
 #
 #
-##%%
-#chan_S = np.loadtxt('Chan_Si_l.txt')
-#
-#plt.loglog(EE, ans, '.', label='my total')
-#plt.loglog(EE, bns, '.', label='my core')
+#plt.loglog(EE, ans, '.', label='now core')
+#plt.loglog(EE, cns, '--', label='old core')
 #
 ##plt.loglog(EE, ans - bns)
-#
-#plt.loglog(chan_S[:, 0], 1/chan_S[:, 1], '.', label='chan')
 #
 #plt.legend()
 
