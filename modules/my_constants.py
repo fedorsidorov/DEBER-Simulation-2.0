@@ -3,10 +3,10 @@ import os
 
 
 #%%
-sim_folder = os.path.join('/Users', 'fedor', 'Documents', 'DEBER-Simulation-2.0') ## MAC
+#sim_folder = os.path.join('/Users', 'fedor', 'Documents', 'DEBER-Simulation-2.0') ## MAC
 #sim_folder = os.path.join('home', 'fedor', 'DEBER-Simulation-2.0') ## FTIAN
-#sim_folder = os.path.join('C:\\', 'Users', 'User', 'Documents', 'GitHub',
-#            'DEBER-Simulation-2.0')
+sim_folder = os.path.join('C:\\', 'Users', 'User', 'Documents', 'GitHub',
+            'DEBER-Simulation-2.0')
 
 #%% SI!!!
 e = 1.6e-19
@@ -71,6 +71,7 @@ uint16_max = 65535
 
 #%%
 EE = np.logspace(0, 4.4, 1000)
+EE_prec = np.logspace(-1, 4.4, 1000)
 
 THETA_deg = np.linspace(0.1, 180, 1000)
 THETA = np.deg2rad(THETA_deg)

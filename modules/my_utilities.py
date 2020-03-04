@@ -45,7 +45,7 @@ def get_closest_el_ind(array, val):
     return np.argmin(np.abs(array - val))
 
 
-def diff2int(DIFF, V=mc.EE, H=mc.EE):
+def diff2int(DIFF, V, H):
     
     INT = np.zeros((len(V), len(H)))
 

@@ -2,8 +2,7 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy import integrate
-
+#from scipy import integrate
 
 import my_utilities as mu
 import my_constants as mc
@@ -20,54 +19,49 @@ os.chdir(os.path.join(mc.sim_folder,
 
 #%%
 u_tot = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'diel_responce', 'PMMA_dapor2015', 'u.npy'
+        'E_loss', 'diel_responce', 'PMMA', 'u.npy'
         ))
-
-S_tot = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'diel_responce', 'PMMA_dapor2015', 'S.npy'
-        ))
-
 tau_tot = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'diel_responce', 'PMMA_dapor2015', 'tau_prec.npy'
+        'E_loss', 'diel_responce', 'PMMA', 'tau_prec.npy'
         ))
 
-u_core = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'Gryzinski', 'PMMA', 'u_core.npy'
+u_C = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'Gryzinski', 'PMMA', 'u_C.npy'
+        ))
+tau_C = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'Gryzinski', 'PMMA', 'tau_C.npy'
         ))
 
-S_core = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'Gryzinski', 'PMMA', 'S_core.npy'
+u_O = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'Gryzinski', 'PMMA', 'u_O.npy'
+        ))
+tau_O = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'Gryzinski', 'PMMA', 'tau_O.npy'
         ))
 
-tau_core = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'Gryzinski', 'PMMA', 'tau_core.npy'
+u_val = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'ELF+Gryzinski', 'PMMA', 'u_val.npy'
+        ))
+tau_val = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'ELF+Gryzinski', 'PMMA', 'tau_val.npy'
         ))
 
 
 #%%
-#EE = mc.EE
-#EE = np.logspace(-2, 4.4, 2000)
-#EE = np.logspace(-1, 4.4, 2000)
-EE = np.logspace(-1, 4.4, 1000)
-
-u_trapz = np.zeros(len(EE))
-S_trapz = np.zeros(len(EE))
-
-
-for i, E in enumerate(EE):
-    
-    inds = np.where(EE < E/2)[0]
-    
-    u_trapz[i] = np.trapz(tau_tot[i, inds], x=EE[inds])
-    S_trapz[i] = np.trapz(tau_tot[i, inds]*EE[inds], x=EE[inds])
-    
-
-#%%
-plt.loglog(mc.EE, u_tot)
-plt.loglog(EE, u_trapz, '--')
+tau_tot_int = mu.diff2int(tau_tot, mc.EE, mc.EE)
+tau_val_int = mu.diff2int(tau_val, mc.EE, mc.EE)
+tau_C_int = mu.diff2int(tau_C, mc.EE, mc.EE)
+tau_O_int = mu.diff2int(tau_O, mc.EE, mc.EE)
 
 
 #%%
-plt.loglog(mc.EE, S_tot)
-plt.loglog(EE, S_trapz, '--')
+for i in range(1, len(mc.EE), 100):
+    
+    plt.loglog(mc.EE, tau_tot_int[i, :])
+
+
+
+
+
+
 

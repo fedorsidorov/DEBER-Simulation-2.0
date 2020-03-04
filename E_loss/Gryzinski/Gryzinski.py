@@ -188,26 +188,28 @@ def get_Gr_Si_total_S(E):
         
 
 #%%
-#EE = mc.EE
-#
-##tau = np.zeros((len(EE), len(EE)))
-#u_C_PMMA = np.zeros(len(EE))
-#u_O_PMMA = np.zeros(len(EE))
-#S_C_PMMA = np.zeros(len(EE))
-#S_O_PMMA = np.zeros(len(EE))
-#
-#u_1s_Si = np.zeros(len(EE))
-#u_2s_Si = np.zeros(len(EE))
-#u_2p_Si = np.zeros(len(EE))
-#S_1s_Si = np.zeros(len(EE))
-#S_2s_Si = np.zeros(len(EE))
-#S_2p_Si = np.zeros(len(EE))
-#
-#
-#for i, E in enumerate(EE):
-#    
-#    mu.pbar(i, len(EE))
-#    
+EE = mc.EE_prec
+
+tau_C = np.zeros((len(EE), len(EE)))
+tau_O = np.zeros((len(EE), len(EE)))
+
+u_C_PMMA = np.zeros(len(EE))
+u_O_PMMA = np.zeros(len(EE))
+S_C_PMMA = np.zeros(len(EE))
+S_O_PMMA = np.zeros(len(EE))
+
+u_1s_Si = np.zeros(len(EE))
+u_2s_Si = np.zeros(len(EE))
+u_2p_Si = np.zeros(len(EE))
+S_1s_Si = np.zeros(len(EE))
+S_2s_Si = np.zeros(len(EE))
+S_2p_Si = np.zeros(len(EE))
+
+
+for i, E in enumerate(EE):
+    
+    mu.pbar(i, len(EE))
+    
 #    u_C_PMMA[i] = get_Gr_PMMA_C_core_u(E)
 #    u_O_PMMA[i] = get_Gr_PMMA_O_core_u(E)
 #    S_C_PMMA[i] = get_Gr_PMMA_C_core_S(E)
@@ -220,8 +222,9 @@ def get_Gr_Si_total_S(E):
 #    S_2s_Si[i] = get_Gr_Si_2s_S(E)
 #    S_2p_Si[i] = get_Gr_Si_2p_S(E)
     
-#    for j, hw in enumerate(EE):
-#        tau[i, j] = get_Gr_Si_core_tau(E, hw)
+    for j, hw in enumerate(EE):
+        tau_C[i, j] = get_Gr_PMMA_C_core_tau(E, hw)
+        tau_O[i, j] = get_Gr_PMMA_O_core_tau(E, hw)
 
 
 
