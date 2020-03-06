@@ -18,7 +18,7 @@ os.chdir(os.path.join(mc.sim_folder,
 
 
 #%%
-layer = 'PMMA'
+layer = 'Si'
 
 u_tot = np.load(os.path.join(mc.sim_folder,
         'E_loss', 'diel_responce', layer, 'u.npy'

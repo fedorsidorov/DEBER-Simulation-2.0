@@ -29,7 +29,7 @@ def get_PMMA_U_phonon(EE, T=300):
     
     U_PH = KT * hw/EE * np.log( (1 + np.sqrt(1 - hw/EE)) / (1 - np.sqrt(1 - hw/EE)) ) ## m^-1
     
-    return U_PH * 1e-2
+    return U_PH * 1e-2 ## cm^-1
 
 
 def get_PMMA_U_polaron(EE):

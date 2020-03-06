@@ -3,10 +3,10 @@ import os
 
 
 #%%
-#sim_folder = os.path.join('/Users', 'fedor', 'Documents', 'DEBER-Simulation-2.0') ## MAC
+sim_folder = os.path.join('/Users', 'fedor', 'Documents', 'DEBER-Simulation-2.0') ## MAC
 #sim_folder = os.path.join('home', 'fedor', 'DEBER-Simulation-2.0') ## FTIAN
-sim_folder = os.path.join('C:\\', 'Users', 'User', 'Documents', 'GitHub',
-            'DEBER-Simulation-2.0')
+#sim_folder = os.path.join('C:\\', 'Users', 'User', 'Documents', 'GitHub',
+#            'DEBER-Simulation-2.0')
 
 #%% SI!!!
 e = 1.6e-19
@@ -76,8 +76,8 @@ EE_prec = np.logspace(-1, 4.4, 1000)
 THETA_deg = np.linspace(0.1, 180, 1000)
 THETA = np.deg2rad(THETA_deg)
 
-WW = np.logspace(0, 4.4, 3000)
-WW_ext = np.logspace(-4, 4.4, 5000)
+#WW = np.logspace(0, 4.4, 3000)
+#WW_ext = np.logspace(-4, 4.4, 5000)
 
 
 #%% PMMA and Si
@@ -88,7 +88,7 @@ occupancy_1S = 2
 
 ##              1s    2s   2p   3s     3p
 #binding_Si   = [1844, 154, 104, 13.46, 8.15 ]
-binding_Si   = [1849, 159, 109, 18   , 12.67]
+#binding_Si   = [1849, 159, 109, 18   , 12.67]
 occupancy_Si = [2,    2,   6,   2,     2]
 
 n_val_PMMA = 40

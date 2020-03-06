@@ -24,10 +24,6 @@ os.chdir(os.path.join(mc.sim_folder,
 
 
 #%%
-EE = np.logspace(0, 4.4, 100)
-
-
-#%% PMMA
 def get_Si_val_tau(E, hw):
     return si.get_tau(E, hw) - gryz.get_Gr_Si_core_tau(E, hw)
 
@@ -47,6 +43,9 @@ def get_Si_val_u(E):
     
     return integrate.quad(get_Y, 0, E/2)[0]
 
+
+#%%
+EE = mc.EE
 
 tau = np.zeros((len(EE), len(EE)))
 tau_core = np.zeros((len(EE), len(EE)))
@@ -68,20 +67,20 @@ for i, E in enumerate(EE):
     
     mu.pbar(i, len(EE))
     
-    S[i] = si.get_S(E)
-    S_val[i] = si.get_S(E) - gryz.get_Gr_Si_core_S(E)
-    S_val_test[i] = get_Si_val_S(E)
-    S_core[i] = gryz.get_Gr_Si_core_S(E)
-    S_Gr_tot[i] = gryz.get_Gr_Si_total_S(E)
+#    S[i] = si.get_S(E)
+#    S_val[i] = si.get_S(E) - gryz.get_Gr_Si_core_S(E)
+#    S_val_test[i] = get_Si_val_S(E)
+#    S_core[i] = gryz.get_Gr_Si_core_S(E)
+#    S_Gr_tot[i] = gryz.get_Gr_Si_total_S(E)
     
-    u[i] = si.get_u(E)
+#    u[i] = si.get_u(E)
     u_val[i] = si.get_u(E) - gryz.get_Gr_Si_core_u(E)
     u_val_test[i] = get_Si_val_u(E)
     u_core[i] = gryz.get_Gr_Si_core_u(E)
-    u_Gr_tot[i] = gryz.get_Gr_Si_total_u(E)
+#    u_Gr_tot[i] = gryz.get_Gr_Si_total_u(E)
     
     for j, hw in enumerate(EE):
-        tau[i, j] = si.get_tau(E, hw)
+#        tau[i, j] = si.get_tau(E, hw)
         tau_core[i, j] = gryz.get_Gr_Si_core_tau(E, hw)
 
 

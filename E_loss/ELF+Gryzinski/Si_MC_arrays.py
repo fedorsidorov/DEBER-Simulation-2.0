@@ -19,54 +19,71 @@ os.chdir(os.path.join(mc.sim_folder,
 
 #%%
 u_tot = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'diel_responce', 'Si_valentin2012', 'u.npy'
+        'E_loss', 'diel_responce', 'Si', 'u.npy'
         ))
-
-S_tot = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'diel_responce', 'Si_valentin2012', 'S.npy'
-        ))
-
 tau_tot = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'diel_responce', 'Si_valentin2012', 'tau_prec.npy'
+        'E_loss', 'diel_responce', 'Si', 'tau.npy'
         ))
 
-u_core = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'Gryzinski', 'Si', 'u_core.npy'
+u_1s = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'Gryzinski', 'Si', 'u_1s.npy'
+        ))
+tau_1s = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'Gryzinski', 'Si', 'tau_1s.npy'
         ))
 
-S_core = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'Gryzinski', 'Si', 'S_core.npy'
+u_2s = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'Gryzinski', 'Si', 'u_2s.npy'
+        ))
+tau_2s = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'Gryzinski', 'Si', 'tau_2s.npy'
         ))
 
-tau_core = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'Gryzinski', 'Si', 'tau_core.npy'
+u_2p = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'Gryzinski', 'Si', 'u_2p.npy'
+        ))
+tau_2p = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'Gryzinski', 'Si', 'tau_2p.npy'
+        ))
+
+u_val = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'ELF+Gryzinski', 'Si', 'u_val.npy'
+        ))
+tau_val = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'ELF+Gryzinski', 'Si', 'tau_val.npy'
         ))
 
 
 #%%
-#EE = mc.EE
-#EE = np.logspace(-2, 4.4, 2000)
-#EE = np.logspace(-1, 4.4, 2000)
-EE = np.logspace(-1, 4.4, 1000)
-
-u_trapz = np.zeros(len(EE))
-S_trapz = np.zeros(len(EE))
-
-
-for i, E in enumerate(EE):
-    
-    inds = np.where(EE < E/2)[0]
-    
-    u_trapz[i] = np.trapz(tau_tot[i, inds], x=EE[inds])
-    S_trapz[i] = np.trapz(tau_tot[i, inds]*EE[inds], x=EE[inds])
-    
-
-#%%
-plt.loglog(mc.EE, u_tot)
-plt.loglog(EE, u_trapz, '--')
+#tau_tot_int = mu.diff2int(tau_tot, mc.EE, mc.EE)
+#tau_val_int = mu.diff2int(tau_val, mc.EE, mc.EE)
+#tau_1s_int = mu.diff2int(tau_1s, mc.EE, mc.EE)
+#tau_2s_int = mu.diff2int(tau_2s, mc.EE, mc.EE)
+#tau_2p_int = mu.diff2int(tau_2p, mc.EE, mc.EE)
 
 
 #%%
-plt.loglog(mc.EE, S_tot)
-plt.loglog(EE, S_trapz, '--')
+tau_tot_int = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'ELF+Gryzinski', 'Si', 'tau_tot_int.npy'
+        ))
+tau_val_int = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'ELF+Gryzinski', 'Si', 'tau_val_int.npy'
+        ))
+tau_1s_int = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'ELF+Gryzinski', 'Si', 'tau_1s_int.npy'
+        ))
+tau_2s_int = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'ELF+Gryzinski', 'Si', 'tau_2s_int.npy'
+        ))
+tau_2p_int = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'ELF+Gryzinski', 'Si', 'tau_2p_int.npy'
+        ))
+
+
+#%%
+#for i in range(1, len(mc.EE), 100):
+#    
+#    plt.loglog(mc.EE, tau_tot_int[i, :])
+#
+
 

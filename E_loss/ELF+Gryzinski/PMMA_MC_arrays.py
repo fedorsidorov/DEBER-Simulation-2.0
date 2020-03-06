@@ -22,7 +22,7 @@ u_tot = np.load(os.path.join(mc.sim_folder,
         'E_loss', 'diel_responce', 'PMMA', 'u.npy'
         ))
 tau_tot = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'diel_responce', 'PMMA', 'tau_prec.npy'
+        'E_loss', 'diel_responce', 'PMMA', 'tau.npy'
         ))
 
 u_C = np.load(os.path.join(mc.sim_folder,
@@ -49,16 +49,31 @@ tau_val = np.load(os.path.join(mc.sim_folder,
 
 #%%
 tau_tot_int = mu.diff2int(tau_tot, mc.EE, mc.EE)
-tau_val_int = mu.diff2int(tau_val, mc.EE, mc.EE)
-tau_C_int = mu.diff2int(tau_C, mc.EE, mc.EE)
-tau_O_int = mu.diff2int(tau_O, mc.EE, mc.EE)
+#tau_val_int = mu.diff2int(tau_val, mc.EE, mc.EE)
+#tau_C_int = mu.diff2int(tau_C, mc.EE, mc.EE)
+#tau_O_int = mu.diff2int(tau_O, mc.EE, mc.EE)
 
 
 #%%
-for i in range(1, len(mc.EE), 100):
-    
-    plt.loglog(mc.EE, tau_tot_int[i, :])
+tau_tot_int = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'ELF+Gryzinski', 'PMMA', 'tau_tot_int.npy'
+        ))
+tau_val_int = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'ELF+Gryzinski', 'PMMA', 'tau_val_int.npy'
+        ))
+tau_C_int = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'ELF+Gryzinski', 'PMMA', 'tau_C_int.npy'
+        ))
+tau_O_int = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'ELF+Gryzinski', 'PMMA', 'tau_O_int.npy'
+        ))
 
+
+#%%
+#for i in range(1, len(mc.EE), 100):
+#    
+#    plt.loglog(mc.EE, tau_tot_int[i, :])
+#
 
 
 

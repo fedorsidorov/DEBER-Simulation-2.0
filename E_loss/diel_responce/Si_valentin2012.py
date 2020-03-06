@@ -23,61 +23,59 @@ params = popt.reshape((6, 3))
 
 
 #%%
-def get_oscillator(E_eV, A, E, w, q_eV):
+def get_oscillator(E, An, En, wn, q):
     
-    if E > 50 and E_eV < E:
+    if En > 50 and E < En:
         return 0
     
-    Eq = E + q_eV**2 / (2*mc.m)
+    Enq = En + q**2 / (2*mc.m)
     
-    return A*w*E_eV / ((E_eV**2 - Eq**2)**2 + (w*E_eV)**2)
+    return An*wn*E / ((E**2 - Enq**2)**2 + (wn*E)**2)
 
 
-def get_ELF(E_eV, q_eV):
+def get_ELF(E, q):
     
     ELF = 0
     
     for arr in params:
-        A, E, w = arr
-        ELF += get_oscillator(E_eV, A, E, w, q_eV)
-    
+        An, En, wn = arr
+        ELF += get_oscillator(E, An, En, wn, q)
     
     return ELF
 
 
-def get_tau(E_eV, hw_eV):
+def get_tau(E, hw):
     
-    if hw_eV > E_eV:
+    if hw > E:
         return 0
     
-    def get_ELF_q(q_eV):
-        return get_ELF(hw_eV, q_eV) / q_eV
+    def get_ELF_q(q):
+        return get_ELF(hw, q) / q
     
-    qp = np.sqrt(2*mc.m)*(np.sqrt(E_eV) + np.sqrt(E_eV - hw_eV))
-    qm = np.sqrt(2*mc.m)*(np.sqrt(E_eV) - np.sqrt(E_eV - hw_eV))
+    qp = np.sqrt(2*mc.m)*(np.sqrt(E) + np.sqrt(E - hw))
+    qm = np.sqrt(2*mc.m)*(np.sqrt(E) - np.sqrt(E - hw))
     
-    return mc.h2si * 1/(np.pi * E_eV) * integrate.quad(get_ELF_q, qm, qp)[0] / 1e+2 ## m -> cm
+    return mc.h2si * 1/(np.pi * E) * integrate.quad(get_ELF_q, qm, qp)[0] / 1e+2 ## m -> cm
 
 
-def get_S(E_eV):
+def get_S(E):
     
-    def get_tau_hw_S(hw_eV):
-        return get_tau(E_eV, hw_eV) * hw_eV
+    def get_tau_hw_S(hw):
+        return get_tau(E, hw) * hw
     
-    return integrate.quad(get_tau_hw_S, 0, E_eV/2)[0]
+    return integrate.quad(get_tau_hw_S, 0, E/2)[0]
 
 
-def get_u(E_eV):
+def get_u(E):
     
-    def get_tau_u(hw_eV):
-        return get_tau(E_eV, hw_eV)
+    def get_tau_u(hw):
+        return get_tau(E, hw)
     
-    return integrate.quad(get_tau_u, 0, E_eV/2)[0]
+    return integrate.quad(get_tau_u, 0, E/2)[0]
 
 
 #%%
-#EE = np.logspace(-1, 4.4, 1000)
-##EE = mc.EE
+#EE = mc.EE
 #
 #tau = np.zeros((len(EE), len(EE)))
 #
@@ -92,18 +90,18 @@ def get_u(E_eV):
 
 
 #%%
-EE = mc.EE
-
-S = np.zeros(len(EE))
-u = np.zeros(len(EE))
-
-
-for i, E in enumerate(EE):
-    
-    mu.pbar(i, len(EE))
-    
-    S[i] = get_S(E)
-    u[i] = get_u(E)
+#EE = mc.EE
+#
+#S = np.zeros(len(EE))
+#u = np.zeros(len(EE))
+#
+#
+#for i, E in enumerate(EE):
+#    
+#    mu.pbar(i, len(EE))
+#    
+#    S[i] = get_S(E)
+#    u[i] = get_u(E)
 
 
 #%%
@@ -120,11 +118,11 @@ for i, E in enumerate(EE):
 #
 #plt.legend()
 #plt.grid()
-#
-##plt.savefig('Si_valentin2012_quad_S.png', dpi=300)
-#
-#
-##%%
+
+#plt.savefig('Si_valentin2012_quad_S.png', dpi=300)
+
+
+#%%
 #plt.semilogx(EE, u, label='no exchange') ## IS BETTER
 ##plt.semilogx(EE_eV, u_exc / 1e+2, label='exchange')
 #
@@ -139,6 +137,6 @@ for i, E in enumerate(EE):
 #
 #plt.legend()
 #plt.grid()
-#
-##plt.savefig('Si_valentin2012_quad_u.png', dpi=300)
-#
+
+#plt.savefig('Si_valentin2012_quad_u.png', dpi=300)
+

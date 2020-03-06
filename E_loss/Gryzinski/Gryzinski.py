@@ -2,18 +2,17 @@
 import numpy as np
 import os
 import importlib
+import matplotlib.pyplot as plt
 
 import my_utilities as mu
 import my_constants as mc
-import E_loss_functions_2020 as elf
-
-import matplotlib.pyplot as plt
+import scission_functions_2020 as sf
 
 from scipy import integrate
 
 mu = importlib.reload(mu)
 mc = importlib.reload(mc)
-elf = importlib.reload(elf)
+sf = importlib.reload(sf)
 
 os.chdir(os.path.join(mc.sim_folder,
         'E_loss', 'Gryzinski'
@@ -38,8 +37,19 @@ n_MMA =  mc.rho_PMMA * mc.Na/mc.u_MMA
 Si_core_Eb  = [1844, 154, 104]
 Si_core_occ = [   2,   2,   6]
 
-Si_total_Eb  = [1849, 159, 109, 18, 12.67]
-Si_total_occ = [   2,   2,   6,  2,     2]
+## Si             1s,  2s,  2p,    3s,      3p
+Si_total_Eb  = [1844, 154, 104, 13.46, 8.15]
+Si_total_occ = [   2,   2,   6,     2,    2]
+
+Si_MuElec_Eb = [16.65, 6.52, 13.63, 107.98, 151.55, 1828.5]
+Si_MuElec_occ = [4, 2, 2, 6, 2, 2]
+
+#  energyConstant.push_back(16.65*eV);
+#  energyConstant.push_back(6.52*eV); 
+#  energyConstant.push_back(13.63*eV);
+#  energyConstant.push_back(107.98*eV); 
+#  energyConstant.push_back(151.55*eV); 
+#  energyConstant.push_back(1828.5*eV);
 
 N_val_Si = 4
 
@@ -185,47 +195,88 @@ def get_Gr_Si_total_S(E):
     return get_Gr_Si_core_S(E) +\
         get_Gr_S(Si_total_Eb[3], E, n_Si, Si_total_occ[3]) +\
         get_Gr_S(Si_total_Eb[4], E, n_Si, Si_total_occ[4])
-        
+
 
 #%%
-EE = mc.EE_prec
-
-tau_C = np.zeros((len(EE), len(EE)))
-tau_O = np.zeros((len(EE), len(EE)))
-
-u_C_PMMA = np.zeros(len(EE))
-u_O_PMMA = np.zeros(len(EE))
-S_C_PMMA = np.zeros(len(EE))
-S_O_PMMA = np.zeros(len(EE))
-
-u_1s_Si = np.zeros(len(EE))
-u_2s_Si = np.zeros(len(EE))
-u_2p_Si = np.zeros(len(EE))
-S_1s_Si = np.zeros(len(EE))
-S_2s_Si = np.zeros(len(EE))
-S_2p_Si = np.zeros(len(EE))
-
-
-for i, E in enumerate(EE):
+def get_scission_probs_gryz_single_E(E):
     
-    mu.pbar(i, len(EE))
+    gryz_bond_u = np.zeros(len(sf.MMA_bonds))
+    
+    
+    for i in range(len(sf.MMA_bonds)):
+        gryz_bond_u[i] = get_Gr_u(
+                sf.MMA_bonds[list(sf.MMA_bonds.keys())[i]][0],
+                E,
+                mc.n_PMMA_mon,
+                sf.MMA_bonds[list(sf.MMA_bonds.keys())[i]][1]
+                )
+    
+    
+    gryz_probs = np.zeros(np.shape(gryz_bond_u))
+    
+    
+    for i in range(len(gryz_probs)):
+        now_sum = np.sum(gryz_bond_u)
+        
+        if now_sum == 0:
+            continue
+        
+        gryz_probs[i] = gryz_bond_u[i] / now_sum
+        
+    
+    return gryz_probs
+
+
+#%%
+#scission_probs = np.zeros((len(mc.EE), sf.MMA_n_bonds))
+#
+#for i, E in enumerate(mc.EE):
+#    
+#    mu.pbar(i, len(mc.EE))
+#    
+#    scission_probs[i, :] = get_scission_probs_gryz_single_E(E)
+
+
+#%%
+#EE = mc.EE
+
+#tau_1s = np.zeros((len(mc.EE), len(mc.EE)))
+#tau_2s = np.zeros((len(mc.EE), len(mc.EE)))
+#tau_2p = np.zeros((len(mc.EE), len(mc.EE)))
+
+#u_C_PMMA = np.zeros(len(EE))
+#u_O_PMMA = np.zeros(len(EE))
+#S_C_PMMA = np.zeros(len(EE))
+#S_O_PMMA = np.zeros(len(EE))
+
+#u1_Si = np.zeros(len(EE))
+#u2_Si = np.zeros(len(EE))
+#u3_Si = np.zeros(len(EE))
+#u4_Si = np.zeros(len(EE))
+#u5_Si = np.zeros(len(EE))
+#u6_Si = np.zeros(len(EE))
+
+
+#for i, E in enumerate(mc.EE):
+
+#    mu.pbar(i, len(mc.EE))
     
 #    u_C_PMMA[i] = get_Gr_PMMA_C_core_u(E)
 #    u_O_PMMA[i] = get_Gr_PMMA_O_core_u(E)
 #    S_C_PMMA[i] = get_Gr_PMMA_C_core_S(E)
 #    S_O_PMMA[i] = get_Gr_PMMA_O_core_S(E)
-#    
-#    u_1s_Si[i] = get_Gr_Si_1s_u(E)
-#    u_2s_Si[i] = get_Gr_Si_2s_u(E)
-#    u_2p_Si[i] = get_Gr_Si_2p_u(E)
-#    S_1s_Si[i] = get_Gr_Si_1s_S(E)
-#    S_2s_Si[i] = get_Gr_Si_2s_S(E)
-#    S_2p_Si[i] = get_Gr_Si_2p_S(E)
     
-    for j, hw in enumerate(EE):
-        tau_C[i, j] = get_Gr_PMMA_C_core_tau(E, hw)
-        tau_O[i, j] = get_Gr_PMMA_O_core_tau(E, hw)
-
+#    u1_Si[i] = get_Gr_S(Si_MuElec_Eb[0], E, n_Si, Si_MuElec_occ[0])
+#    u2_Si[i] = get_Gr_S(Si_MuElec_Eb[1], E, n_Si, Si_MuElec_occ[1])
+#    u3_Si[i] = get_Gr_S(Si_MuElec_Eb[2], E, n_Si, Si_MuElec_occ[2])
+#    u4_Si[i] = get_Gr_S(Si_MuElec_Eb[3], E, n_Si, Si_MuElec_occ[3])
+#    u5_Si[i] = get_Gr_S(Si_MuElec_Eb[4], E, n_Si, Si_MuElec_occ[4])
+#    u6_Si[i] = get_Gr_S(Si_MuElec_Eb[5], E, n_Si, Si_MuElec_occ[5])
+    
+#    for j, hw in enumerate(mc.EE):
+#        tau_1s[i, j] = get_Gr_Si_1s_tau(E, hw)
+#        tau_2s[i, j] = get_Gr_Si_2s_tau(E, hw)
+#        tau_2p[i, j] = get_Gr_Si_2p_tau(E, hw)
 
 
 #%%

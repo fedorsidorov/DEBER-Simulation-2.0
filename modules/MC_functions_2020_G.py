@@ -6,10 +6,12 @@ import importlib
 import my_arrays_2020 as ma
 import my_constants as mc
 import my_utilities as mu
+import scission_functions_2020 as sf
 
 ma = importlib.reload(ma)
 mc = importlib.reload(mc)
 mu = importlib.reload(mu)
+sf = importlib.reload(sf)
 
 import matplotlib.pyplot as plt
 #from mpl_toolkits.mplot3d import Axes3D
@@ -56,12 +58,10 @@ def get_collision_ind(layer_ind, E_ind):
 
 def get_PMMA_val_bond_ind(E_ind):
     
-    bond_inds = list(range(len(ma.PMMA_val_Eb)))
-    
     if np.sum(ma.scission_prob_gryz[E_ind]) == 0:
         return -9
     
-    return np.random.choice(bond_inds, p=ma.scission_prob_gryz[E_ind])
+    return np.random.choice(sf.bond_inds, p=ma.scission_prob_gryz[E_ind])
 
 
     
@@ -87,11 +87,11 @@ def get_elastic_On(layer_ind, E_ind, O_prev):
     return get_O_matrix(phi, theta, O_prev)
 
 
-def get_ion_On_O2nd(E, E_prime, E_bind, O_prev):
+def get_ion_On_O2nd(E, E_prime, Eb, O_prev):
     
     phi = 2 * np.pi * rnd.random()
     phi_s = phi + np.pi
-    
+    scission_prob_gryz
     p = np.sqrt(E / (2*mc.m))
     p_prime = np.sqrt(E_prime / (2*mc.m))
     
@@ -109,19 +109,19 @@ def get_ion_On_O2nd(E, E_prime, E_bind, O_prev):
 def get_ion_dE_E2nd_On_O2nd(layer_ind, proc_ind, now_E, E_ind, O_prev):
     
     if proc_ind >= 10:
-        E_bind = ma.PMMA_val_Eb[proc_ind - 10]
+        Eb = ma.PMMA_val_Eb[proc_ind - 10]
         int_array = ma.processes_int_U[layer_ind][1][E_ind, :]
     
     else:
-        E_bind = ma.E_bind[layer_ind][proc_ind][E_ind]
+        Eb = ma.Eb[layer_ind][proc_ind][E_ind]
         int_array = ma.processes_int_U[layer_ind][proc_ind][E_ind, :]
         
     dE = get_closest_int_el(int_array, mc.EE, rnd.random())
     
-    if dE > E_bind:
+    if dE > Eb:
         
-        E2nd = dE - E_bind
-        On, O2nd = get_ion_On_O2nd(now_E, now_E - dE, E_bind, O_prev)
+        E2nd = dE - Eb
+        On, O2nd = get_ion_On_O2nd(now_E, now_E - dE, Eb, O_prev)
         
         return dE, E2nd, On, O2nd
     
