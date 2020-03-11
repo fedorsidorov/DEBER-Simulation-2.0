@@ -28,7 +28,7 @@ def get_closest_int_el(int_array, source, value):
     
     for i in range(len(int_array) - 1):           
         if int_array[i] <= value <= int_array[i + 1]:
-            closest_ind = i
+            return source[i]
         
     return source[closest_ind]
 
@@ -122,11 +122,19 @@ def get_PMMA_phonon_dE_On(E, O_prev):
     phi = 2*np.pi*rnd.random()
     
     E_prime = E - dE
+    
+    if E_prime < 0:
+        print(E, E_prime)
+    
     B = (E + E_prime + 2*np.sqrt(E*E_prime)) /\
         (E + E_prime - 2*np.sqrt(E*E_prime))
     u5 = rnd.random()
     
     cos_theta = (E + E_prime)/(2*np.sqrt(E*E_prime)) * (1 - B**u5) + B**u5
+    
+    if np.abs(cos_theta) > 1:
+        print(E, E_prime, cos_theta)
+    
     theta = np.arccos(cos_theta)
     
     On = get_O_matrix(phi, theta, O_prev)
@@ -145,9 +153,6 @@ def get_ion_dE_E2nd_On_O2nd(layer_ind, proc_ind, E, E_ind, O_prev):
     elif layer_ind == 0 and proc_ind >= 10: ## valence electrons, bond contribution
         
         bond_ind = proc_ind - 10
-        
-        if bond_ind < 0:
-            print('bond_ind < 0!!!')
         
         Eb = ma.PMMA_val_E_bind[bond_ind]
         int_array = ma.proc_tau_cumulated[layer_ind][2, E_ind, :]
@@ -177,7 +182,7 @@ def get_ion_dE_E2nd_On_O2nd(layer_ind, proc_ind, E, E_ind, O_prev):
 
 def get_dE_E2nd_On_O2nd(layer_ind, proc_ind, E, E_ind, O_prev):
     
-    if mc.EE[E_ind] < ma.E_cut[layer_ind]: ## cutoff
+    if E < ma.E_cut[layer_ind]: ## cutoff
         return E, 0, O_prev*0, O_prev*0
     
     if proc_ind == 0: ## elastic scattering
@@ -276,9 +281,7 @@ def get_TT_and_sim_data(TT, n_TT, d_PMMA, tr_num, par_num, E0, x0y0z0, O_prev, z
         layer_ind, proc_ind, E, dxdydz, dE, E2nd, On, O2nd,  =\
             get_coll_data(d_PMMA, E, O_prev, x, z)
         
-        if layer_ind == 1 and E < 10:
-            break
-        
+
         sim_data[pos, 2] = layer_ind
         sim_data[pos, 3] = proc_ind
         sim_data[pos, 8] = dE - E2nd
@@ -296,13 +299,11 @@ def get_TT_and_sim_data(TT, n_TT, d_PMMA, tr_num, par_num, E0, x0y0z0, O_prev, z
             TT[n_TT] = new_task
             n_TT += 1
         
-#        else:
-#            sim_data[pos, 3] = proc_ind*(-1)
-        
         
         if pos+1 >= len(sim_data):
             sim_data = np.vstack((sim_data, np.zeros((mc.DATA_tr_len, 10)) * -100))
             print('Add sim_data len')
+            print('E =', E)
         
         
         sim_data[pos + 1, :] = np.concatenate(([[tr_num]], [[par_num]], [[np.nan]],\
@@ -340,7 +341,7 @@ def create_TT(E0, n_tracks):
 
 
 ## SUPER VAZHNO
-def get_DATA(d_PMMA, E0, n_tracks, z_cut_Si):
+def get_DATA(d_PMMA, E0, n_tracks, z_cut_Si=100):
     
     TT, n_TT = create_TT(E0, n_tracks)
 

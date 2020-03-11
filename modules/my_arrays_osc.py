@@ -25,7 +25,7 @@ proc_u_norm = [pp.u_table_norm, ps.u_table_norm]
 proc_tau_cumulated = [pp.tau_cumulated_table, ps.tau_cumulated_table]
 
 E_bind = [pp.E_bind, ps.E_bind]
-E_cut = [pp.E_cut, ps.E_cut]
+E_cut = [mc.E_cut_PMMA, mc.E_cut_Si]
 
 PMMA_val_E_bind = pp.val_E_bind
 

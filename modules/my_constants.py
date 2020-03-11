@@ -86,12 +86,6 @@ binding_O_1S = 538
 
 occupancy_1S = 2
 
-##              1s    2s   2p   3s     3p
-#binding_Si   = [1844, 154, 104, 13.46, 8.15 ]
-#binding_Si   = [1849, 159, 109, 18   , 12.67]
-#occupancy_Si = [2,    2,   6,   2,     2]
-
-
 ##               plasm    3p     3s      2p      2s      1s
 Si_MuElec_Eb  = [16.65, 6.52, 13.63, 107.98, 151.55, 1828.5]
 Si_MuElec_occ = [    4,    2,     2,      6,      2,      2]
@@ -101,7 +95,7 @@ n_val_Si = 4
 
 
 #%%
-PMMA_Ebind = (25.84, 3.6, 288, 543)
+PMMA_Ebind = [25.84, 3.6, 288, 543]
 
 
 #%%
@@ -110,6 +104,6 @@ TT_len = int(7e+3)
 DATA_tr_len = int(3e+4)
 
 E_cut_PMMA = 3.7
-E_cut_Si = Si_MuElec_Eb[0]
+E_cut_Si = 16.7
 
 
