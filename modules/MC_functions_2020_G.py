@@ -91,7 +91,7 @@ def get_ion_On_O2nd(E, E_prime, Eb, O_prev):
     
     phi = 2 * np.pi * rnd.random()
     phi_s = phi + np.pi
-    scission_prob_gryz
+#    scission_prob_gryz
     p = np.sqrt(E / (2*mc.m))
     p_prime = np.sqrt(E_prime / (2*mc.m))
     

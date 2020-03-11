@@ -1,15 +1,17 @@
 3#%% Import
 import numpy as np
-import os
+#import os
 import importlib
 import matplotlib.pyplot as plt
-import copy
 
 import my_constants as mc
 mc = importlib.reload(mc)
 
-import E_loss_functions_2020 as elf
-elf = importlib.reload(elf)
+import my_utilities as mu
+mu = importlib.reload(mu)
+
+import Gryzinski as gryz
+gryz = importlib.reload(gryz)
 
 
 #%%
@@ -28,83 +30,99 @@ MMA_bonds["O-C3"]  = 364 * kJmol_2_eV,  2
 MMA_bonds["C-C3"]  = 356 * kJmol_2_eV,  2
 MMA_bonds["C-C2"]  = 354 * kJmol_2_eV,  4
 
-MMA_n_bonds = len(MMA_bonds)
-MMA_bond_inds = list(range(MMA_n_bonds))
+n_bonds = len(MMA_bonds)
+bond_inds = list(range(n_bonds))
+
+bond_names = list(MMA_bonds.keys())
+
+BDE_array = np.array(list(MMA_bonds.values()))
+
+bonds_BDE = BDE_array[:, 0]
+bonds_occ = BDE_array[:, 1]
 
 #bond_names = list(MMA_bonds.keys())
-Eb_Nel = np.array(list(MMA_bonds.values()))
+#Eb_Nel = np.array(list(MMA_bonds.values()))
 
 
 #%%
-def get_stairway(b_map_sc, EE=mc.EE):
-    
-    Eb_Nel_sc_list = []
-    
-    for val in b_map_sc.keys():
-        Eb_Nel_sc_list.append([MMA_bonds[val][0], b_map_sc[val]])
-    
-    Eb_Nel_sc = np.array(Eb_Nel_sc_list)
-    
-    probs = np.zeros(len(EE))
-    
-    nums = np.zeros(len(EE))
-    dens = np.zeros(len(EE))
-    
-    
-    for i, e in enumerate(EE):
-        
-        num = 0
-            
-        for st in Eb_Nel_sc:
-            if e >= st[0]:
-                num += st[1]
-        
-        if num == 0:
-            continue
-        
-        nums[i] = num
-        
-        den = 0
-        
-        for st in Eb_Nel:
-            if e >= st[0]:
-                den += st[1]
-        
-        dens[i] = den
-        
-        probs[i] = num / den
-        
-    
-    return probs
-
-
-#%%
-#def scission_probs_gryz(EE):
+#def get_stairway(b_map_sc, EE=mc.EE):
 #    
-#    gryz_bond_U = np.zeros((len(EE), len(MMA_bonds)))
+#    Eb_Nel_sc_list = []
+#    
+#    for val in b_map_sc.keys():
+#        Eb_Nel_sc_list.append([MMA_bonds[val][0], b_map_sc[val]])
+#    
+#    Eb_Nel_sc = np.array(Eb_Nel_sc_list)
+#    
+#    probs = np.zeros(len(EE))
+#    
+#    nums = np.zeros(len(EE))
+#    dens = np.zeros(len(EE))
 #    
 #    
-#    for i in range(len(MMA_bonds)):
+#    for i, e in enumerate(EE):
 #        
-#        gryz_bond_U[:, i] = elf.get_Gryzinski_CS(EE, MMA_bonds[list(MMA_bonds.keys())[i]][0],\
-#                WW=mc.WW_ext) * MMA_bonds[list(MMA_bonds.keys())[i]][1] * mc.n_PMMA_mon
+#        num = 0
+#            
+#        for st in Eb_Nel_sc:
+#            if e >= st[0]:
+#                num += st[1]
 #        
-##        plt.loglog(EE, gryz_bond_U[:, i], label=list(MMA_bonds.keys())[i])
-#    
-#    gryz_probs = np.zeros(np.shape(gryz_bond_U))
-#    
-#    
-#    for i in range(len(gryz_probs)):
-#        
-#        now_sum = np.sum(gryz_bond_U[i])
-#        
-#        if now_sum == 0:
+#        if num == 0:
 #            continue
 #        
-#        gryz_probs[i] = gryz_bond_U[i] / now_sum
+#        nums[i] = num
 #        
+#        den = 0
 #        
-#    return gryz_probs
+#        for st in Eb_Nel:
+#            if e >= st[0]:
+#                den += st[1]
+#        
+#        dens[i] = den
+#        
+#        probs[i] = num / den
+#        
+#    
+#    return probs
+
+
+#%%
+def get_bonds_u(EE):
+    
+    bonds_u = np.zeros((len(EE), n_bonds))
+    
+    
+    for n in range(n_bonds):
+        
+        mu.pbar(n, n_bonds)
+        
+        Eb = bonds_BDE[n]
+        occ = bonds_occ[n]
+        
+        for i in range(len(EE)):
+            bonds_u[i, n] = gryz.get_Gr_u(Eb, EE[i], mc.n_PMMA_mon, occ)
+        
+        plt.loglog(EE, bonds_u[:, n], label=list(MMA_bonds.keys())[n])
+    
+    return bonds_u
+    
+
+#%%
+#bonds_u = get_bonds_u(mc.EE)
+#
+#
+##%%
+#plt.loglog(mc.EE, bonds_u)
+#
+#
+##%%
+#bonds_u_norm = mu.normalize_u_array(bonds_u)
+#
+#
+#plt.loglog(mc.EE, bonds_u_norm)
+#
+#plt.ylim(1e-2, 1)
 
 
 #%%

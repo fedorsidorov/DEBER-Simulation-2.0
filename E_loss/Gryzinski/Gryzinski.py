@@ -6,13 +6,13 @@ import matplotlib.pyplot as plt
 
 import my_utilities as mu
 import my_constants as mc
-import scission_functions_2020 as sf
+#import scission_functions_2020 as sf
 
 from scipy import integrate
 
 mu = importlib.reload(mu)
 mc = importlib.reload(mc)
-sf = importlib.reload(sf)
+#sf = importlib.reload(sf)
 
 os.chdir(os.path.join(mc.sim_folder,
         'E_loss', 'Gryzinski'
@@ -41,8 +41,8 @@ Si_core_occ = [   2,   2,   6]
 Si_total_Eb  = [1844, 154, 104, 13.46, 8.15]
 Si_total_occ = [   2,   2,   6,     2,    2]
 
-Si_MuElec_Eb = [16.65, 6.52, 13.63, 107.98, 151.55, 1828.5]
-Si_MuElec_occ = [4, 2, 2, 6, 2, 2]
+#Si_MuElec_Eb = [16.65, 6.52, 13.63, 107.98, 151.55, 1828.5]
+#Si_MuElec_occ = [4, 2, 2, 6, 2, 2]
 
 #  energyConstant.push_back(16.65*eV);
 #  energyConstant.push_back(6.52*eV); 
@@ -198,33 +198,33 @@ def get_Gr_Si_total_S(E):
 
 
 #%%
-def get_scission_probs_gryz_single_E(E):
-    
-    gryz_bond_u = np.zeros(len(sf.MMA_bonds))
-    
-    
-    for i in range(len(sf.MMA_bonds)):
-        gryz_bond_u[i] = get_Gr_u(
-                sf.MMA_bonds[list(sf.MMA_bonds.keys())[i]][0],
-                E,
-                mc.n_PMMA_mon,
-                sf.MMA_bonds[list(sf.MMA_bonds.keys())[i]][1]
-                )
-    
-    
-    gryz_probs = np.zeros(np.shape(gryz_bond_u))
-    
-    
-    for i in range(len(gryz_probs)):
-        now_sum = np.sum(gryz_bond_u)
-        
-        if now_sum == 0:
-            continue
-        
-        gryz_probs[i] = gryz_bond_u[i] / now_sum
-        
-    
-    return gryz_probs
+#def get_scission_probs_gryz_single_E(E):
+#    
+#    gryz_bond_u = np.zeros(len(sf.MMA_bonds))
+#    
+#    
+#    for i in range(len(sf.MMA_bonds)):
+#        gryz_bond_u[i] = get_Gr_u(
+#                sf.MMA_bonds[list(sf.MMA_bonds.keys())[i]][0],
+#                E,
+#                mc.n_PMMA_mon,
+#                sf.MMA_bonds[list(sf.MMA_bonds.keys())[i]][1]
+#                )
+#    
+#    
+#    gryz_probs = np.zeros(np.shape(gryz_bond_u))
+#    
+#    
+#    for i in range(len(gryz_probs)):
+#        now_sum = np.sum(gryz_bond_u)
+#        
+#        if now_sum == 0:
+#            continue
+#        
+#        gryz_probs[i] = gryz_bond_u[i] / now_sum
+#        
+#    
+#    return gryz_probs
 
 
 #%%

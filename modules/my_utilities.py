@@ -63,3 +63,22 @@ def diff2int(DIFF, V, H):
     
     return INT
     
+
+def normalize_u_array(arr):
+    
+    arr_norm = np.zeros(np.shape(arr))
+    
+    for i in range(len(arr)):
+        
+        if np.all(arr[i, :] == 0):
+            continue
+        
+        arr_norm[i, :] = arr[i, :] / np.sum(arr[i, :])
+    
+    
+    return arr_norm
+            
+
+
+
+

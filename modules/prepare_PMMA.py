@@ -1,58 +1,51 @@
 #%% Import
 import numpy as np
-#import scission_functions as sf
 import os
 import importlib
 
 import my_constants as mc
 import my_utilities as mu
-import Gryzinski as gryz
+import scission_functions_2020 as sf
 
 mc = importlib.reload(mc)
 mu = importlib.reload(mu)
-gryz = importlib.reload(gryz)
+sf = importlib.reload(sf)
 
 import matplotlib.pyplot as plt
 
 
 #%% elastic
 u_el = np.load(os.path.join(mc.sim_folder, 
-        'elastic', 'PMMA_elastic_U.npy'
+        'elastic', 'PMMA', 'u.npy'
         ))
 
-tau_el_int = np.load(os.path.join(mc.sim_folder,
-        'elastic', 'PMMA_elastic_int_CS.npy'
+diff_cs_el_cumulated = np.load(os.path.join(mc.sim_folder,
+        'elastic', 'PMMA', 'diff_cs_cumulated.npy'
         ))
 
 
 #%% electron-electron
 u_ee_tot = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'diel_responce', 'PMMA', 'u.npy'
+        'E_loss', 'diel_responce', 'PMMA', 'u_ee.npy'
         ))
-u_ee_val = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'ELF+Gryzinski', 'PMMA', 'u_val.npy'
+u_ee_4osc = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'diel_responce', 'PMMA', 'u_4osc.npy'
         ))
-u_ee_C_core = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'Gryzinski', 'PMMA', 'u_C.npy'
-        ))
-u_ee_O_core = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'Gryzinski', 'PMMA', 'u_O.npy'
-        ))
-
-#plt.loglog(EE, u_ee, label='total')
-#plt.loglog(EE, u_ee_val + u_ee_C + u_ee_O, '--', label='val+C+O')
 
 
 #%%
-tau_ee_val_int = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'ELF+Gryzinski', 'PMMA', 'tau_val_int.npy'
+#plt.loglog(mc.EE, u_ee_tot, label='total')
+#plt.loglog(mc.EE, u_el, label='elastic')
+#
+#plt.legend()
+
+
+#%%
+tau_ee_4osc_cumulated = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'diel_responce', 'PMMA', 'tau_4osc_cumulated.npy'
         ))
-tau_ee_C_core_int = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'ELF+Gryzinski', 'PMMA', 'tau_C_int.npy'
-        ))
-tau_ee_O_core_int = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'ELF+Gryzinski', 'PMMA', 'tau_O_int.npy'
-        ))
+
+
 
 
 #%% phonons and polarons
@@ -64,43 +57,41 @@ u_pol = np.load(os.path.join(mc.sim_folder,
         ))
 
 
-#%%
-plt.loglog(mc.EE, u_el, label='elastic')
-plt.loglog(mc.EE, u_ee_tot, label='ee')
-plt.loglog(mc.EE, u_ee_C_core, label='C 1S')
-plt.loglog(mc.EE, u_ee_O_core, label='O 1S')
-plt.loglog(mc.EE, u_ee_val, '--', label='val')
-plt.loglog(mc.EE, u_ph, label='phonon')
-plt.loglog(mc.EE, u_pol, label='polaron')
-
-plt.ylim(1e+1, 1e+9)
-
-plt.grid()
-plt.legend()
-
-
 #%% combine it all
-u_list = [u_el, u_ee_val, u_ee_C_core, u_ee_O_core, u_ph, u_pol]
-u_proc = np.zeros((len(mc.EE), len(u_list)))
+u_table = np.zeros((len(mc.EE), 7))
+
+u_table[:, 0] = u_el
+u_table[:, 1:5] = u_ee_4osc
+u_table[:, 5] = u_ph
+u_table[:, 6] = u_pol
 
 
-for i in range(len(u_list)):
-    u_proc[:, i] = u_list[i]
+u_table_norm = np.zeros(np.shape(u_table))
+
+for i in range(len(mc.EE)):
+    u_table_norm[i, :] = u_table[i, :] / np.sum(u_table[i, :])
 
 
 #%%
-tau_int_list = [tau_el_int, tau_ee_val_int, tau_ee_C_core_int, tau_ee_O_core_int]
+tau_cumulated_table = np.zeros((5, len(mc.EE), len(mc.EE)))
+
+tau_cumulated_table[0, :, :] = diff_cs_el_cumulated
+tau_cumulated_table[1:, :, :] = tau_ee_4osc_cumulated
 
 
 #%%
-el_Eb = np.zeros(len(mc.EE)) ## dummy!!!
-val_Eb = np.ones(len(mc.EE)) ## dummy!!!
-C_core_Eb = np.ones(len(mc.EE)) * gryz.MMA_core_Eb[0]
-O_core_Eb = np.ones(len(mc.EE)) * gryz.MMA_core_Eb[1]
+E_bind = np.zeros(5) 
 
-E_bind = [el_Eb, val_Eb, C_core_Eb, O_core_Eb]
+E_bind[1:] = mc.PMMA_Ebind
 
 scission_probs = np.load(os.path.join(mc.sim_folder,
         'E_loss', 'Gryzinski', 'PMMA', 'scission_probs.npy'
         ))
+
+scission_probs[np.where(scission_probs) == -0] = 0
+
+
+val_E_bind = sf.bonds_BDE
+
+E_cut = mc.E_cut_PMMA
 

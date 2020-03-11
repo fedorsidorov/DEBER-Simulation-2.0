@@ -55,11 +55,18 @@ for n in range(6):
 
 
 #%%
+diff_6osc[np.where(diff_6osc == 10**(-100))] = 0
+
+diff_6osc_int = np.zeros(np.shape(diff_6osc))
 
 
-
-
-
+for n in range(6):
+    
+    mu.pbar(n, 6)
+    
+    diff_6osc_int[n, :, :] = mu.diff2int(diff_6osc[n, :, :], mc.EE, mc.EE)
+    
+    
 
 
 

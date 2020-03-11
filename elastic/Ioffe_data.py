@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 mc = importlib.reload(mc)
 mu = importlib.reload(mu)
 
-os.chdir(mc.sim_path_MAC + 'elastic')
+os.chdir(os.path.join(mc.sim_folder, 'elastic'))
 
 
 #%%
@@ -130,12 +130,12 @@ _, _, C_DIFF_CS, C_TOTAL_CS = get_Ioffe_final_data('C')
 _, _, O_DIFF_CS, O_TOTAL_CS = get_Ioffe_final_data('O')
 _, _, Si_DIFF_CS, Si_TOTAL_CS = get_Ioffe_final_data('Si')
 
-PMMA_DIFF_CS = mc.n_C_PMMA*C_DIFF_CS + mc.n_H_PMMA*H_DIFF_CS + mc.n_O_PMMA*O_DIFF_CS
+PMMA_DIFF_CS = mc.N_C_PMMA*C_DIFF_CS + mc.N_H_PMMA*H_DIFF_CS + mc.N_O_PMMA*O_DIFF_CS
 PMMA_INT_CS = mu.diff2int(PMMA_DIFF_CS, mc.EE, mc.THETA)
 
 
 #%%
-PMMA_TOTAL_CS = mc.n_C_PMMA*C_TOTAL_CS + mc.n_H_PMMA*H_TOTAL_CS + mc.n_O_PMMA*O_TOTAL_CS
+PMMA_TOTAL_CS = mc.N_C_PMMA*C_TOTAL_CS + mc.N_H_PMMA*H_TOTAL_CS + mc.N_O_PMMA*O_TOTAL_CS
 
 PMMA_U = PMMA_TOTAL_CS * mc.n_PMMA_mon
 

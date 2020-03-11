@@ -68,12 +68,12 @@ plt.xlim(1e+1, 1e+4)
 plt.ylim(1e-3, 1e+3)
 
 
-#plt.loglog(EE, s1*1e+18, '--')
-#plt.loglog(EE, s2*1e+18, '--')
-#plt.loglog(EE, s3*1e+18, '--')
-#plt.loglog(EE, s4*1e+18, '--')
-#plt.loglog(EE, s5*1e+18, '--')
-#plt.loglog(EE, s6*1e+18, '--')
+plt.loglog(EE, s1*1e+18, '--')
+plt.loglog(EE, s2*1e+18, '--')
+plt.loglog(EE, s3*1e+18, '--')
+plt.loglog(EE, s4*1e+18, '--')
+plt.loglog(EE, s5*1e+18, '--')
+plt.loglog(EE, s6*1e+18, '--')
 
 
 #%%

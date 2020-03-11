@@ -19,11 +19,13 @@ os.chdir(os.path.join(mc.sim_folder,
 
 #%%
 #EE_eV = np.logspace(0, 4.4, 1000)
-EE_eV = np.logspace(-1, 4.4, 2000)
+#EE_eV = np.logspace(-1, 4.4, 2000)
 #EE_eV = np.linspace(0.01, 1e+4, 1000)
 
-EE = EE_eV * mc.eV
-qq = np.sqrt(2*mc.m*EE)
+#EE = EE_eV * mc.eV
+#qq = np.sqrt(2*mc.m*EE)
+
+EE_eV = mc.EE
 
 a0 = 5.29e-11 ## m
 
@@ -41,23 +43,23 @@ params = [
 
 
 #%%
-OLF = np.zeros((len(EE), len(EE)))
-OLF_1d = np.zeros(len(EE))
-
-
-for i in range(len(EE_eV)):
-    
-    mu.pbar(i, len(EE_eV))
-    
-    for j in range(len(qq)):
-
-        for arr in params:
-        
-            En, Gn, An, = arr
-            
-            Enq = En + qq[j]**2 / (2*mc.m) / mc.eV
-            
-            OLF[i, j] += An * Gn * EE_eV[i] / ((Enq**2 - EE_eV[i]**2)**2 + (Gn * EE_eV[i])**2)
+#OLF = np.zeros((len(EE), len(EE)))
+OLF_1d = np.zeros(len(mc.EE))
+#
+#
+#for i in range(len(EE_eV)):
+#    
+#    mu.pbar(i, len(EE_eV))
+#    
+#    for j in range(len(qq)):
+#
+#        for arr in params:
+#        
+#            En, Gn, An, = arr
+#            
+#            Enq = En + qq[j]**2 / (2*mc.m) / mc.eV
+#            
+#            OLF[i, j] += An * Gn * EE_eV[i] / ((Enq**2 - EE_eV[i]**2)**2 + (Gn * EE_eV[i])**2)
 
 
 for arr in params:
@@ -67,7 +69,7 @@ for arr in params:
 
 
 #%%
-plt.loglog(EE_eV, OLF[:, 0], label='OLF, q = 1')
+#plt.loglog(EE_eV, OLF[:, 0], label='OLF, q = 1')
 plt.loglog(EE_eV, OLF_1d, '--', label='OLF, q = 0')
 
 plt.xlabel('E, eV')

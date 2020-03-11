@@ -1,106 +1,98 @@
 #%% Import
 import numpy as np
 import os
+import importlib
 
 import my_constants as mc
 import my_utilities as mu
+import Gryzinski as gryz
 
-import importlib
 mc = importlib.reload(mc)
 mu = importlib.reload(mu)
+gryz = importlib.reload(gryz)
 
-#import matplotlib.pyplot as plt
-
-
-#%%
-EE = mc.EE
-THETA = mc.THETA
+import matplotlib.pyplot as plt
 
 
-#%% Elastic scattering
-Si_el_U = np.load(os.path.join(mc.sim_folder,
+#%% elastic
+u_el = np.load(os.path.join(mc.sim_folder, 
         'elastic', 'Si_elastic_U.npy'
         ))
 
-Si_el_int_U = np.load(os.path.join(mc.sim_folder,
+tau_el_int = np.load(os.path.join(mc.sim_folder,
         'elastic', 'Si_elastic_int_CS.npy'
         ))
 
 
-#%% Total inelastic U
-Si_ee_U = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'diel_responce', 'Palik_2020', 'Si_ee_U_Palik_Ashley.npy'
+#%% electron-electron
+u_ee_tot = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'diel_responce', 'Si', 'u.npy'
+        ))
+u_ee_val = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'ELF+Gryzinski', 'Si', 'u_val.npy'
+        ))
+u_ee_1s = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'Gryzinski', 'Si', 'u_1s.npy'
+        ))
+u_ee_2s = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'Gryzinski', 'Si', 'u_2s.npy'
+        ))
+u_ee_2p = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'Gryzinski', 'Si', 'u_2p.npy'
+        ))
+
+
+tau_ee_val_int = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'ELF+Gryzinski', 'Si', 'tau_val_int.npy'
+        ))
+tau_ee_1s_int = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'ELF+Gryzinski', 'Si', 'tau_1s_int.npy'
+        ))
+tau_ee_2s_int = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'ELF+Gryzinski', 'Si', 'tau_2s_int.npy'
+        ))
+tau_ee_2p_int = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'ELF+Gryzinski', 'Si', 'tau_2p_int.npy'
         ))
 
 
 #%%
-## Si
-Si_1S_total_U = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'Gryzinski', 'Si', 'Si_1S_U.npy'
-        ))
+plt.loglog(mc.EE, u_el, label='elastic')
+plt.loglog(mc.EE, u_ee_tot, label='ee')
+plt.loglog(mc.EE, u_ee_1s, label='1s')
+plt.loglog(mc.EE, u_ee_2s, label='2s')
+plt.loglog(mc.EE, u_ee_2p, label='2p')
+plt.loglog(mc.EE, u_ee_val, '--', label='val')
 
-Si_1S_int_U = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'Gryzinski', 'Si', 'Si_1S_int_U.npy'
-        ))
+plt.ylim(1e+1, 1e+9)
 
-Si_2S_total_U = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'Gryzinski', 'Si', 'Si_2S_U.npy'
-        ))
+plt.grid()
+plt.legend()
 
-Si_2S_int_U = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'Gryzinski', 'Si', 'Si_2S_int_U.npy'
-        ))
 
-Si_2P_total_U = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'Gryzinski', 'Si', 'Si_2P_U.npy'
-        ))
+#%% combine it all
+u_list = [u_el, u_ee_val, u_ee_1s, u_ee_2s, u_ee_2p]
+u_proc = np.zeros((len(mc.EE), len(u_list)))
 
-Si_2P_int_U = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'Gryzinski', 'Si', 'Si_2P_int_U.npy'
-        ))
+
+for i in range(len(u_list)):
+    u_proc[:, i] = u_list[i]
 
 
 #%%
-Si_val_U = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'diel_responce', 'Palik_2020', 'Si_val_U_Palik_Ashley-Gryzinski.npy'
-        ))
-
-Si_val_int_U = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'diel_responce', 'Palik_2020', 'Si_val_int_U_Palik_Ashley-Gryzinski.npy'
-        ))
+tau_int_list = [tau_el_int, tau_ee_val_int, tau_ee_1s_int, tau_ee_2s_int, tau_ee_2p_int]
 
 
 #%%
-#plt.loglog(EE, Si_el_U, label='elastic')
-#plt.loglog(EE, Si_ee_U, label='ee')
-#plt.loglog(EE, Si_1S_total_U, label='1S')
-#plt.loglog(EE, Si_2S_total_U, label='2S')
-#plt.loglog(EE, Si_2P_total_U, label='2P')
-#plt.loglog(EE, Si_val_U, '--', label='valence')
-#
-#plt.legend()
+el_Eb = np.zeros(len(mc.EE)) ## dummy!!!
+val_Eb = np.ones(len(mc.EE)) ## dummy!!!
+C_core_Eb = np.ones(len(mc.EE)) * gryz.MMA_core_Eb[0]
+O_core_Eb = np.ones(len(mc.EE)) * gryz.MMA_core_Eb[1]
 
+E_bind = [el_Eb, val_Eb, C_core_Eb, O_core_Eb]
 
-#%% Combine it all for Si
-## elastic, valence, core_1S, core_2S, core_2P
-Si_processes_U_list = [Si_el_U, Si_val_U, Si_1S_total_U, Si_2S_total_U, Si_2P_total_U]
+scission_probs = np.load(os.path.join(mc.sim_folder,
+        'E_loss', 'Gryzinski', 'PMMA', 'scission_probs.npy'
+        ))
 
-Si_processes_U = np.zeros((len(mc.EE), len(Si_processes_U_list)))
-
-for i in range(len(Si_processes_U_list)):
-
-    Si_processes_U[:, i] = Si_processes_U_list[i]
-
-
-#%%
-Si_processes_int_U = [Si_el_int_U, Si_val_int_U, Si_1S_int_U, Si_2S_int_U, Si_2P_int_U]
-
-
-Si_el_E_bind = np.zeros(len(EE)) ## dummy!!!
-Si_val_E_bind = np.load(os.path.join(mc.sim_folder, 'E_loss', 'E_bind_Si', 'Si_E_bind_2020.npy'))
-Si_1S_E_bind = np.ones(len(EE)) * mc.binding_Si[0]
-Si_2S_E_bind = np.ones(len(EE)) * mc.binding_Si[1]
-Si_2P_E_bind = np.ones(len(EE)) * mc.binding_Si[2]
-
-Si_E_bind = [Si_el_E_bind, Si_val_E_bind, Si_1S_E_bind, Si_2S_E_bind, Si_2P_E_bind]
 
