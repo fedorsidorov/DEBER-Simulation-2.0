@@ -12,11 +12,14 @@ os.chdir(os.path.join(mc.sim_folder, 'SE_files'))
 
 
 #%%
-step_l = 100
+step_l = 6
 half_l = step_l / 2
 
-arr_y = np.linspace(0, 50, 26)
-arr_z = 1 + np.cos(2*np.pi/50 * arr_y)/2
+arr_y = np.linspace(0, 50, 20)
+arr_z = 10*(1 - np.cos(2*np.pi/50 * arr_y)/2)
+
+#arr_y = np.array([0, 1, 2, 3, 4, 5])
+#arr_z = np.array([1, 1, 0.8, 0.8, 1, 1])
 
 n = len(arr_y)
 
@@ -40,10 +43,10 @@ V[  n+1, :] = 100+n+2,  half_l, arr_y[n-1], 0
 V[2*n+3, :] = 200+n+2, -half_l, arr_y[n-1], 0
 
 
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-ax.plot(V[:, 1], V[:, 2], V[:, 3], 'o')
-plt.show()
+#fig = plt.figure()
+#ax = fig.add_subplot(111, projection='3d')
+#ax.plot(V[:, 1], V[:, 2], V[:, 3], 'o')
+#plt.show()
 
 
 #%% edges
@@ -147,4 +150,62 @@ for j in range(1, n+3):
     
     F_2[0, j] = -(100+n+2+1-j)
     F_2[1, j] = 200+j
+
+
+#%% datafile
+file = 'vertices\n'
+
+
+for i in range(len(V)):
+    
+    V_ind = str(int(V[i, 0]))
+    V_coords = str(V[i, 1:])[1:-1]
+    
+    file += V_ind + '\t' + V_coords + '\n'
+
+
+file += '\n' + 'edges' + '\n'
+
+
+for i in range(len(E)):
+    
+    E_ind = str(int(E[i, 0]))
+    beg = str(int(E[i, 1]))
+    end = str(int(E[i, 2]))
+    file += E_ind + '\t' + beg + ' ' + end + '\n'
+
+
+file += '\n' + 'faces' + '\n'
+
+
+for i in range(len(F_1)):
+    
+    F_ind = str(int(F_1[i, 0]))
+    F_edges = str(F_1[i, 1:].astype(int))[1:-1]
+    
+    file += F_ind + '\t' + F_edges + '\n'
+
+
+for i in range(len(F_2)):
+    
+    F_ind = str(int(F_2[i, 0]))
+    F_edges = str(F_2[i, 1:].astype(int))[1:-1]
+    
+    file += F_ind + '\t' + F_edges + '\n'
+
+
+file += '\n' + 'bodies' + '\n' + '1' + '\t'
+    
+
+for i in range(len(F_1)):
+    
+    file += str(i+1) + ' '
+
+
+file += str(301) + ' ' + str(401) + '\n'
+
+
+with open('SE_input.txt', 'w') as myfile:
+    myfile.write(file)
+
 
