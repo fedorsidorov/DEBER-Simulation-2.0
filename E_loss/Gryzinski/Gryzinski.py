@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 import my_utilities as mu
 import my_constants as mc
-#import scission_functions_2020 as sf
+import scission_functions_2020 as sf
 
 from scipy import integrate
 
@@ -225,8 +225,8 @@ def get_Gr_Si_total_S(E):
 #        
 #    
 #    return gryz_probs
-
-
+#
+#
 #%%
 #scission_probs = np.zeros((len(mc.EE), sf.MMA_n_bonds))
 #

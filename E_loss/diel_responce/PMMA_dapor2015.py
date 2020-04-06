@@ -75,8 +75,8 @@ def get_u(E):
 
 
 #%%
-EE = np.logspace(-1, 4.4, 1000)
-#EE = mc.EE
+#EE = np.logspace(-1, 4.4, 1000)
+EE = mc.EE
 
 tau = np.zeros((len(EE), len(EE)))
 
@@ -85,12 +85,16 @@ for i, E in enumerate(EE):
     
     mu.pbar(i, len(EE))
     
-    for j, hw in enumerate(EE):
-        
+    for j, hw in enumerate(EE):        
         tau[i, j] = get_tau(E, hw)
 
 
-##%%
+
+#%%
+tau_cumulated = mu.diff2int(tau, V=mc.EE, H=mc.EE)
+
+
+#%%
 #S = np.zeros(len(EE))
 #u = np.zeros(len(EE))
 #

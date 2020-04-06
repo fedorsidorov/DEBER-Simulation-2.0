@@ -10,13 +10,13 @@ from itertools import product
 
 import my_constants as mc
 import my_utilities as mu
-import my_arrays_Dapor as ma
+#import my_arrays_Dapor as ma
 
 mc = importlib.reload(mc)
 mu = importlib.reload(mu)
-ma = importlib.reload(ma)
+#ma = importlib.reload(ma)
 
-os.chdir(mc.sim_folder + 'DEBER_profile')
+os.chdir(mc.sim_folder + '/DEBER_profile')
 
 vols = [0.39, 1.31, 2.05]
 vols_07 = [0.2, 0.64, 1.11]
@@ -28,7 +28,7 @@ from scipy.optimize import curve_fit
 plt.figure(figsize=[3.1496, 3.1496])
 font_size = 10
 
-n_dose = 2
+n_dose = 0
 
 shifts = [2.837, 6.97, 6.85]
 
@@ -55,7 +55,9 @@ def SE(xx, level):
 
 profile = np.loadtxt('EXP_' + str(n_dose+1) + '.txt')
 profile = profile[profile[:, 0].argsort()]
+
 height = 0.9
+
 xx, yy = profile[:, 0], profile [:, 1]
 xx = xx - shifts[n_dose]
 yy = yy + height - yy.max()
@@ -63,8 +65,8 @@ plt.plot(xx, yy * 1000 + 25, label='EXP')
 #popt, pcov = curve_fit(func, xx, yy)
 
 o7_level = (0.9 - (0.9-yy.min())*0.3)
-#plt.plot(xx, np.ones(len(xx))*o7_level * 1000 + 25, 'k-.')
-#plt.plot(xx, SE(xx, o7_level) * 1000 + 25, '--', label='SE')
+plt.plot(xx, np.ones(len(xx))*o7_level * 1000 + 25, 'k-.')
+plt.plot(xx, SE(xx, o7_level) * 1000 + 25, '--', label='SE')
 
 plt.plot(xx, func(xx, *popt) * 1000 + 25, '--', label='SIM')
 
@@ -73,7 +75,8 @@ plt.xlabel('x, μm')
 plt.ylabel('y, nm')
 plt.legend()
 
-plt.ylim(0, 1000)
+#plt.ylim(200, 1000)
+#plt.ylim(0, 1000)
 
 plt.grid()
 plt.show()
@@ -85,7 +88,7 @@ for tick in ax.yaxis.get_major_ticks():
     tick.label.set_fontsize(font_size)
 
 
-plt.savefig('final_' + str(n_dose) + '_ATT.jpg', bbox_inches='tight', dpi=1000)
+#plt.savefig('final_' + str(n_dose) + '_ATT.pdf', bbox_inches='tight')
 
 
 #%%

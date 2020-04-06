@@ -1,0 +1,84 @@
+// Geometry.fe contains the geometry of the file to be simulated
+// Model parameterized in (uks)-units (um, kg, s)
+
+/*----model geometry and material parameters----*/
+ PARAMETER step_l   = 5.00                                              // step length
+ PARAMETER resist_h = 1.820                                             // height of unexposed step
+ PARAMETER pin_h    = resist_h                                          // pinning line at height of first step due to EBL
+
+ /*-STEP1-*/
+ PARAMETER step1_rel = 1.00                                             // relative height of step
+ PARAMETER inclination1 = 85                                            // inclination of sidewall   
+ PARAMETER step_w1_top = 1.820                                          // step width at top
+ PARAMETER step_h1     = resist_h*step1_rel                             // absolute step height
+ 
+ /*-STEP2-*/
+ PARAMETER step2_rel = 0.70
+ PARAMETER inclination2 = 77                                            // inclination of sidewall   
+ PARAMETER step_w2_top = 0.650                                          // step width at top
+ PARAMETER step_h2     = resist_h*step2_rel                             // absolute step height
+ 
+ /*-STEP3-*/
+ PARAMETER step3_rel = 0.20
+ PARAMETER inclination3 = 90                                            // inclination of sidewall   
+ PARAMETER step_w3_top = 0.500                                          // step width at top
+  
+ PARAMETER step_h3 = resist_h*step3_rel				   	   // absolute step height
+ PARAMETER step_w3_bas = step_w3_top+step_h3/tan(inclination3*pi/180)   // step width at bottom
+
+
+ /*step widths at base*/
+ PARAMETER step_w1_bas = step_w1_top+(1-step2_rel)*step_h1/tan(inclination1*pi/180) 	// step width at bottom
+ PARAMETER step_w2_bas = step_w2_top+step_h2/tan(inclination2*pi/180) 	              // step width at bottom
+
+ PARAMETER base_w = 15 // width of base (step + cleared width)
+
+ /*-Mobility-*/
+ PARAMETER vmob_v1 = 1/5			// mobility value region1
+ PARAMETER fmob_v1 = 1/5			// mobility value region1
+
+ PARAMETER vmob_v2 = 1              // mobility value region2
+ PARAMETER fmob_v2 = 1              // mobility value region2	
+
+ PARAMETER vmob_v3 = 1              // mobility value region3
+ PARAMETER fmob_v3 = 1              // mobility value region3
+
+/*----material properties (experiment and literature)----*/
+ PARAMETER SV = 0.8148e15               // specific volume PMMA (from Wu1970) 120-180°C
+ PARAMETER gamma = 4.62e11              // linear temperature coeefficient of polymer specific volume (from Wu1970) 120-180°C
+
+
+ PARAMETER angle_s1_ind = 55      		// interior angle between plane and resist surface, degrees (for indefinite waiting time)
+ PARAMETER angle_s2_ind = 25     		// interior angle between plane and resist surface, degrees (for indefinite waiting time)
+
+ PARAMETER angle_w_ind = 90      
+ 
+ PARAMETER TENS_r  = 33.5e-2     		// surface tension of reflowing resist
+ 
+ PARAMETER TENS_s1 = -TENS_r*cos((angle_s1_ind)*pi/180)
+ PARAMETER TENS_s2 = -TENS_r*cos((angle_s2_ind)*pi/180)
+ PARAMETER TENS_w  = -TENS_r*cos((angle_w_ind)*pi/180)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

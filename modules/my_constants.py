@@ -106,4 +106,5 @@ DATA_tr_len = int(3e+4)
 E_cut_PMMA = 3.7
 E_cut_Si = 16.7
 
+Wf_PMMA = 4.68
 

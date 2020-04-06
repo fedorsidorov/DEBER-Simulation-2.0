@@ -12,14 +12,11 @@ os.chdir(os.path.join(mc.sim_folder, 'SE_files'))
 
 
 #%%
-step_l = 6
+step_l = 60
 half_l = step_l / 2
 
-arr_y = np.linspace(0, 50, 20)
-arr_z = 10*(1 - np.cos(2*np.pi/50 * arr_y)/2)
-
-#arr_y = np.array([0, 1, 2, 3, 4, 5])
-#arr_z = np.array([1, 1, 0.8, 0.8, 1, 1])
+arr_y = np.linspace(0, 50, 26)
+arr_z = 10*(1 + np.cos(2*np.pi/50 * arr_y)/2)
 
 n = len(arr_y)
 
@@ -27,14 +24,14 @@ n = len(arr_y)
 
 
 #%% vertices
-V = np.zeros(((n+2)*2, 1+3))
+V = np.zeros(((n+2)*2 + (n-2)*2, 1+3))
 
 
 V[  0, :] = 101,  half_l, 0, 0
 V[n+2, :] = 201, -half_l, 0, 0
 
 
-for i in range(0, n):
+for i in range(n):
     V[  i+1, :] = 100+i+2,  half_l, arr_y[i], arr_z[i]
     V[i+n+3, :] = 200+i+2, -half_l, arr_y[i], arr_z[i]
 
@@ -43,14 +40,19 @@ V[  n+1, :] = 100+n+2,  half_l, arr_y[n-1], 0
 V[2*n+3, :] = 200+n+2, -half_l, arr_y[n-1], 0
 
 
-#fig = plt.figure()
-#ax = fig.add_subplot(111, projection='3d')
-#ax.plot(V[:, 1], V[:, 2], V[:, 3], 'o')
-#plt.show()
+for i in range(n-2):
+    V[(n+2)*2       + i, :] = 300+i+3,  half_l, arr_y[i+1], 0
+    V[(n+2)*2 + n-2 + i, :] = 400+i+3, -half_l, arr_y[i+1], 0
+
+
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax.plot(V[:, 1], V[:, 2], V[:, 3], 'o')
+plt.show()
 
 
 #%% edges
-E = np.zeros((8+n+2*(n-1), 3))
+E = np.zeros((8+n+2*(n-1) + (n-2)*2, 2+1))
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
@@ -102,6 +104,35 @@ for i in range(1, n+3-1):
     ax.plot(dx_200, dy_200, dz_200)
 
 
+for i in range(n-2):
+    
+    beg_V_100_ind = 300+i+3
+    end_V_100_ind = 100+i+3
+    
+    beg_V_200_ind = 200+i+3
+    end_V_200_ind = 400+i+3
+    
+    E[(n+2)*2       + i, :] = 300+i+3, beg_V_100_ind, end_V_100_ind
+    E[(n+2)*2 + n-2 + i, :] = 400+i+3, beg_V_200_ind, end_V_200_ind
+    
+    beg_x_100, beg_y_100, beg_z_100 = V[np.where(V[:, 0] == beg_V_100_ind)[0], 1:].reshape((3, 1))
+    end_x_100, end_y_100, end_z_100 = V[np.where(V[:, 0] == end_V_100_ind)[0], 1:].reshape((3, 1))
+    
+    beg_x_200, beg_y_200, beg_z_200 = V[np.where(V[:, 0] == beg_V_200_ind)[0], 1:].reshape((3, 1))
+    end_x_200, end_y_200, end_z_200 = V[np.where(V[:, 0] == end_V_200_ind)[0], 1:].reshape((3, 1))
+    
+    dx_100 = np.array([beg_x_100, end_x_100])[:, 0]
+    dy_100 = np.array([beg_y_100, end_y_100])[:, 0]
+    dz_100 = np.array([beg_z_100, end_z_100])[:, 0]
+    
+    dx_200 = np.array([beg_x_200, end_x_200])[:, 0]
+    dy_200 = np.array([beg_y_200, end_y_200])[:, 0]
+    dz_200 = np.array([beg_z_200, end_z_200])[:, 0]
+    
+    ax.plot(dx_100, dy_100, dz_100)
+    ax.plot(dx_200, dy_200, dz_200)
+
+
 E[2*n + 3] = 100+n+3-1, 100+n+2, 101
 E[3*n + 5] = 200+n+3-1, 200+n+2, 201
 
@@ -120,13 +151,15 @@ dy_200 = np.array([beg_y_200, end_y_200])[:, 0]
 dz_200 = np.array([beg_z_200, end_z_200])[:, 0]
     
 
-ax.plot(dx_100, dy_100, dz_100)
-ax.plot(dx_200, dy_200, dz_200)
+#ax.plot(dx_100, dy_100, dz_100)
+#ax.plot(dx_200, dy_200, dz_200)
     
     
 #%% faces
-F_1 = np.zeros((n+2, 5))
-F_2 = np.zeros((2, n+2+1))
+F = np.zeros((n+2 + (n-1)*2, 5))
+
+#F_1 = np.zeros((n+2, 5))
+#F_2 = np.zeros((2, n+2+1))
 
 
 for i in range(1, n+3-1):
@@ -136,20 +169,38 @@ for i in range(1, n+3-1):
     e3_ind = 200+i
     e4_ind = i
     
-    F_1[i-1] = i, e1_ind, e2_ind, -e3_ind, -e4_ind
+    F[i-1] = i, e1_ind, e2_ind, -e3_ind, -e4_ind
 
 
-F_1[n+1] = n+2, 1, -(200+n+2), -(n+2), 100+n+2
+F[n+1] = n+2, 1, -(200+n+2), -(n+2), 100+n+2
 
 
-F_2[0, 0] = 301
-F_2[1, 0] = 401
-
-
-for j in range(1, n+3):
+for i in range(n-1):
     
-    F_2[0, j] = -(100+n+2+1-j)
-    F_2[1, j] = 200+j
+    e1_ind_100 = 100+i
+    e2_ind_100 = i+1
+    e3_ind_100 = 200+i
+    e4_ind_100 = i
+    
+    e1_ind_200 = 100+i
+    e2_ind_200 = i+1
+    e3_ind_200 = 200+i
+    e4_ind_200 = i
+    
+    F[n+2       + i] = 
+    F[n+2 + n-1 + i] = 
+
+
+
+
+#F_2[0, 0] = 301
+#F_2[1, 0] = 401
+#
+#
+#for j in range(1, n+3):
+#    
+#    F_2[0, j] = -(100+n+2+1-j)
+#    F_2[1, j] = 200+j
 
 
 #%% datafile

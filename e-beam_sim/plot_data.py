@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 
 #%%
-def plot_DATA(DATA, d_PMMA):
+def plot_DATA(DATA, x, z, d_PMMA=0):
     
     fig, ax = plt.subplots()
     
@@ -16,7 +16,9 @@ def plot_DATA(DATA, d_PMMA):
         beg = np.where(DATA[:, 0] == tn)[0][0]
         end = np.where(DATA[:, 0] == tn)[0][-1] + 1
         
-        ax.plot(DATA[beg:end, 5], DATA[beg:end, 7])
+#        ax.plot(DATA[beg:end, 5], DATA[beg:end, 7])
+        ax.plot(DATA[beg:end, x], DATA[beg:end, z])
+#        ax.plot(DATA[beg:end, 3], DATA[beg:end, 5])
         
     #        if np.isnan(DATA[beg, 1]):
     #            
@@ -38,9 +40,10 @@ def plot_DATA(DATA, d_PMMA):
     #        ax.plot(DATA[inds_exc, 5], DATA[inds_exc, 7],\
     #                marker='^', color='tab:green' , linestyle='')
     
-    points = np.linspace(-d_PMMA*2, d_PMMA*2, 100)
-    ax.plot(points, np.zeros(len(points)), 'k')
-    ax.plot(points, np.ones(len(points))*d_PMMA, 'k')
+    if d_PMMA != 0:
+        points = np.linspace(-d_PMMA*2, d_PMMA*2, 100)
+        ax.plot(points, np.zeros(len(points)), 'k')
+        ax.plot(points, np.ones(len(points))*d_PMMA, 'k')        
     
     #    ax.plot(0, 10, 'k-', linewidth=2, label='primary electron')
     #    ax.plot(0, 10, color='0.5', linestyle='dashed', linewidth=2,
@@ -53,7 +56,7 @@ def plot_DATA(DATA, d_PMMA):
     ax.yaxis.get_major_formatter().set_powerlimits((0, 1))
     plt.gca().set_aspect('equal', adjustable='box')
     
-    plt.title('Direct Monte-Carlo simulation')
+#    plt.title('Direct Monte-Carlo simulation')
     plt.xlabel('x, nm')
     plt.ylabel('z, nm')
     

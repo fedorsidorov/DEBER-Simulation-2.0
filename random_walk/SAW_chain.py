@@ -15,7 +15,7 @@ mu = importlib.reload(mu)
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-os.chdir(mc.sim_folder + 'random_walk')
+os.chdir(mc.sim_folder + '/random_walk')
 
 
 #%%
@@ -55,7 +55,7 @@ def make_PMMA_chain(chain_len):
     
     while i < chain_len:
         
-        mu.upd_progress_bar(i, chain_len)
+        mu.pbar(i, chain_len)
         
         phi = uniform(0, 2*np.pi)
         theta = np.deg2rad(180-109)
@@ -96,7 +96,7 @@ def make_PMMA_SAW_chain(chain_len):
     
     while i < chain_len:
         
-        mu.upd_progress_bar(i, chain_len)
+        mu.pbar(i, chain_len)
         
         while True:
             
@@ -135,6 +135,41 @@ def make_PMMA_SAW_chain(chain_len):
                 else:
                     print('Jam in very start!')
                     break
+        
+        i += 1
+    
+    return chain_coords
+
+
+def make_PMMA_chain_2D(chain_len):
+
+    step = 0.28
+    
+    chain_coords = np.zeros((chain_len, 3))
+    chain_coords[0, :] = 0, 0, 1
+    
+    i = 1
+    
+    On = np.eye(3)
+    x_prime = np.array([0, 0, 1])
+    
+    On_list = [None] * chain_len
+    On_list[0] = On
+    
+    while i < chain_len:
+        
+        mu.pbar(i, chain_len)
+        
+#        phi = uniform(0, 2*np.pi)
+        phi = 0
+#        theta = np.deg2rad(180-109)
+        theta = np.random.uniform(-np.pi/3, np.pi/3)
+        
+        On = get_On(phi, theta, On_list[i-1])
+        xn = np.matmul(On.transpose(), x_prime)
+        
+        chain_coords[i, :] = chain_coords[i-1, :] + step*xn
+        On_list[i] = On
         
         i += 1
     
@@ -228,9 +263,27 @@ def rotate_chain(chain):
 
 
 #%%
+now_chain = make_PMMA_chain_2D(10000)
+
+
+#%%
+plt.figure(figsize=[5, 5])
+
+plt.plot(now_chain[:, 1], now_chain[:, 2], 'ko-', markersize=10)
+
+plt.xlim(-60, -57)
+plt.ylim(-20, -17)
+
+
+#%%
+plt.savefig('chain_3.pdf')
+
+
+#%%
 chain = np.load('../CHAINS/chains_1M/chain_5.npy')
 
-chain_rot = rotate_chain(chain)
+plt.savefig('chain.pdf')
+
 
 #%%
 check_chain_bonds(chain_rot)

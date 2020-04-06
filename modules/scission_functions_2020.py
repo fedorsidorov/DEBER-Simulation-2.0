@@ -3,6 +3,7 @@ import numpy as np
 #import os
 import importlib
 import matplotlib.pyplot as plt
+import matplotlib
 
 import my_constants as mc
 mc = importlib.reload(mc)
@@ -41,50 +42,50 @@ bonds_BDE = BDE_array[:, 0]
 bonds_occ = BDE_array[:, 1]
 
 #bond_names = list(MMA_bonds.keys())
-#Eb_Nel = np.array(list(MMA_bonds.values()))
+Eb_Nel = np.array(list(MMA_bonds.values()))
 
 
 #%%
-#def get_stairway(b_map_sc, EE=mc.EE):
-#    
-#    Eb_Nel_sc_list = []
-#    
-#    for val in b_map_sc.keys():
-#        Eb_Nel_sc_list.append([MMA_bonds[val][0], b_map_sc[val]])
-#    
-#    Eb_Nel_sc = np.array(Eb_Nel_sc_list)
-#    
-#    probs = np.zeros(len(EE))
-#    
-#    nums = np.zeros(len(EE))
-#    dens = np.zeros(len(EE))
-#    
-#    
-#    for i, e in enumerate(EE):
-#        
-#        num = 0
-#            
-#        for st in Eb_Nel_sc:
-#            if e >= st[0]:
-#                num += st[1]
-#        
-#        if num == 0:
-#            continue
-#        
-#        nums[i] = num
-#        
-#        den = 0
-#        
-#        for st in Eb_Nel:
-#            if e >= st[0]:
-#                den += st[1]
-#        
-#        dens[i] = den
-#        
-#        probs[i] = num / den
-#        
-#    
-#    return probs
+def get_stairway(b_map_sc, EE=mc.EE):
+    
+    Eb_Nel_sc_list = []
+    
+    for val in b_map_sc.keys():
+        Eb_Nel_sc_list.append([MMA_bonds[val][0], b_map_sc[val]])
+    
+    Eb_Nel_sc = np.array(Eb_Nel_sc_list)
+    
+    probs = np.zeros(len(EE))
+    
+    nums = np.zeros(len(EE))
+    dens = np.zeros(len(EE))
+    
+    
+    for i, e in enumerate(EE):
+        
+        num = 0
+            
+        for st in Eb_Nel_sc:
+            if e >= st[0]:
+                num += st[1]
+        
+        if num == 0:
+            continue
+        
+        nums[i] = num
+        
+        den = 0
+        
+        for st in Eb_Nel:
+            if e >= st[0]:
+                den += st[1]
+        
+        dens[i] = den
+        
+        probs[i] = num / den
+        
+    
+    return probs
 
 
 #%%
@@ -109,20 +110,76 @@ def get_bonds_u(EE):
     
 
 #%%
-#bonds_u = get_bonds_u(mc.EE)
+def get_scission_probs_gryz_single_E(E):
+    
+    gryz_bond_u = np.zeros(len(MMA_bonds))
+    
+    
+    for i in range(len(MMA_bonds)):
+        gryz_bond_u[i] = gryz.get_Gr_u(
+                MMA_bonds[list(MMA_bonds.keys())[i]][0],
+                E,
+                mc.n_PMMA_mon,
+                MMA_bonds[list(MMA_bonds.keys())[i]][1]
+                )
+    
+    
+    gryz_probs = np.zeros(np.shape(gryz_bond_u))
+    
+    
+    for i in range(len(gryz_probs)):
+        now_sum = np.sum(gryz_bond_u)
+        
+        if now_sum == 0:
+            continue
+        
+        gryz_probs[i] = gryz_bond_u[i] / now_sum
+        
+    
+    return gryz_probs
+
+
+#%%
+#scission_probs = np.zeros((len(mc.EE), n_bonds))
+#
+#for i, E in enumerate(mc.EE):
+#    
+#    mu.pbar(i, len(mc.EE))
+#    
+#    scission_probs[i, :] = get_scission_probs_gryz_single_E(E)
+
+
+#%%
+#font_size = 14
+#
+#plt.figure(figsize=[5, 5])
+#
+#matplotlib.rcParams['font.family'] = 'Times New Roman'
+#
+#plt.legend(fontsize=font_size, loc='lower right')
+#
+#ax = plt.gca()
+#for tick in ax.xaxis.get_major_ticks():
+#    tick.label.set_fontsize(font_size)
+#for tick in ax.yaxis.get_major_ticks():
+#    tick.label.set_fontsize(font_size)
 #
 #
-##%%
-#plt.loglog(mc.EE, bonds_u)
+#
+#for i in range(1, len(MMA_bonds)):
+#    plt.loglog(mc.EE, scission_probs[:, i], label=bond_names[i])
 #
 #
-##%%
-#bonds_u_norm = mu.normalize_u_array(bonds_u)
+#plt.xlabel('E, eV', fontsize=font_size)
+#plt.ylabel('bond weight', fontsize=font_size)
 #
-#
-#plt.loglog(mc.EE, bonds_u_norm)
-#
+#plt.xlim(1e+0, 1e+4)
 #plt.ylim(1e-2, 1)
+#
+#plt.legend(loc='upper right', fontsize=font_size)
+#plt.grid()
+#
+#plt.savefig('probs.png', dpi=600)
 
 
 #%%

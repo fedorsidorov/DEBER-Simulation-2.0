@@ -15,7 +15,7 @@ mc = importlib.reload(mc)
 mu = importlib.reload(mu)
 ma = importlib.reload(ma)
 
-os.chdir(mc.sim_folder + 'DEBER_profile')
+os.chdir(mc.sim_folder + '/DEBER_profile')
 
 
 vols = [0.39, 1.31, 2.05]

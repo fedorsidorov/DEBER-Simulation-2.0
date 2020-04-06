@@ -1,0 +1,200 @@
+// File: 2Step.fe
+// Date: 25.06.2014
+// Code: Robert Kirchner
+// Surface Evolver data for full 3D reflow simulation double-step line
+// Model parameterized in (uks)-units (um, kg, s)
+
+/*------------------------------------HEADER START------------------------------------*/
+/*defining a general value mobility*/
+define vertex attribute vmob real 		// required for mobility_tensor (must be a vertex attribute in this tensor)
+define facet attribute fmob real		// used as transfer parameter to inherit vertex mobility from facet mobility
+
+/*mobility tensor m*/
+MOBILITY_TENSOR
+vmob 	0 	0
+0 	vmob 	0
+0	0	vmob
+
+/*defining simulation control parameters*/
+PARAMETER Temp = 120 	// Reflow temperature
+
+PARAMETER countr = 0	// running counter used to inherit vertex mobility via average over facets	
+PARAMETER mobsum = 0	// running sum used to inherit vertex mobility via average over facets	
+
+PARAMETER IXu = 4		// used to print and visualize facets having at least one vertex with this mobility
+PARAMETER IXo = 5		// used to print and visualize facets having at least one vertex with this mobility
+
+/*defining geometry and material parameters*/
+#include "Geometry.fe"	// include the file with the required geometry data
+
+/*defining macros*/
+#define GR 9.81e6                               // gravity constant
+#define SG 1/(SV+gamma*Temp)                    // specific gravity of resist
+
+#define step1_vol (step_h1*step_w1_top+step_h2*(step_w1_bas-step_w1_top)+0.5*(step_h1-step_h2)*(step_h1-step_h2)/tan(inclination1*pi/180))*step_l    // volume of step 1 for simulation
+#define step2_vol (step_h2*step_w2_top+0.5*step_h2*(step_w2_bas-step_w2_top))*step_l    // volume of step 2 for simulation
+
+/*initialization*/
+gravity_constant GR  
+
+/*------------------------------------HEADER END------------------------------------*/
+
+
+/*##################################################################################*/
+
+
+/*---------------------------------CONSTRAINTS START--------------------------------*/
+constraint 1   /* fixing the resist on the substrate surface */
+formula: x3 = 0
+
+constraint 3 nonpositive /* pinning resist on upper end of un-exposed PMMA pillar*/
+formula: x3 = pin_h
+
+constraint 4   /* mirror plane, resist on front-side wall */
+formula: x1 = 0.5*step_l
+
+constraint 5   /* mirror plane, resist on back-side wall */
+formula: x1 = -0.5*step_l
+/*---------------------------------CONSTRAINTS END---------------------------------*/
+
+
+/*##################################################################################*/
+
+
+/*---------------------------------GEOMETRY START-----------------------------------*/
+// (0 0 0) is at the step center and at the left wall
+// vertices by "x y z [optional parameters]"
+vertices
+// for limitation of simulation area
+9   0.5*step_l  	 0.5*base_w 	0.0     	vmob 0 fixed   			/* for table top */
+10  0.5*step_l  	-0.5*base_w    	0.0     	vmob 0 fixed
+11 -0.5*step_l  	-0.5*base_w    	0.0     	vmob 0 fixed
+12 -0.5*step_l  	 0.5*base_w 	0.0     	vmob 0 fixed
+
+//vertices for steps
+//step 1
+1  -0.5*step_l  	0.0    	0.0     	vmob vmob_v1 constraints 1 5		/* 2 vertices on substrate */
+2   0.5*step_l  	0.0    	0.0     	vmob vmob_v1 constraints 1 4
+
+5  -0.5*step_l  	0.0    	step_h1      	vmob vmob_v1 constraints 3 5		/* 4 vertices on top */
+6   0.5*step_l  	0.0    	step_h1 	vmob vmob_v1 constraints 3 4
+7   0.5*step_l  	step_w1_top	step_h1	vmob vmob_v1 constraints 3 4
+8  -0.5*step_l  	step_w1_top	step_h1	vmob vmob_v1 constraints 3 5
+
+//step 2
+201  -0.5*step_l  	step_w1_bas			0.0 		vmob vmob_v2 constraints 1 5
+202   0.5*step_l  	step_w1_bas			0.0 		vmob vmob_v2 constraints 1 4
+205  -0.5*step_l  	step_w1_bas			step_h2	vmob vmob_v2 constraint 5
+206   0.5*step_l  	step_w1_bas  			step_h2  	vmob vmob_v2 constraint 4
+207   0.5*step_l  	step_w1_bas+step_w2_top    	step_h2	vmob vmob_v2 constraint 4
+208  -0.5*step_l  	step_w1_bas+step_w2_top    	step_h2	vmob vmob_v2 constraint 5
+
+//step 3
+301  -0.5*step_l  	step_w1_bas+step_w2_bas							     	0.0        	vmob vmob_v3 constraints 1 5
+302   0.5*step_l  	step_w1_bas+step_w2_bas    								0.0		vmob vmob_v3 constraints 1 4
+305  -0.5*step_l  	step_w1_bas+step_w2_bas-step_h3/tan(inclination2*pi/180)		step_h3	vmob vmob_v3 constraint 5    
+306   0.5*step_l  	step_w1_bas+step_w2_bas-step_h3/tan(inclination2*pi/180)		step_h3  	vmob vmob_v3 constraint 4
+
+edges  
+// given by endpoints and attributes
+// for limitation of simulation area
+13  	9 	10	no_refine  	fixed  /* for table top */
+14      10 	11 	no_refine  	fixed
+15      11 	12 	no_refine  	fixed
+16      12   9 	no_refine  	fixed
+
+//step 1
+1     	1   	2    	constraints 1 
+2     	2       202     constraints 1 4
+4   	201   	1    	constraints 1 5
+5     	5   	6    	constraints 3 
+6     	6   	7    	constraints 3 4
+7     	7   	8 
+8     	8   	5       constraints 3 5
+9     	1   	5       constraints 5
+10    	2   	6       constraints 4
+
+//step 2
+202 	202 	302 	constraints 1 4
+203 	202 	201     constraint 1
+204 	301 	201 	constraints 1 5
+205 	205 	206
+206 	206 	207     constraint 4
+207 	207 	208
+208 	208 	205     constraint 5
+209 	205   	8       constraint 5
+210 	206  	7       constraint 4
+213 	202 	206     constraint 4
+214 	201 	205     constraint 5
+
+//step 3
+303 	302 	301 	constraint 1
+305 	305 	306	 
+309 	305 	208     constraint 5
+310 	306 	207     constraint 4
+313 	302 	306     constraint 4
+314 	301 	305     constraint 5
+
+faces  
+// given by oriented edge loop
+// for limitation of simulation area
+// wall to the left and base below (required to avoid vertices having zero facets)
+7  13  14 15  16  	color clear 	tension 0 	no_refine 	density 0 	fmob 0	fixed /* table top for display */
+
+//step 1
+1      1  	 10    -5    -9     	color brown 	tension TENS_r  	fmob fmob_v1
+2    -10 	 2   	213   210  	-6	color brown   	tension TENS_w  	fmob fmob_v1
+4      9  	-8     -209  -214    4	color brown   	tension TENS_w  	fmob fmob_v1
+5      5   	 6      7     8     	color brown  	tension TENS_r      fmob fmob_v1
+6     -4    -203   -2    -1  		color brown 	tension TENS_s2     fmob fmob_v1
+
+//step 2
+201     -7 -210 -205  209         			color brown  		tension TENS_r	fmob fmob_v1
+202   -213  202  313  310 -206    			color yellow 		tension TENS_w	fmob fmob_v2
+204    214 -208 -309 -314  204    			color yellow		tension TENS_w	fmob fmob_v2
+205    205  206  207  208         			color yellow 		tension TENS_r	fmob fmob_v2
+206   -204 -303 -202  203  				    color yellow 		tension TENS_s2	fmob fmob_v2
+
+299	305 -313  303	 314                    color yellow		tension TENS_r	fmob fmob_v2 
+
+//step 3
+301   -207 -310 -305  309         			color yellow    	tension TENS_r	fmob fmob_v2
+
+bodies  
+// body defined by its oriented faces
+1 1 5 201 205 301 299 volume step1_vol+step2_vol density SG
+
+
+/*---------------------------------GEOMETRY END-----------------------------------*/
+
+
+/*##################################################################################*/
+
+
+/*----------------------------------simulation--------------------------------------*/
+/*defining commands for SE command line execution*/
+read 
+/*calculate vertex mobility as average of mobility all surrounding facets*/
+defv:={foreach vertex vv do {countr:=0; mobsum:=0; foreach vv.facet do {countr:=countr+1; mobsum:=mobsum+fmob}; print id; print mobsum/countr; set vv vmob mobsum/countr}}
+
+/*print list of vertices (IDs) with a mobility in the given range*/
+liste:={foreach vertex vv where vv.vmob>=IXu and vv.vmob<=IXo do {print id}}
+
+/*color alls facets having at least one vertices with a mobility in the given range*/
+colr:={foreach vertex vv where vv.vmob>=IXu and vv.vmob<=IXo do {foreach vv.facet do set vv.facet color red}}
+
+/*graphical output of slicing along z-y-plane at x=0*/
+sliceX := {slice_coeff[1]:= 1; 
+           slice_coeff[2]:= 0; 
+           slice_coeff[3]:= 0;
+           slice_coeff[4]:= 0;
+           slice_view}
+
+/*meshing*/
+meshit := {r; defv; r; defv; r; defv; area_normalization;}
+
+/*iteration*/
+loopit := {g50; w 0.001; w 0.001; V}
+
+/*output to postscript file*/
+printit := {psfilename := sprintf "%2.3f_%2.3f__%2.6f_%2.6f",vmob_v1,vmob_v2,total_time,total_energy; POSTSCRIPT psfilename}
