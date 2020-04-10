@@ -17,24 +17,23 @@ os.chdir(os.path.join(mc.sim_folder, '2ndary_yield'))
 #%%
 source = os.path.join(mc.sim_folder, 'e_DATA', 'Secondaries', '250')
 
-n = 1000
+n_files = 64
 
-e_total = n * 100
-e_2ndaries = 0
+n_total = 0
+n_2nd = 0
 
 
-for i in range(1000):
+for i in range(n_files):
     
-    mu.pbar(i, n)
+    mu.pbar(i, n_files)
     
-    DATA = np.load(os.path.join(source, 'DATA_' + str(i) + '.npy'))
+    DATA = np.load(os.path.join(source, 'n_2nd_for_100_prim_tracks_' + str(i) + '.npy'))
     
-    inds = np.where(np.logical_and(DATA[:, 3] < 50, DATA[:, 6] < 0))
-    
-    e_2ndaries += len(inds[0])
+    n_total += 100
+    n_2nd += DATA
 
 
-print(e_2ndaries/e_total)
+print(n_2nd/n_total)
     
 
 #%%

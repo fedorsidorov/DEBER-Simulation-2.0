@@ -27,7 +27,7 @@ E0 = 250
 n_files = 1000
 n_tracks = 100
 
-num = 0
+num = 64
 
 
 while num < n_files:
@@ -37,9 +37,9 @@ while num < n_files:
     inds = np.where(np.logical_and(DATA[:, 5] < 0, DATA[:, 7] < 50))
     n_2ndaries = len(inds[0])
     
-    fname = '../e_DATA/Secondaries/250/DATA_' + str(num) + '.npy'
+    fname = '../e_DATA/Secondaries/250/n_2nd_for_100_prim_tracks_' + str(num) + '.npy'
     
-    np.save(fname, np.array((n_tracks, n_2ndaries)))
+    np.save(fname, np.array((n_2ndaries)))
     
     print('file ' + fname + ' is ready')
 

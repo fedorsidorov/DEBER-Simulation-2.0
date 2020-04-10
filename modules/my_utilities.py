@@ -2,7 +2,7 @@ import numpy as np
 import sys
 from scipy import interpolate
 import importlib
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import my_constants as mc
 
 mc = importlib.reload(mc)
@@ -31,6 +31,7 @@ def pbar(progress, total):
 def log_interp1d(xx, yy, kind='linear'):
     
     logx = np.log10(xx)
+    
     logy = np.log10(yy)
 
     lin_interp = interpolate.interp1d(logx, logy, kind=kind)
@@ -40,33 +41,50 @@ def log_interp1d(xx, yy, kind='linear'):
     return log_interp
 
 
+def semilogy_interp1d(xx, yy, kind='linear'):
+    
+    logy = np.log10(yy)
+
+    lin_interp = interpolate.interp1d(xx, logy, kind=kind)
+
+    log_interp = lambda zz: np.power(10.0, lin_interp(zz))
+    
+    return log_interp
+
+
 def get_closest_el_ind(array, val):
     
     return np.argmin(np.abs(array - val))
 
 
-def diff2int(DIFF, V, H):
+def diff2int(diff_array, V, H):
     
-    INT = np.zeros((len(V), len(H)))
+    int_array = np.zeros((len(V), len(H)))
+
 
     for i in range(len(V)):
         
         pbar(i, len(V))
         
-        integral = np.trapz(DIFF[i, :], x=H)
+        integral = np.trapz(diff_array[i, :], x=H)
+        
         
         if integral == 0:
             continue
         
+        
         for j in range(1, len(H)):
-            INT[i, j] = np.trapz(DIFF[i, :j+1], x=H[:j+1]) / integral
+            
+            int_array[i, j] = np.trapz(diff_array[i, :j+1], x=H[:j+1]) / integral
     
-    return INT
+    
+    return int_array
     
 
 def normalize_u_array(arr):
     
     arr_norm = np.zeros(np.shape(arr))
+    
     
     for i in range(len(arr)):
         
