@@ -91,7 +91,21 @@ for i, E in enumerate(EE):
 
 
 #%%
-tau_cumulated = mu.diff2int(tau, V=mc.EE, H=mc.EE)
+#tau_cumulated = mu.diff2int(tau, V=mc.EE, H=mc.EE)
+
+tau = np.load('PMMA/tau.npy')
+
+tau_norm = np.zeros(np.shape(tau))
+
+
+for i in range(len(mc.EE)):
+    
+    now_tau = tau[i, :]
+    
+    if np.all(now_tau == 0):
+        continue
+    
+    tau_norm[i, :] = now_tau / np.sum(now_tau)
 
 
 #%%
@@ -108,35 +122,36 @@ tau_cumulated = mu.diff2int(tau, V=mc.EE, H=mc.EE)
 
 
 #%%
-#plt.semilogx(EE, S / 1e+8, label='my')
-#
-#S_Dapor = np.loadtxt('curves/S_dapor2015.txt')
-#plt.semilogx(S_Dapor[:, 0], S_Dapor[:, 1], label='dapor2015.pdf')
-#
-#S_Ciappa = np.loadtxt('curves/dEds_solid.txt')
-#plt.semilogx(S_Ciappa[:, 0], S_Ciappa[:, 1], label='ciappa2010.pdf')
-#
-#plt.xlim(1, 1e+4)
-#plt.ylim(0, 4)
-#
-#plt.legend()
-#plt.grid()
+u = np.load('PMMA/easy/u.npy')
 
-#plt.savefig('S 0.2, 4.4, 1000.png', dpi=300)
+plt.semilogx(mc.EE, 1/u * 1e+8, label='my')
+
+l_Dapor = np.loadtxt('curves/l_dapor2015.txt')
+plt.semilogx(l_Dapor[:, 0], l_Dapor[:, 1], label='dapor2015.pdf')
+
+plt.xlim(20, 1.1e+4)
+plt.ylim(0, 250)
+
+plt.legend()
+plt.grid()
 
 
 #%%
-#plt.semilogx(EE, 1/u * 1e+8, label='my')
-#
-#l_Dapor = np.loadtxt('curves/l_dapor2015.txt')
-#plt.semilogx(l_Dapor[:, 0], l_Dapor[:, 1], label='dapor2015.pdf')
-#
-#plt.xlim(20, 1.1e+4)
-#plt.ylim(0, 250)
-#
-#plt.legend()
-#plt.grid()
+S = np.load('PMMA/easy/S.npy')
 
+plt.semilogx(mc.EE, S / 1e+8, label='my')
 
-    
-    
+S_Dapor = np.loadtxt('curves/S_dapor2015.txt')
+plt.semilogx(S_Dapor[:, 0], S_Dapor[:, 1], label='dapor2015.pdf')
+
+S_Ciappa = np.loadtxt('curves/dEds_solid.txt')
+plt.semilogx(S_Ciappa[:, 0], S_Ciappa[:, 1], label='ciappa2010.pdf')
+
+plt.xlim(1, 1e+4)
+plt.ylim(0, 4)
+
+plt.legend()
+plt.grid()
+
+#plt.savefig('S 0.2, 4.4, 1000.png', dpi=300)
+

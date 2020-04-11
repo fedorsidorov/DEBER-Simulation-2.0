@@ -57,7 +57,7 @@ def get_closest_el_ind(array, val):
     return np.argmin(np.abs(array - val))
 
 
-def diff2int(diff_array, V, H):
+def diff2int2d(diff_array, V, H):
     
     int_array = np.zeros((len(V), len(H)))
 
@@ -79,7 +79,22 @@ def diff2int(diff_array, V, H):
     
     
     return int_array
+
+
+def diff2int_1d(yy, xx):
     
+    int_array = np.zeros(len(xx))
+
+    integral = np.trapz(yy, x=xx)
+    
+    
+    for j in range(1, len(xx)):
+        
+        int_array[j] = np.trapz(yy[:j+1], x=xx[:j+1]) / integral
+    
+    
+    return int_array
+
 
 def normalize_u_array(arr):
     

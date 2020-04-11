@@ -56,15 +56,32 @@ def interpolate_diff_cs(diff_cs_raw, EE_raw, THETA_deg_raw):
     return diff_cs
 
 
-def interpolate_cs(cs_raw, EE_raw):
+def interpolate_cs(cs_raw, EE_raw, extrap=False):
     
-    cs_dummy = np.concatenate((cs_raw[:1]*0,
-                                        cs_raw, cs_raw[-1:]*0), axis=0)
+    cs_dummy = np.concatenate((cs_raw[:1]*0, cs_raw, cs_raw[-1:]*0), axis=0)
     
     EE_raw_ext = np.concatenate((mc.EE[:1], EE_raw, mc.EE[-1:]))
     
-    cs_dummy[0] = cs_dummy[1]
-    cs_dummy[-1] = cs_dummy[-2]
+    
+    if extrap:
+        
+        cs_dummy[0] = np.exp(
+            np.log(EE_raw_ext[0]/EE_raw_ext[1]) /
+            np.log(EE_raw_ext[1]/EE_raw_ext[2]) *
+            np.log(cs_dummy[1]/cs_dummy[2])
+            ) * cs_dummy[1]
+        
+        cs_dummy[-1] = np.exp(
+            np.log(EE_raw_ext[-1]/EE_raw_ext[-2]) /
+            np.log(EE_raw_ext[-2]/EE_raw_ext[-3]) *
+            np.log(cs_dummy[-2]/cs_dummy[-3])
+            ) * cs_dummy[-2]
+    
+    else:
+        
+        cs_dummy[0] = cs_dummy[1]
+        cs_dummy[-1] = cs_dummy[-2]
+    
     
     cs = mu.log_interp1d(EE_raw_ext, cs_dummy)(mc.EE)
     
@@ -72,18 +89,26 @@ def interpolate_cs(cs_raw, EE_raw):
 
 
 #%%
-el = 'Si'
-
 EE_raw = np.load('raw_arrays/elsepa_EE.npy')
 THETA_deg_raw = np.load('raw_arrays/elsepa_theta.npy')
 
-diff_cs_raw = np.load('raw_arrays/Si_atomic_diff_cs.npy')
-cs_raw = np.load('raw_arrays/Si_atomic_cs.npy')
 
-final_diff_cs = interpolate_diff_cs(diff_cs_raw, EE_raw, THETA_deg_raw)
-final_cs = interpolate_cs(cs_raw, EE_raw)
-
-final_int_cs = mu.diff2int(final_diff_cs, mc.EE, mc.THETA_deg)
+for kind in ['atomic', 'muffin']:
+    
+    for el in ['H', 'C', 'O', 'Si']:
+        
+        print(el)
+        
+        diff_cs_raw = np.load('raw_arrays/' + el + '_' + kind + '_diff_cs.npy')
+        cs_raw = np.load('raw_arrays/' + el + '_' + kind + '_cs.npy')
+        
+        diff_cs = interpolate_diff_cs(diff_cs_raw, EE_raw, THETA_deg_raw)
+        cs = interpolate_cs(cs_raw, EE_raw)
+        cs_extrap = interpolate_cs(cs_raw, EE_raw, extrap=True)
+        
+#        np.save('final_arrays/' + el + '/' + kind + '_diff_cs', diff_cs)
+#        np.save('final_arrays/' + el + '/' + kind + '_cs', cs)
+        np.save('final_arrays/' + el + '/' + kind + '_cs_extrap', cs_extrap)
 
 
 #%%

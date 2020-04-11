@@ -15,9 +15,9 @@ os.chdir(os.path.join(mc.sim_folder, '2ndary_yield'))
 
 
 #%%
-source = os.path.join(mc.sim_folder, 'e_DATA', 'Secondaries', '250')
+source = os.path.join(mc.sim_folder, 'e_DATA', '2ndaries', '250')
 
-n_files = 64
+n_files = 559
 
 n_total = 0
 n_2nd = 0
@@ -43,5 +43,5 @@ dm = 2.16
 
 d = dm*1.2*(E0/Em)**(-0.67) * (1-np.exp(-1.614 * (E0/Em)**1.67))
 
-d
+print(d)
 

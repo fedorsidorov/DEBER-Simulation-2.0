@@ -2,6 +2,7 @@
 import numpy as np
 import os
 import importlib
+#import matplotlib.pyplot as plt
 
 import my_constants as mc
 import my_utilities as mu
@@ -9,24 +10,27 @@ import my_utilities as mu
 mc = importlib.reload(mc)
 mu = importlib.reload(mu)
 
-#import matplotlib.pyplot as plt
-
 
 #%% elastic
 u_el = np.load(os.path.join(mc.sim_folder, 
-        'elastic', 'PMMA', 'u.npy'
+#        'elastic', 'final_arrays', 'PMMA', 'u_muffin_extrap.npy'
+        'elastic', 'final_arrays', 'PMMA', 'u_muffin.npy'
         ))
-u_el_diff_cumulated = np.load(os.path.join(mc.sim_folder,
-        'elastic', 'PMMA', 'diff_cs_cumulated.npy'
+
+u_el_diff_sample = np.load(os.path.join(mc.sim_folder,
+        'elastic', 'final_arrays', 'PMMA', 'diff_cs_plane_norm_muffin.npy'
         ))
 
 
 #%% electron-electron
 u_ee = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'diel_responce', 'PMMA', 'u_ee.npy'
+#        'E_loss', 'diel_responce', 'PMMA', 'u_ee.npy'
+        'E_loss', 'diel_responce', 'PMMA', 'easy', 'u.npy'
         ))
-u_ee_diff_cumulated = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'diel_responce', 'PMMA', 'tau_cumulated.npy'
+
+u_ee_diff_sample = np.load(os.path.join(mc.sim_folder,
+#        'E_loss', 'diel_responce', 'PMMA', 'tau_norm.npy'
+        'E_loss', 'diel_responce', 'PMMA', 'easy', 'tau_u_norm.npy'
         ))
 
 
@@ -34,6 +38,7 @@ u_ee_diff_cumulated = np.load(os.path.join(mc.sim_folder,
 u_ph = np.load(os.path.join(mc.sim_folder,
         'E_loss', 'phonons_polarons', 'PMMA_u_phonon.npy'
         ))
+
 u_pol = np.load(os.path.join(mc.sim_folder,
         'E_loss', 'phonons_polarons', 'PMMA_u_polaron.npy'
         ))

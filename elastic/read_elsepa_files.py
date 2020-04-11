@@ -93,11 +93,13 @@ for i, E in enumerate(EE):
 
 
 #%%
-EE, cs_at = get_elsepa_EE_cs('atomic/O')
-EE, cs_mat = get_elsepa_EE_cs('material/O')
+el = 'Si'
+
+EE, cs_at  = get_elsepa_EE_cs('atomic/' + el)
+EE, cs_muf = get_elsepa_EE_cs('muffin/' + el)
 
 #ioffe = np.load('_outdated/Ioffe/Si/u.npy') / mc.n_Si
 #
-#plt.loglog(EE, cs1)
-#plt.loglog(EE, cs2)
+plt.loglog(EE, cs_at)
+plt.loglog(EE, cs_muf)
 #plt.loglog(mc.EE, ioffe)
