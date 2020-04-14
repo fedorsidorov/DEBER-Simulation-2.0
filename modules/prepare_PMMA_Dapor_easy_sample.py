@@ -24,11 +24,11 @@ u_el_diff_sample = np.load(os.path.join(mc.sim_folder,
 
 #%% electron-electron
 u_ee = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'diel_responce', 'PMMA', 'u_ee.npy'
+        'E_loss', 'diel_responce', 'PMMA', 'easy', 'u.npy'
         ))
 
 u_ee_diff_sample = np.load(os.path.join(mc.sim_folder,
-        'E_loss', 'diel_responce', 'PMMA', 'tau_norm.npy'
+        'E_loss', 'diel_responce', 'PMMA', 'easy', 'tau_u_norm.npy'
         ))
 
 
@@ -38,12 +38,7 @@ u_ph = np.load(os.path.join(mc.sim_folder,
         ))
 
 u_pol = np.load(os.path.join(mc.sim_folder,
-#        'E_loss', 'phonons_polarons', 'PMMA_u_polaron_0p1.npy'
-#        'E_loss', 'phonons_polarons', 'PMMA_u_polaron_0p2.npy'
-        'E_loss', 'phonons_polarons', 'PMMA_u_polaron_0p25.npy'
-#        'E_loss', 'phonons_polarons', 'PMMA_u_polaron_0p3.npy'
-#        'E_loss', 'phonons_polarons', 'PMMA_u_polaron_0p4.npy'
-#        'E_loss', 'phonons_polarons', 'PMMA_u_polaron_0p5.npy'
+        'E_loss', 'phonons_polarons', 'PMMA_u_polaron.npy'
         ))
 
 

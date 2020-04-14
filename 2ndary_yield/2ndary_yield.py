@@ -15,33 +15,44 @@ os.chdir(os.path.join(mc.sim_folder, '2ndary_yield'))
 
 
 #%%
-source = os.path.join(mc.sim_folder, 'e_DATA', '2ndaries', '250')
+folder = '250_0p25'
 
-n_files = 559
+source = os.path.join(mc.sim_folder, 'e_DATA', '2ndaries', folder)
+
+filenames = os.listdir(source)
 
 n_total = 0
 n_2nd = 0
 
 
-for i in range(n_files):
+for fname in filenames:
     
-    mu.pbar(i, n_files)
+    if fname == '.DS_Store':
+        continue
     
-    DATA = np.load(os.path.join(source, 'n_2nd_for_100_prim_tracks_' + str(i) + '.npy'))
+    DATA = np.load(os.path.join(source, fname))
     
     n_total += 100
     n_2nd += DATA
 
 
-print(n_2nd/n_total)
-    
+my_d = n_2nd/n_total
 
-#%%
-E0 = 250
-Em = 307
-dm = 2.16
+print(my_d)
 
-d = dm*1.2*(E0/Em)**(-0.67) * (1-np.exp(-1.614 * (E0/Em)**1.67))
 
-print(d)
+D_sim = np.loadtxt('Dapor_sim.txt')
+D_exp = np.loadtxt('Dapor_exp.txt')
+
+plt.plot(D_sim[:, 0], D_sim[:, 1], 'o', label='Dapor simulation')
+plt.plot(D_exp[:, 0], D_exp[:, 1], 'o', label='experiment')
+
+plt.plot(250, my_d, 'r*', label='my')
+
+plt.legend()
+plt.grid()
+
+plt.xlim(0, 1500)
+plt.ylim(0, 3)
+
 

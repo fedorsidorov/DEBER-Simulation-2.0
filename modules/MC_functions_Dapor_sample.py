@@ -1,9 +1,11 @@
+from numba import jit
+
 import numpy as np
 import numpy.random as rnd
 
 import importlib
 
-import prepare_PMMA_Dapor as ma
+import prepare_PMMA_Dapor_sample as ma
 import my_constants as mc
 import my_utilities as mu
 
@@ -16,20 +18,22 @@ import matplotlib.pyplot as plt
 
 
 #%% Simulation functions
+@jit(nopython=True)
 def get_closest_el_ind(array, val):
     
     return np.argmin(np.abs(array - val))
 
 
+@jit(nopython=True)
 def get_collision_ind(E_ind):    
     
     values = ma.u_processes[E_ind, :]
-    inds = list(range(len(values)))
     probs = values / np.sum(values)
     
-    return rnd.choice(inds, p=probs)
+    return rnd.choice(np.arange(len(values), dtype=int), p=probs)
 
-    
+
+@jit(nopython=True)
 def get_O_matrix(phi, theta, O):
     
     W = np.mat([[               np.cos(phi),                np.sin(phi),             0],
@@ -39,15 +43,16 @@ def get_O_matrix(phi, theta, O):
     return np.matmul(W, O)
 
 
+@jit(nopython=True)
 def get_elastic_On(E_ind, O):
     
     phi = 2 * np.pi * rnd.random()
-    
     theta = np.random.choice(mc.THETA_rad, p=ma.u_el_diff_sample[E_ind, :])
     
     return get_O_matrix(phi, theta, O)
 
 
+@jit(nopython=True)
 def get_ee_On_O2nd(E, W, O):
     
     phi = 2 * np.pi * rnd.random()
@@ -62,34 +67,35 @@ def get_ee_On_O2nd(E, W, O):
     return On, O2nd
 
 
+@jit(nopython=True)
 def get_ee_W_On_O2nd(E, E_ind, O):
     
     W = rnd.choice(mc.EE, p=ma.u_ee_diff_sample[E_ind, :])
-    
     On, O2nd = get_ee_On_O2nd(E, W, O)
         
     return W, On, O2nd
 
 
+@jit(nopython=True)
 def get_phonon_W_On(E, O):
     
     W = mc.hw_phonon
-        
+    
     phi = 2*np.pi*rnd.random()
     
     E_prime = E - W
     B = (E + E_prime + 2*np.sqrt(E*E_prime)) / (E + E_prime - 2*np.sqrt(E*E_prime))
     
     u5 = rnd.random()
-    
     cos_theta = (E + E_prime)/(2*np.sqrt(E*E_prime)) * (1 - B**u5) + B**u5
-    theta = np.arccos(cos_theta)
     
+    theta = np.arccos(cos_theta)
     On = get_O_matrix(phi, theta, O)
     
     return W, On
 
 
+@jit(nopython=True)
 def T_PMMA(E_cos2_theta):
     
     if E_cos2_theta >= mc.Wf_PMMA:
@@ -104,6 +110,7 @@ def T_PMMA(E_cos2_theta):
         return 0
 
 
+@jit(nopython=True)
 def get_dxdydz(E_ind, O):
     
     s = -1 / np.sum(ma.u_processes[E_ind, :]) * np.log(rnd.random())
@@ -113,6 +120,7 @@ def get_dxdydz(E_ind, O):
     return dxdydz.A1
 
 
+@jit(nopython=True)
 def get_TT_and_sim_data(TT, n_TT, tr_num, par_num, E0, x0y0z0, O):
     
     # track_num | parent_track_num | proc_ind | x | y | z | W | E
@@ -123,8 +131,10 @@ def get_TT_and_sim_data(TT, n_TT, tr_num, par_num, E0, x0y0z0, O):
     E = E0
     pos = 0
     
-    while E > mc.Wf_PMMA:
+    
+    while E > 0:
         
+        E_ind = get_closest_el_ind(mc.EE, E)
         z = sim_data[pos, 5]
         
         if z < 0:
@@ -134,25 +144,32 @@ def get_TT_and_sim_data(TT, n_TT, tr_num, par_num, E0, x0y0z0, O):
             sim_data = np.vstack((sim_data, np.zeros((mc.DATA_tr_len, 8)) * -100))
             print('Add sim_data len')
         
-        E_ind = get_closest_el_ind(mc.EE, E)
-        proc_ind = get_collision_ind(E_ind)
         
-        if proc_ind == 0: ## elastic scattering
-        
-            On = get_elastic_On(E_ind, O)
-            W = 0
-    
-        elif proc_ind == 1: ## electron-electron interaction
-        
-            W, On, O2nd = get_ee_W_On_O2nd(E, E_ind, O)
-    
-        elif proc_ind == 2: ## PMMA phonons
-        
-            W, On = get_phonon_W_On(mc.EE[E_ind], O)
-        
-        else: ## PMMA polarons (proc_ind == 3)
+        if E < mc.Wf_PMMA:
             
+            proc_ind = 4
             W, On = E, O*0
+        
+        else:
+        
+            proc_ind = get_collision_ind(E_ind)
+            
+            if proc_ind == 0: ## elastic scattering
+            
+                On = get_elastic_On(E_ind, O)
+                W = 0
+        
+            elif proc_ind == 1: ## electron-electron interaction
+            
+                W, On, O2nd = get_ee_W_On_O2nd(E, E_ind, O)
+        
+            elif proc_ind == 2: ## PMMA phonons
+            
+                W, On = get_phonon_W_On(mc.EE[E_ind], O)
+            
+            else: ## PMMA polarons (proc_ind == 3)
+                
+                W, On = E, O*0
         
         
         E -= W
@@ -197,7 +214,7 @@ def get_TT_and_sim_data(TT, n_TT, tr_num, par_num, E0, x0y0z0, O):
                 xyz_reflection = sim_data[pos, 3:6] + dxdydz*scale                
                 dxdydz_reserved = dxdydz * [1, 1, -1] * (1 - scale)
                 
-                sim_data[pos+1, :3] = tr_num, par_num, -1
+                sim_data[pos+1, :3] = tr_num, par_num, -2
                 sim_data[pos+1, 3:6] = xyz_reflection
                 sim_data[pos+1, 6:] = 0, E
                 
@@ -239,6 +256,7 @@ def get_TT_and_sim_data(TT, n_TT, tr_num, par_num, E0, x0y0z0, O):
     return TT, n_TT, sim_data
 
 
+@jit(nopython=True)
 def create_TT(E0, n_tracks):
     
     O0 = np.eye(3)
@@ -258,6 +276,7 @@ def create_TT(E0, n_tracks):
 
 
 ## SUPER VAZHNO
+@jit(nopython=True)
 def get_DATA(E0, n_tracks):
     
     TT, n_TT = create_TT(E0, n_tracks)
