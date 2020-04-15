@@ -1,5 +1,3 @@
-from numba import jit
-
 import numpy as np
 import numpy.random as rnd
 
@@ -18,13 +16,11 @@ import matplotlib.pyplot as plt
 
 
 #%% Simulation functions
-@jit(nopython=True)
 def get_closest_el_ind(array, val):
     
     return np.argmin(np.abs(array - val))
 
 
-@jit(nopython=True)
 def get_collision_ind(E_ind):    
     
     values = ma.u_processes[E_ind, :]
@@ -33,8 +29,14 @@ def get_collision_ind(E_ind):
     return rnd.choice(np.arange(len(values), dtype=int), p=probs)
 
 
-@jit(nopython=True)
 def get_O_matrix(phi, theta, O):
+    
+    # arr = np.zeros((3, 3))
+    # arr[0, :] = np.cos(phi), np.sin(phi), 0
+    # arr[1, :] = -np.sin(phi)*np.cos(theta), np.cos(phi)*np.cos(theta), np.sin(theta)
+    # arr[2, :] = np.sin(phi)*np.sin(theta), -np.cos(phi)*np.sin(theta), np.cos(theta)
+    
+    # W = np.asmatrix(arr)
     
     W = np.mat([[               np.cos(phi),                np.sin(phi),             0],
                 [-np.sin(phi)*np.cos(theta),  np.cos(phi)*np.cos(theta), np.sin(theta)],
@@ -43,7 +45,6 @@ def get_O_matrix(phi, theta, O):
     return np.matmul(W, O)
 
 
-@jit(nopython=True)
 def get_elastic_On(E_ind, O):
     
     phi = 2 * np.pi * rnd.random()
@@ -52,7 +53,6 @@ def get_elastic_On(E_ind, O):
     return get_O_matrix(phi, theta, O)
 
 
-@jit(nopython=True)
 def get_ee_On_O2nd(E, W, O):
     
     phi = 2 * np.pi * rnd.random()
@@ -67,7 +67,6 @@ def get_ee_On_O2nd(E, W, O):
     return On, O2nd
 
 
-@jit(nopython=True)
 def get_ee_W_On_O2nd(E, E_ind, O):
     
     W = rnd.choice(mc.EE, p=ma.u_ee_diff_sample[E_ind, :])
@@ -76,7 +75,6 @@ def get_ee_W_On_O2nd(E, E_ind, O):
     return W, On, O2nd
 
 
-@jit(nopython=True)
 def get_phonon_W_On(E, O):
     
     W = mc.hw_phonon
@@ -95,7 +93,6 @@ def get_phonon_W_On(E, O):
     return W, On
 
 
-@jit(nopython=True)
 def T_PMMA(E_cos2_theta):
     
     if E_cos2_theta >= mc.Wf_PMMA:
@@ -110,17 +107,14 @@ def T_PMMA(E_cos2_theta):
         return 0
 
 
-@jit(nopython=True)
 def get_dxdydz(E_ind, O):
     
     s = -1 / np.sum(ma.u_processes[E_ind, :]) * np.log(rnd.random())
-    
     dxdydz = np.matmul(O.transpose(), np.mat([[0], [0], [1]])) * s
     
     return dxdydz.A1
 
 
-@jit(nopython=True)
 def get_TT_and_sim_data(TT, n_TT, tr_num, par_num, E0, x0y0z0, O):
     
     # track_num | parent_track_num | proc_ind | x | y | z | W | E
@@ -256,7 +250,6 @@ def get_TT_and_sim_data(TT, n_TT, tr_num, par_num, E0, x0y0z0, O):
     return TT, n_TT, sim_data
 
 
-@jit(nopython=True)
 def create_TT(E0, n_tracks):
     
     O0 = np.eye(3)
@@ -276,7 +269,6 @@ def create_TT(E0, n_tracks):
 
 
 ## SUPER VAZHNO
-@jit(nopython=True)
 def get_DATA(E0, n_tracks):
     
     TT, n_TT = create_TT(E0, n_tracks)

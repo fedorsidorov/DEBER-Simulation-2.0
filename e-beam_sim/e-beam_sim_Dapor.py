@@ -19,29 +19,32 @@ pd = importlib.reload(pd)
 
 
 #%%
-#E0_list = [50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800,\
-#           850, 900, 950, 1000]
+E0_list = [50, 100, 150, 200, 300, 350, 400, 450, 500, 600, 800, 1000, 1500]
 
-E0 = 500
+# E0 = 250
 
 n_files = 1000
 n_tracks = 100
 
-num = 51
+num = 0
 
 
 while num < n_files:
     
-    DATA = mcf.get_DATA(E0, n_tracks)
     
-    inds = np.where(np.logical_and(DATA[:, 5] < 0, DATA[:, 7] < 50))
-    n_2ndaries = len(inds[0])
+    for E0 in E0_list:
     
-    fname = '../e_DATA/2ndaries/250_0p25/n_2nd_for_100_prim_tracks_' + str(num) + '.npy'
-#    np.save(fname, np.array((n_2ndaries)))
+        DATA = mcf.get_DATA(E0, n_tracks)
+        
+        inds = np.where(np.logical_and(DATA[:, 5] < 0, DATA[:, 7] < 50))
+        n_2ndaries = len(inds[0])
+        
+        fname = '../e_DATA/2ndaries/' + str(E0) + '/n_2nd_for_100_prim_tracks_' + str(num) + '.npy'
+        np.save(fname, np.array((n_2ndaries)))
+        
+        print('file ' + fname + ' is ready')
     
-    print('file ' + fname + ' is ready')
-
+    
     num += 1
 
 
