@@ -15,15 +15,33 @@ os.chdir(os.path.join(mc.sim_folder, 'elastic'))
 
 
 #%%
-def interpolate_diff_cs(diff_cs_raw, EE_raw, THETA_deg_raw):
+def interpolate_diff_cs(diff_cs_raw, EE_raw, THETA_deg_raw, extrap=False):
     
     diff_cs_pre_dummy = np.concatenate((diff_cs_raw[:1, :]*0,
                                         diff_cs_raw, diff_cs_raw[-1:, :]*0), axis=0)
     
     EE_raw_ext = np.concatenate((mc.EE[:1], EE_raw, mc.EE[-1:]))
     
-    diff_cs_pre_dummy[0, :] = diff_cs_pre_dummy[1, :]
-    diff_cs_pre_dummy[-1, :] = diff_cs_pre_dummy[-2, :]
+    
+    if extrap:
+        
+        diff_cs_pre_dummy[0, :] = np.exp(
+            np.log(EE_raw_ext[0]/EE_raw_ext[1]) /
+            np.log(EE_raw_ext[1]/EE_raw_ext[2]) *
+            np.log(diff_cs_pre_dummy[1, :]/diff_cs_pre_dummy[2, :])
+            ) * diff_cs_pre_dummy[1, :]
+        
+        diff_cs_pre_dummy[-1, :] = np.exp(
+            np.log(EE_raw_ext[-1]/EE_raw_ext[-2]) /
+            np.log(EE_raw_ext[-2]/EE_raw_ext[-3]) *
+            np.log(diff_cs_pre_dummy[-2]/diff_cs_pre_dummy[-3, :])
+            ) * diff_cs_pre_dummy[-2, :]
+    
+    else:
+        
+        diff_cs_pre_dummy[0, :] = diff_cs_pre_dummy[1, :]
+        diff_cs_pre_dummy[-1, :] = diff_cs_pre_dummy[-2, :]
+    
     
     diff_cs_pre = np.zeros((len(mc.EE), len(THETA_deg_raw)))
     
@@ -42,13 +60,16 @@ def interpolate_diff_cs(diff_cs_raw, EE_raw, THETA_deg_raw):
         now_THETA_deg_raw = [THETA_deg_raw[0]]
     
     
-        for j in range(1, len(THETA_deg_raw)):
+        for j in range(1, len(THETA_deg_raw) - 1):
             
             if diff_cs_pre[i, j] != now_diff_cs_pre[-1]:
                 
                 now_diff_cs_pre.append(diff_cs_pre[i, j])
                 now_THETA_deg_raw.append(THETA_deg_raw[j])
-                
+            
+        
+        now_diff_cs_pre.append(diff_cs_pre[i, -1])
+        now_THETA_deg_raw.append(THETA_deg_raw[-1])
         
         diff_cs[i, :] = mu.semilogy_interp1d(now_THETA_deg_raw, now_diff_cs_pre)(mc.THETA_deg)
     
@@ -93,21 +114,23 @@ EE_raw = np.load('raw_arrays/elsepa_EE.npy')
 THETA_deg_raw = np.load('raw_arrays/elsepa_theta.npy')
 
 
-for kind in ['atomic', 'muffin']:
+for kind in ['easy', 'atomic', 'muffin']:
     
     for el in ['H', 'C', 'O', 'Si']:
         
         print(el)
         
-        diff_cs_raw = np.load('raw_arrays/' + el + '_' + kind + '_diff_cs.npy')
-        cs_raw = np.load('raw_arrays/' + el + '_' + kind + '_cs.npy')
+        diff_cs_raw = np.load('raw_arrays/' + el + '/' + kind + '_diff_cs.npy')
+        cs_raw = np.load('raw_arrays/' + el + '/' + kind + '_cs.npy')
         
         diff_cs = interpolate_diff_cs(diff_cs_raw, EE_raw, THETA_deg_raw)
+        diff_cs_extrap = interpolate_diff_cs(diff_cs_raw, EE_raw, THETA_deg_raw)
+        
         cs = interpolate_cs(cs_raw, EE_raw)
         cs_extrap = interpolate_cs(cs_raw, EE_raw, extrap=True)
         
-#        np.save('final_arrays/' + el + '/' + kind + '_diff_cs', diff_cs)
-#        np.save('final_arrays/' + el + '/' + kind + '_cs', cs)
+        np.save('final_arrays/' + el + '/' + kind + '_diff_cs', diff_cs)
+        np.save('final_arrays/' + el + '/' + kind + '_cs', cs)
         np.save('final_arrays/' + el + '/' + kind + '_cs_extrap', cs_extrap)
 
 

@@ -52,6 +52,17 @@ def semilogy_interp1d(xx, yy, kind='linear'):
     return log_interp
 
 
+def semilogx_interp1d(xx, yy, kind='linear'):
+    
+    logx = np.log10(xx)
+
+    lin_interp = interpolate.interp1d(logx, yy, kind=kind)
+
+    log_interp = lambda zz: lin_interp(np.log10(zz))
+    
+    return log_interp
+
+
 def get_closest_el_ind(array, val):
     
     return np.argmin(np.abs(array - val))

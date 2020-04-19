@@ -31,13 +31,6 @@ def get_collision_ind(E_ind):
 
 def get_O_matrix(phi, theta, O):
     
-    # arr = np.zeros((3, 3))
-    # arr[0, :] = np.cos(phi), np.sin(phi), 0
-    # arr[1, :] = -np.sin(phi)*np.cos(theta), np.cos(phi)*np.cos(theta), np.sin(theta)
-    # arr[2, :] = np.sin(phi)*np.sin(theta), -np.cos(phi)*np.sin(theta), np.cos(theta)
-    
-    # W = np.asmatrix(arr)
-    
     W = np.mat([[               np.cos(phi),                np.sin(phi),             0],
                 [-np.sin(phi)*np.cos(theta),  np.cos(phi)*np.cos(theta), np.sin(theta)],
                 [ np.sin(phi)*np.sin(theta), -np.cos(phi)*np.sin(theta), np.cos(theta)]])
@@ -56,9 +49,10 @@ def get_elastic_On(E_ind, O):
 def get_ee_On_O2nd(E, W, O):
     
     phi = 2 * np.pi * rnd.random()
-    phi_s = phi + np.pi
-    
     theta = np.arcsin(np.sqrt(W/E))
+    
+    # phi_s = phi + np.pi
+    phi_s = np.pi * rnd.random()
     theta_s = np.pi * rnd.random()
     
     On = get_O_matrix(phi, theta, O)

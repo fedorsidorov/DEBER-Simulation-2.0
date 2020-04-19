@@ -20,8 +20,12 @@ Na = 6.02e+23
 eps0 = 8.854e-12 ## SI!!!
 k_el = 1 / (4*np.pi*eps0)
 c = 3e+8 ## SI!!!
+a0 = 5.292e-9 ## cm
+k_B = 8.617e-5
 
-hw_phonon = 0.1
+r0 = 2.828e-13 ## cm - classical electron radius
+
+hw_phonon = 0.1 ## eV
 
 h2si = k_el * m * e**2 / hbar**2
 
@@ -47,14 +51,18 @@ u_Si = 28.09
 rho_Si = 2.33
 n_Si = rho_Si * Na/u_Si
 
-#Z_PMMA = 3.6
-u_MMA = 100.12
-M0 = u_MMA
-rho_PMMA = 1.18
-
 N_H_MMA = 8
 N_C_MMA = 5
 N_O_MMA = 2
+
+#Z_PMMA = 3.6
+# u_MMA = 100.12
+u_MMA = (N_H_MMA*u_H + N_C_MMA*u_C + N_O_MMA*u_O)
+
+M0 = u_MMA / Na
+
+rho_PMMA = 1.19
+
 
 n_MMA = rho_PMMA * Na/u_MMA
 #n_PMMA_at = n_PMMA_mon * (n_H_PMMA + n_C_PMMA + n_O_PMMA)
@@ -71,6 +79,7 @@ uint16_max = 65535
 
 #%%
 EE = np.logspace(0, 4.4, 1000)
+EE_10 = np.logspace(1, 4.4, 1000)
 
 THETA_deg = np.linspace(0, 180, 1000)
 THETA_rad = np.deg2rad(THETA_deg)
@@ -106,5 +115,5 @@ DATA_tr_len = int(3e+4)
 E_cut_PMMA = 3.7
 E_cut_Si = 16.7
 
-Wf_PMMA = 4.68
-
+# Wf_PMMA = 4.68
+Wf_PMMA = 1.0

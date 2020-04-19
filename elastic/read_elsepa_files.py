@@ -64,32 +64,82 @@ def get_elsepa_EE_cs(dirname):
 
 
 #%%
-EE = np.array([10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 25, 30, 35, 40, 45,
-      50, 60, 70, 80, 90, 100, 150, 200, 250, 300, 350, 400, 450, 500,
-      600, 700, 800, 900, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500,
-      5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000, 13000, 14000, 15000,
-      16000, 17000, 18000, 19000, 20000, 21000, 22000, 23000, 24000, 25000])
+EE = np.array([
+          10,    11,    12,    13,    14,    15,    16,    17,    18,    19, ##  0- 9
+          20,    25,    30,    35,    40,    45,    50,    60,    70,    80, ## 10-19
+          90,   100,   150,   200,   250,   300,   350,   400,   450,   500, ## 20-29
+         600,   700,   800,   900,  1000,  1500,  2000,  2500,  3000,  3500, ## 30-39
+        4000,  4500,  5000,  6000,  7000,  8000,  9000, 10000, 11000, 12000, ## 40-49
+       13000, 14000, 15000, 16000, 17000, 18000, 19000, 20000, 21000, 22000, ## 50-59
+       23000, 24000, 25000]) ## 60-63
+
+a02 = 2.8e-17 ## cm
 
 
-folder = 'material/Si'
-
-diff_cs = np.zeros((len(EE), 606))
-theta = np.zeros(606)
-
-filenames = os.listdir(folder)
+for el in ['H', 'C', 'O', 'Si']:
 
 
-for i, E in enumerate(EE):
+    folder_ea = 'easy/' + el
+    folder_at = 'atomic/' + el
+    folder_mu = 'muffin/' + el
     
-    E_str = str(E)
+    diff_cs_ea = np.zeros((len(EE), 606))
+    diff_cs_at = np.zeros((len(EE), 606))
+    diff_cs_mu = np.zeros((len(EE), 606))
     
-    d1 = E_str[0]
-    d2 = E_str[1]
-    exp = str(len(E_str) - 1)
+    theta = np.zeros(606)
     
-    fname = 'dcs_' + d1 + 'p' + d2 + '00e0' + exp + '.dat'
     
-    diff_cs[i, :] = get_elsepa_theta_diff_cs(os.path.join(folder, fname))[1]
+    for i, E in enumerate(EE):
+        
+        E_str = str(int(E))
+        
+        d1 = E_str[0]
+        d2 = E_str[1]
+        exp = str(len(E_str) - 1)
+        
+        fname = 'dcs_' + d1 + 'p' + d2 + '00e0' + exp + '.dat'
+        
+        theta, diff_cs_ea[i, :] = get_elsepa_theta_diff_cs(os.path.join(folder_ea, fname))
+        theta, diff_cs_at[i, :] = get_elsepa_theta_diff_cs(os.path.join(folder_at, fname))
+        theta, diff_cs_mu[i, :] = get_elsepa_theta_diff_cs(os.path.join(folder_mu, fname))
+        
+        EE, cs_ea = get_elsepa_EE_cs(folder_ea)
+        EE, cs_at = get_elsepa_EE_cs(folder_at)
+        EE, cs_mu = get_elsepa_EE_cs(folder_mu)
+        
+    
+    np.save(os.path.join('raw_arrays', el, 'easy_diff_cs.npy'), diff_cs_ea)
+    np.save(os.path.join('raw_arrays', el, 'atomic_diff_cs.npy'), diff_cs_at)
+    np.save(os.path.join('raw_arrays', el, 'muffin_diff_cs.npy'), diff_cs_mu)
+    
+    np.save(os.path.join('raw_arrays', el, 'easy_cs.npy'), cs_ea)
+    np.save(os.path.join('raw_arrays', el, 'atomic_cs.npy'), cs_at)
+    np.save(os.path.join('raw_arrays', el, 'muffin_cs.npy'), cs_mu)
+
+
+#%%
+i50, i100, i500, i1k, i5k, i10k, i15k, i20k = 16, 21, 29, 34, 42, 47, 52, 58
+
+ind = 3
+
+# now_diff_cs_ea = diff_cs_at[ind, :] / a02
+# now_diff_cs_at = diff_cs_at[ind, :] / a02
+# now_diff_cs_mu = diff_cs_mu[ind, :] / a02
+
+# print(now_diff_cs_ea[0], now_diff_cs_ea[-1])
+# print(now_diff_cs_at[0], now_diff_cs_mu[-1])
+# print(now_diff_cs_mu[0], now_diff_cs_mu[-1])
+
+# plt.semilogy(theta, diff_cs_ea[ind, :] / a02, label='easy')
+# plt.semilogy(theta, diff_cs_at[ind, :] / a02, label='atomic')
+# plt.semilogy(theta, diff_cs_mu[ind, :] / a02, '--', label='muffin')
+
+plt.xlim(0, 180)
+# plt.ylim(1e-7, 1e+4)
+
+plt.legend()
+plt.grid()
 
 
 #%%
