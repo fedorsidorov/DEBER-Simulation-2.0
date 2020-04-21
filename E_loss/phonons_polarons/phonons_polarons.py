@@ -43,7 +43,13 @@ def get_PMMA_U_polaron(EE, C_inv_nm, gamma):
 
 #%%
 u_ph = get_PMMA_U_phonon(mc.EE)
-u_pol = get_PMMA_U_polaron(mc.EE, 1.5, 0.14)
+u_pol = get_PMMA_U_polaron(mc.EE, 0.1, 0.15)
+
+# plt.loglog(EE, u_ph)
+# plt.loglog(EE, u_pol)
+
+# plt.xlim(1, 1e+4)
+# plt.ylim(1e+1, 1e+9)
 
 
 #%%
@@ -56,14 +62,8 @@ plt.semilogy(D_pol[:, 0], D_pol[:, 1], 'o', label='Dapor polaron')
 ind = 523
 EE = mc.EE[:ind]
 
-# u_ph = get_PMMA_U_phonon(EE)
-# u_pol = get_PMMA_U_polaron(EE, 1.5, 0.14)
-
-# plt.loglog(mc.EE, u_ph)
-# plt.loglog(mc.EE, u_pol)
-
-# plt.xlim(1, 1e+4)
-# plt.ylim(1e+1, 1e+9)
+u_ph = get_PMMA_U_phonon(EE)
+u_pol = get_PMMA_U_polaron(EE, 1.5, 0.14)
 
 plt.semilogy(EE, 1/u_ph * 1e+8, label='my phonon')
 plt.semilogy(EE, 1/u_pol * 1e+8, label='my_polaron')

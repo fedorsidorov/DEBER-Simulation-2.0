@@ -68,59 +68,75 @@ def get_closest_el_ind(array, val):
     return np.argmin(np.abs(array - val))
 
 
-def diff2int2d(diff_array, V, H):
+# def diff2int2d(diff_array, V, H):
     
-    int_array = np.zeros((len(V), len(H)))
+#     int_array = np.zeros((len(V), len(H)))
 
 
-    for i in range(len(V)):
+#     for i in range(len(V)):
         
-        pbar(i, len(V))
+#         pbar(i, len(V))
         
-        integral = np.trapz(diff_array[i, :], x=H)
-        
-        
-        if integral == 0:
-            continue
+#         integral = np.trapz(diff_array[i, :], x=H)
         
         
-        for j in range(1, len(H)):
+#         if integral == 0:
+#             continue
+        
+        
+#         for j in range(1, len(H)):
             
-            int_array[i, j] = np.trapz(diff_array[i, :j+1], x=H[:j+1]) / integral
+#             int_array[i, j] = np.trapz(diff_array[i, :j+1], x=H[:j+1]) / integral
     
     
-    return int_array
+#     return int_array
 
 
-def diff2int_1d(yy, xx):
+def get_cumulated_array(array):
     
-    int_array = np.zeros(len(xx))
-
-    integral = np.trapz(yy, x=xx)
+    result = np.zeros((len(array)))
     
     
-    for j in range(1, len(xx)):
+    for i in range(len(array)):
         
-        int_array[j] = np.trapz(yy[:j+1], x=xx[:j+1]) / integral
-    
-    
-    return int_array
-
-
-def normalize_u_array(arr):
-    
-    arr_norm = np.zeros(np.shape(arr))
-    
-    
-    for i in range(len(arr)):
-        
-        if np.all(arr[i, :] == 0):
+        if np.all(array == 0):
             continue
         
-        arr_norm[i, :] = arr[i, :] / np.sum(arr[i, :])
+        result[i] = np.sum(array[:i+1])
     
     
-    return arr_norm
+    return result
+
+
+# def diff2int_1d(yy, xx):
+    
+#     int_array = np.zeros(len(xx))
+
+#     integral = np.trapz(yy, x=xx)
+    
+    
+#     for j in range(1, len(xx)):
+        
+#         int_array[j] = np.trapz(yy[:j+1], x=xx[:j+1]) / integral
+    
+    
+#     return int_array
+
+
+# def normalize_u_array(arr):
+    
+#     arr_norm = np.zeros(np.shape(arr))
+    
+    
+#     for i in range(len(arr)):
+        
+#         if np.all(arr[i, :] == 0):
+#             continue
+        
+#         arr_norm[i, :] = arr[i, :] / np.sum(arr[i, :])
+    
+    
+#     return arr_norm
             
 
 

@@ -116,50 +116,65 @@ THETA_deg_raw = np.load('raw_arrays/elsepa_theta.npy')
 
 for kind in ['easy', 'atomic', 'muffin']:
     
+    
     for el in ['H', 'C', 'O', 'Si']:
         
         print(el)
         
-        diff_cs_raw = np.load('raw_arrays/' + el + '/' + kind + '_diff_cs.npy')
-        cs_raw = np.load('raw_arrays/' + el + '/' + kind + '_cs.npy')
+        diff_cs_raw = np.load(os.path.join(
+            'raw_arrays', kind, el, el + '_' + kind + '_diff_cs.npy'
+            ))
+        
+        cs_raw = np.load(os.path.join(
+            'raw_arrays', kind, el, el + '_' + kind + '_cs.npy'
+            ))
         
         diff_cs = interpolate_diff_cs(diff_cs_raw, EE_raw, THETA_deg_raw)
-        diff_cs_extrap = interpolate_diff_cs(diff_cs_raw, EE_raw, THETA_deg_raw)
         
         cs = interpolate_cs(cs_raw, EE_raw)
+        
         cs_extrap = interpolate_cs(cs_raw, EE_raw, extrap=True)
         
-        np.save('final_arrays/' + el + '/' + kind + '_diff_cs', diff_cs)
-        np.save('final_arrays/' + el + '/' + kind + '_cs', cs)
-        np.save('final_arrays/' + el + '/' + kind + '_cs_extrap', cs_extrap)
-
-
-#%%
-#for i in range(228, len(mc.EE), 100):
-#    
-#    E_str = "{:6.1f}".format(mc.EE[i])
-#    
-#    plt.semilogy(THETA_deg_raw, ans[i, :], label=E_str + ' eV')
-#    plt.semilogy(mc.THETA_deg[::50], bns[i, ::50], '.')
-#    
-#    now_x = np.concatenate((-np.deg2rad(THETA_deg_raw), np.deg2rad(THETA_deg_raw)))
-#    now_y = np.concatenate((np.log10(ans[i, :]), np.log10(ans[i, :])))
-#    
-#    plt.polar(now_x, now_y)
-#
-#
-#plt.savefig('elastic_interpolation_polar.jpg', dpi=500)
+        
+        np.save(os.path.join(
+            'final_arrays', kind, el, el + '_' + kind + '_diff_cs.npy'
+            ), diff_cs)
+        
+        np.save(os.path.join(
+            'final_arrays', kind, el, el + '_' + kind + '_cs.npy'
+            ), cs)
+        
+        np.save(os.path.join(
+            'final_arrays', kind, el, el + '_' + kind + '_cs_extrap.npy'
+            ), cs_extrap)
+        
 
 #%%
-plt.title('Differential elastic cross-section for Si')
-plt.xlabel('E, eV')
-plt.ylabel('DESCS, cm$^2$/sr')
+# for i in range(228, len(mc.EE), 100):
+    
+#     E_str = "{:6.1f}".format(mc.EE[i])
+    
+#     plt.semilogy(THETA_deg_raw, ans[i, :], label=E_str + ' eV')
+#     plt.semilogy(mc.THETA_deg[::50], bns[i, ::50], '.')
+    
+#     now_x = np.concatenate((-np.deg2rad(THETA_deg_raw), np.deg2rad(THETA_deg_raw)))
+#     now_y = np.concatenate((np.log10(ans[i, :]), np.log10(ans[i, :])))
+    
+#     plt.polar(now_x, now_y)
 
-plt.xlim(0, 180)
-plt.ylim(1e-22, 1e-14)
 
-plt.legend()
-plt.grid()
+# plt.savefig('elastic_interpolation_polar.jpg', dpi=500)
+
+#%%
+# plt.title('Differential elastic cross-section for Si')
+# plt.xlabel('E, eV')
+# plt.ylabel('DESCS, cm$^2$/sr')
+
+# plt.xlim(0, 180)
+# plt.ylim(1e-22, 1e-14)
+
+# plt.legend()
+# plt.grid()
 
 
-plt.savefig('elastic_interpolation_polar.jpg', dpi=500)
+# plt.savefig('elastic_interpolation_polar.jpg', dpi=500)

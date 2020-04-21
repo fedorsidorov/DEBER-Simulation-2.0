@@ -2,7 +2,7 @@
 import numpy as np
 import os
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+# from mpl_toolkits.mplot3d import Axes3D
 import importlib
 
 import my_constants as mc
@@ -31,7 +31,8 @@ def get_elsepa_theta_diff_cs(filename):
         else:
             line_arr = line.split()
             theta[i] = line_arr[0]
-            diff_cs[i] = line_arr[2]
+            diff_cs[i] = line_arr[2] ## in cm**2 / sr
+            # diff_cs[i] = line_arr[3] ## in a0_2**2 / sr
             
             i += 1
             
@@ -77,11 +78,12 @@ a02 = 2.8e-17 ## cm
 
 
 for el in ['H', 'C', 'O', 'Si']:
+# for el in ['Si']:
 
 
-    folder_ea = 'easy/' + el
-    folder_at = 'atomic/' + el
-    folder_mu = 'muffin/' + el
+    folder_ea = 'raw_data/easy/' + el
+    folder_at = 'raw_data/atomic/' + el
+    folder_mu = 'raw_data/muffin/' + el
     
     diff_cs_ea = np.zeros((len(EE), 606))
     diff_cs_at = np.zeros((len(EE), 606))
@@ -91,6 +93,7 @@ for el in ['H', 'C', 'O', 'Si']:
     
     
     for i, E in enumerate(EE):
+    # for i, E in enumerate([500]):
         
         E_str = str(int(E))
         
@@ -103,25 +106,30 @@ for el in ['H', 'C', 'O', 'Si']:
         theta, diff_cs_ea[i, :] = get_elsepa_theta_diff_cs(os.path.join(folder_ea, fname))
         theta, diff_cs_at[i, :] = get_elsepa_theta_diff_cs(os.path.join(folder_at, fname))
         theta, diff_cs_mu[i, :] = get_elsepa_theta_diff_cs(os.path.join(folder_mu, fname))
-        
-        EE, cs_ea = get_elsepa_EE_cs(folder_ea)
-        EE, cs_at = get_elsepa_EE_cs(folder_at)
-        EE, cs_mu = get_elsepa_EE_cs(folder_mu)
+    
+    
+    EE, cs_ea = get_elsepa_EE_cs(folder_ea)
+    EE, cs_at = get_elsepa_EE_cs(folder_at)
+    EE, cs_mu = get_elsepa_EE_cs(folder_mu)
         
     
-    np.save(os.path.join('raw_arrays', el, 'easy_diff_cs.npy'), diff_cs_ea)
-    np.save(os.path.join('raw_arrays', el, 'atomic_diff_cs.npy'), diff_cs_at)
-    np.save(os.path.join('raw_arrays', el, 'muffin_diff_cs.npy'), diff_cs_mu)
+    np.save(os.path.join('raw_arrays',   'easy', el, el +   '_easy_diff_cs.npy'), diff_cs_ea)
+    np.save(os.path.join('raw_arrays', 'atomic', el, el + '_atomic_diff_cs.npy'), diff_cs_at)
+    np.save(os.path.join('raw_arrays', 'muffin', el, el + '_muffin_diff_cs.npy'), diff_cs_mu)
     
-    np.save(os.path.join('raw_arrays', el, 'easy_cs.npy'), cs_ea)
-    np.save(os.path.join('raw_arrays', el, 'atomic_cs.npy'), cs_at)
-    np.save(os.path.join('raw_arrays', el, 'muffin_cs.npy'), cs_mu)
+    np.save(os.path.join('raw_arrays',   'easy', el, el +   '_easy_cs.npy'), cs_ea)
+    np.save(os.path.join('raw_arrays', 'atomic', el, el + '_atomic_cs.npy'), cs_at)
+    np.save(os.path.join('raw_arrays', 'muffin', el, el + '_muffin_cs.npy'), cs_mu)
 
 
 #%%
-i50, i100, i500, i1k, i5k, i10k, i15k, i20k = 16, 21, 29, 34, 42, 47, 52, 58
+# plt.semilogy(theta, diff_cs_ea[0, :] / mc.a0_2)
 
-ind = 3
+
+#%%
+# i50, i100, i500, i1k, i5k, i10k, i15k, i20k = 16, 21, 29, 34, 42, 47, 52, 58
+
+# ind = 3
 
 # now_diff_cs_ea = diff_cs_at[ind, :] / a02
 # now_diff_cs_at = diff_cs_at[ind, :] / a02
@@ -135,21 +143,21 @@ ind = 3
 # plt.semilogy(theta, diff_cs_at[ind, :] / a02, label='atomic')
 # plt.semilogy(theta, diff_cs_mu[ind, :] / a02, '--', label='muffin')
 
-plt.xlim(0, 180)
+# plt.xlim(0, 180)
 # plt.ylim(1e-7, 1e+4)
 
-plt.legend()
-plt.grid()
+# plt.legend()
+# plt.grid()
 
 
 #%%
-el = 'Si'
-
-EE, cs_at  = get_elsepa_EE_cs('atomic/' + el)
-EE, cs_muf = get_elsepa_EE_cs('muffin/' + el)
-
-#ioffe = np.load('_outdated/Ioffe/Si/u.npy') / mc.n_Si
+# el = 'Si'
+# 
+# EE, cs_at  = get_elsepa_EE_cs('atomic/' + el)
+# EE, cs_muf = get_elsepa_EE_cs('muffin/' + el)
+# 
+# ioffe = np.load('_outdated/Ioffe/Si/u.npy') / mc.n_Si
 #
-plt.loglog(EE, cs_at)
-plt.loglog(EE, cs_muf)
-#plt.loglog(mc.EE, ioffe)
+# plt.loglog(EE, cs_at)
+# plt.loglog(EE, cs_muf)
+# plt.loglog(mc.EE, ioffe)

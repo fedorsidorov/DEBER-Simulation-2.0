@@ -9,25 +9,28 @@ sim_folder = os.path.join('/Users', 'fedor', 'Documents', 'DEBER-Simulation-2.0'
 #            'DEBER-Simulation-2.0')
 
 #%% SI!!!
-e = 1.6e-19
-m = 9.1e-31
+e = 1.602e-19 ## SI !!!
+m = 9.1e-31 ## SI !!!
 m_eV = 511e+3
-h = 6.626e-34
-hbar = 1.054e-34
-eV = 1.6e-19
-E0 = 20e+3
-Na = 6.02e+23
-eps0 = 8.854e-12 ## SI!!!
-k_el = 1 / (4*np.pi*eps0)
+h = 6.626e-34 ## SI !!!
+h_bar = 1.054e-34 ## SI !!!
+eV = 1.602e-19 ## SI !!!
+Na = 6.02e+23 
+eps_0 = 8.854e-12 ## SI!!!
+k_el = 1 / ( 4 * np.pi * eps_0 ) ## SI !!!
 c = 3e+8 ## SI!!!
+
 a0 = 5.292e-9 ## cm
-k_B = 8.617e-5
+
+k_B = 8.617e-5 ## eV / K
 
 r0 = 2.828e-13 ## cm - classical electron radius
 
 hw_phonon = 0.1 ## eV
 
-h2si = k_el * m * e**2 / hbar**2
+h2si = k_el * m * e**2 / h_bar**2 ## Hartree units to SI
+
+a0_2 = 2.8002852e-17 ## cm
 
 
 #%% PMMA ans Si
@@ -55,8 +58,6 @@ N_H_MMA = 8
 N_C_MMA = 5
 N_O_MMA = 2
 
-#Z_PMMA = 3.6
-# u_MMA = 100.12
 u_MMA = (N_H_MMA*u_H + N_C_MMA*u_C + N_O_MMA*u_O)
 
 M0 = u_MMA / Na
@@ -69,8 +70,10 @@ n_MMA = rho_PMMA * Na/u_MMA
 
 m_MMA = u_MMA / Na
 
-#CONC_at = {'H': n_H, 'C': n_C, 'O': n_O, 'Si': n_Si}
-#CONC = [n_PMMA_at, n_PMMA_at, n_PMMA_at, n_Si]
+PMMA_val_kF = ( 3 * np.pi**2 * n_MMA * 40 )**(1/3) * 1e+2 ## cm^-1 -> m^-1
+PMMA_val_pF = h_bar * PMMA_val_kF ## kg * m/s
+PMMA_val_vF = PMMA_val_pF / m ## m/s
+
 
 
 #%%
@@ -111,6 +114,7 @@ PMMA_Ebind = [25.84, 3.6, 288, 543]
 TT_len = int(7e+3)
 
 DATA_tr_len = int(3e+4)
+# DATA_tr_len = int(3e+5)
 
 E_cut_PMMA = 3.7
 E_cut_Si = 16.7
