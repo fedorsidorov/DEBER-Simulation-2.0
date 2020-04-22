@@ -4,7 +4,7 @@ import os
 import importlib
 import my_constants as mc
 import my_utilities as mu
-# from scipy import integrate
+from scipy import integrate
 
 import matplotlib.pyplot as plt
 
@@ -21,6 +21,7 @@ m_sgs     = 9.109383701e-28 ## g
 e_sgs     = 4.803204673e-10 ## sm^3/2 * g^1/2* s^-1
 eV_sgs    = 1.602176620e-12 ## erg
 h_bar_sgs = 1.054571817e-27 ## erg * s
+a0_sgs    = 5.292e-9        ## cm
 
 ## hwi    hgi       Ai
 PMMA_params = [
@@ -81,65 +82,65 @@ def get_eps_M(q, hw_eV_complex, E_pl_eV): ## hw_complex = hw + 1j*gamma - in eV
 
 
 #%% 1 test ELF - OK
-HW = np.linspace(1, 80, 100)
+# HW = np.linspace(1, 80, 100)
 
 
-eps_M_0p1 = np.zeros(len(HW), dtype=complex)
-eps_M_1p0 = np.zeros(len(HW), dtype=complex)
-eps_M_10p = np.zeros(len(HW), dtype=complex)
+# eps_M_0p1 = np.zeros(len(HW), dtype=complex)
+# eps_M_1p0 = np.zeros(len(HW), dtype=complex)
+# eps_M_10p = np.zeros(len(HW), dtype=complex)
 
 
-for i, hw in enumerate(HW):
+# for i, hw in enumerate(HW):
     
-    eps_M_0p1[i] = get_eps_M(1.0*p_au, hw + 0.1j, 20)
-    eps_M_1p0[i] = get_eps_M(1.0*p_au, hw +   1j, 20)
-    eps_M_10p[i] = get_eps_M(1.0*p_au, hw +  10j, 20)
+#     eps_M_0p1[i] = get_eps_M(1.0*p_au, hw + 0.1j, 20)
+#     eps_M_1p0[i] = get_eps_M(1.0*p_au, hw +   1j, 20)
+#     eps_M_10p[i] = get_eps_M(1.0*p_au, hw +  10j, 20)
 
 
-plt.plot(HW, np.imag(-1/eps_M_0p1))
-plt.plot(HW, np.imag(-1/eps_M_1p0))
-plt.plot(HW, np.imag(-1/eps_M_10p))
+# plt.plot(HW, np.imag(-1/eps_M_0p1))
+# plt.plot(HW, np.imag(-1/eps_M_1p0))
+# plt.plot(HW, np.imag(-1/eps_M_10p))
 
-book = np.loadtxt('curves/mermin_book.txt')
-plt.plot(book[:, 0], book[:, 1], '.')
+# book = np.loadtxt('curves/mermin_book.txt')
+# plt.plot(book[:, 0], book[:, 1], '.')
 
 
 #%% 2 test ELF - OK
-HW = np.linspace(1, 80, 100)
+# HW = np.linspace(1, 80, 100)
 
-eps_L_0p5 = np.zeros(len(HW), dtype=complex)
-eps_L_1p0 = np.zeros(len(HW), dtype=complex)
-eps_L_1p5 = np.zeros(len(HW), dtype=complex)
+# eps_L_0p5 = np.zeros(len(HW), dtype=complex)
+# eps_L_1p0 = np.zeros(len(HW), dtype=complex)
+# eps_L_1p5 = np.zeros(len(HW), dtype=complex)
 
-eps_M_0p5 = np.zeros(len(HW), dtype=complex)
-eps_M_1p0 = np.zeros(len(HW), dtype=complex)
-eps_M_1p5 = np.zeros(len(HW), dtype=complex)
+# eps_M_0p5 = np.zeros(len(HW), dtype=complex)
+# eps_M_1p0 = np.zeros(len(HW), dtype=complex)
+# eps_M_1p5 = np.zeros(len(HW), dtype=complex)
 
 
-for i, hw in enumerate(HW):
+# for i, hw in enumerate(HW):
     
-    eps_L_0p5[i] = get_eps_L(0.5*p_au, hw + 1e-100j, 20)
-    eps_L_1p0[i] = get_eps_L(1.0*p_au, hw + 1e-100j, 20)
-    eps_L_1p5[i] = get_eps_L(1.5*p_au, hw + 1e-100j, 20)
+#     eps_L_0p5[i] = get_eps_L(0.5*p_au, hw + 1e-100j, 20)
+#     eps_L_1p0[i] = get_eps_L(1.0*p_au, hw + 1e-100j, 20)
+#     eps_L_1p5[i] = get_eps_L(1.5*p_au, hw + 1e-100j, 20)
     
-    eps_M_0p5[i] = get_eps_M(0.5*p_au, hw + 5j, 20)
-    eps_M_1p0[i] = get_eps_M(1.0*p_au, hw + 5j, 20)
-    eps_M_1p5[i] = get_eps_M(1.5*p_au, hw + 5j, 20)
+#     eps_M_0p5[i] = get_eps_M(0.5*p_au, hw + 5j, 20)
+#     eps_M_1p0[i] = get_eps_M(1.0*p_au, hw + 5j, 20)
+#     eps_M_1p5[i] = get_eps_M(1.5*p_au, hw + 5j, 20)
 
 
-plt.plot(HW, np.imag(-1/eps_L_0p5))
-plt.plot(HW, np.imag(-1/eps_L_1p0))
-plt.plot(HW, np.imag(-1/eps_L_1p5))
+# plt.plot(HW, np.imag(-1/eps_L_0p5))
+# plt.plot(HW, np.imag(-1/eps_L_1p0))
+# plt.plot(HW, np.imag(-1/eps_L_1p5))
 
-plt.plot(HW, np.imag(-1/eps_M_0p5))
-plt.plot(HW, np.imag(-1/eps_M_1p0))
-plt.plot(HW, np.imag(-1/eps_M_1p5))
+# plt.plot(HW, np.imag(-1/eps_M_0p5))
+# plt.plot(HW, np.imag(-1/eps_M_1p0))
+# plt.plot(HW, np.imag(-1/eps_M_1p5))
 
-book_L = np.loadtxt('curves/book_L.txt')
-book_M = np.loadtxt('curves/book_M.txt')
+# book_L = np.loadtxt('curves/book_L.txt')
+# book_M = np.loadtxt('curves/book_M.txt')
 
-plt.plot(book_L[:, 0], book_L[:, 1], '.')
-plt.plot(book_M[:, 0], book_M[:, 1], '.')
+# plt.plot(book_L[:, 0], book_L[:, 1], '.')
+# plt.plot(book_M[:, 0], book_M[:, 1], '.')
 
 
 #%%
@@ -175,6 +176,33 @@ def get_PMMA_ELF_M(q, hw_eV, params_hw_hg_A): ## SGS
     return PMMA_ELF_M
 
 
+def get_PMMA_ELF(q, hw_eV, params_hw_hg_A, kind): ## SGS
+    
+    PMMA_ELF = 0
+    
+    
+    for line in params_hw_hg_A:
+        
+        E_pl_eV, gamma_eV, A = line
+        
+        if  kind == 'L':
+            gamma_eV = 1e-100
+        
+        elif kind == 'M':
+            gamma_eV = gamma_eV
+        
+        else:
+            print('Specify ELF kind!')
+            return 0 + 0j
+        
+        now_eps = get_eps_M(q, hw_eV + 1j*gamma_eV, E_pl_eV)
+
+        PMMA_ELF += A * np.imag(-1/now_eps)
+    
+    
+    return PMMA_ELF
+
+
 def get_PMMA_OLF_D(hw, params_hw_hg_A):
     
     PMMA_OLF_D = 0
@@ -190,82 +218,91 @@ def get_PMMA_OLF_D(hw, params_hw_hg_A):
 
 
 #%% test PMMA OLF - OK
-EE = np.linspace(1, 100, 100)
-
-OLF_M = np.zeros(len(EE))
-OLF_D = np.zeros(len(EE))
-
-
-for i, E in enumerate(EE):
-    
-    OLF_M[i] = get_PMMA_ELF_M(5e-3 * inv_A * h_bar_sgs, E, PMMA_params)
-    OLF_D[i] = get_PMMA_OLF_D(E, PMMA_params)
-
-
-plt.plot(EE, OLF_M, '*')
-plt.plot(EE, OLF_D)
-
-ritsko = np.loadtxt('Ritsko_Henke/Ritsko_dashed.txt')
-plt.plot(ritsko[:, 0], ritsko[:, 1], '.', label='Ritsko')
-
-
-#%% test PMMA ELF
-EE = 
-
-
-
-#%%
 # EE = np.linspace(1, 100, 100)
 
-# Im = np.zeros(len(EE))
+# OLF_M = np.zeros(len(EE))
+# OLF_D = np.zeros(len(EE))
 
 
 # for i, E in enumerate(EE):
     
-#     Im[i] = get_Im(h_bar_sgs*k, E, PMMA_params, hw_threshold_eV=0)
+#     OLF_M[i] = get_PMMA_ELF(5e-3 * inv_A * h_bar_sgs, E, PMMA_params, kind='M')
+#     OLF_D[i] = get_PMMA_OLF_D(E, PMMA_params)
 
 
-# plt.plot(EE, Im)
+# plt.plot(EE, OLF_M, '*')
+# plt.plot(EE, OLF_D)
+
+# ritsko = np.loadtxt('Ritsko_Henke/Ritsko_dashed.txt')
+# plt.plot(ritsko[:, 0], ritsko[:, 1], '.', label='Ritsko')
+
+
+#%% test PMMA ELF - OK
+# EE = np.linspace(1, 80, 100)
+
+# ELF_2_M = np.zeros(len(EE))
+# ELF_4_M = np.zeros(len(EE))
+
+
+# for i, E in enumerate(EE):
+    
+#     ELF_2_M[i] = get_PMMA_ELF(2 * inv_A * h_bar_sgs, E, PMMA_params, 'M')
+#     ELF_4_M[i] = get_PMMA_ELF(4 * inv_A * h_bar_sgs, E, PMMA_params, 'M')
+
+
+# plt.plot(EE, ELF_2_M, label='my Mermin 2 A-1')
+# plt.plot(EE, ELF_4_M, label='my Mermin 4 A-1')
+
+
+# DM2 = np.loadtxt('curves/Dapor_M_2A-1.txt')
+# DM4 = np.loadtxt('curves/Dapor_M_4A-1.txt')
+
+# plt.plot(DM2[:, 0], DM2[:, 1], 'o')
+# plt.plot(DM4[:, 0], DM4[:, 1], 'o')
 
 
 #%%
-# def get_DIIMFP(E_eV, hw_eV):
-        
-#     E = E_eV * mc.eV
-#     hw = hw_eV * mc.eV
+def get_PMMA_DIIMFP(E_eV, hw_eV):
     
-#     w = hw / mc.h_bar
+    if hw_eV > E_eV:
+        return 0
     
-#     if hw > E:
-#         return 0
-    
-#     def get_Y(k):
-#         # return get_Im(k, w, PMMA_params, PMMA_hw_th) / k
-#         return get_Im(k, w, PMMA_params, 0) / k
-    
-#     kp = np.sqrt( 2*mc.m / mc.h_bar**2 ) * ( np.sqrt(E) + np.sqrt(E - hw) )
-#     km = np.sqrt( 2*mc.m / mc.h_bar**2 ) * ( np.sqrt(E) - np.sqrt(E - hw) )
-    
-#     integral = integrate.quad(get_Y, km, kp)[0]
+    E = E_eV * eV_sgs
+    hw = hw_eV * eV_sgs
     
     
-#     return 1 / (np.pi * mc.a0 * E_eV) * integral ## cm^-1 * eV^-1
+    def get_Y(k):
+        return get_PMMA_ELF(k * h_bar_sgs, hw_eV, PMMA_params, 'M') / k
+    
+    kp = np.sqrt(2*m_sgs / h_bar_sgs**2) * (np.sqrt(E) + np.sqrt(E - hw))
+    km = np.sqrt(2*m_sgs / h_bar_sgs**2) * (np.sqrt(E) - np.sqrt(E - hw))
+    
+    integral = integrate.quad(get_Y, km, kp)[0]
+    
+    
+    return 1 / (np.pi * a0_sgs * E_eV) * integral ## cm^-1 * eV^-1
 
 
-#%%
-# DIIMFP = np.zeros(len(mc.EE))
+#%% test PMMA DIIMFP - OK
+# EE_D = [50, 100, 200, 300, 400, 500, 1000]
+# EE = np.linspace(1, 80, 100)
 
+# DIIMFP = np.zeros((len(EE_D), len(EE)))
 
-# for i, E in enumerate(mc.EE):
+# for i, E_D in enumerate(EE_D):
+
+#     for j, E in enumerate(EE):
     
-#     DIIMFP[i] = get_DIIMFP(200, mc.EE[i])
+#         DIIMFP[i, j] = get_PMMA_DIIMFP(E_D, E)
 
 
-#%%
-# plt.plot(mc.EE, DIIMFP * 1e-8)
+# for i in range(len(EE_D)):
+#     plt.plot(EE, DIIMFP[i, :] * 1e-8)
+
+
+# Dapor_DIIMFP = np.loadtxt('curves/Dapor_DIIMFP.txt')
+# plt.plot(Dapor_DIIMFP[:, 0], Dapor_DIIMFP[:, 1], '.')
 
 # plt.xlim(0, 100)
-
-
-
+# plt.ylim(0, 0.008)
 
