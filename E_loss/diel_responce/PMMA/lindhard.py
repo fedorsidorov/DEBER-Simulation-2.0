@@ -23,7 +23,6 @@ eV_sgs    = 1.602176620e-12 ## erg
 h_bar_sgs = 1.054571817e-27 ## erg * s
 
 
-
 def get_kF_vF(wp): ## SGS
     
     n = wp**2 * m_sgs / (4 * np.pi * e_sgs**2) ## SGS
@@ -52,6 +51,11 @@ def get_eps_L_book_gamma(q, hw_eV, Epl_eV, gamma_eV): ## gamma is energy!
         np.log( (z - x/(4*z) + 1) / (z - x/(4*z) - 1) ) +\
         1/(8*z) * (1 - (z + x/(4*z))**2) *\
         np.log( (z + x/(4*z) + 1) / (z + x/(4*z) - 1) )
+        
+        # res = 1/2 + 1/(8*z) * (1 - (z - x/(4*z))**2) *\
+        # np.log( np.abs( (z - x/(4*z) + 1) / (z - x/(4*z) - 1) ) ) +\
+        # 1/(8*z) * (1 - (z + x/(4*z))**2) *\
+        # np.log( np.abs( (z + x/(4*z) + 1) / (z + x/(4*z) - 1) ) )
         
         return res
     
@@ -123,7 +127,7 @@ k = q / h_bar_sgs
 Epl_20 = 20
 
 ww = np.linspace(0, 30, 100)
-# ww = np.linspace(3, 7, 2)
+# ww = np.linspace(0, 120, 100)
 
 eps_L_03 = np.zeros(len(ww), dtype=complex)
 eps_L_05 = np.zeros(len(ww), dtype=complex)
@@ -143,18 +147,41 @@ for i, hw in enumerate(ww):
     eps_L_b_03[i] = get_eps_L_book_gamma(0.3*q, hw, Epl_20, 1e-100)
     eps_L_b_05[i] = get_eps_L_book_gamma(0.5*q, hw, Epl_20, 1e-100)
     eps_L_b_07[i] = get_eps_L_book_gamma(0.7*q, hw, Epl_20, 1e-100)
+    
+    # eps_L_b_03[i] = get_eps_L_book_gamma(1.0*q, hw, Epl_20, 1e-100)
+    # eps_L_b_05[i] = get_eps_L_book_gamma(1.5*q, hw, Epl_20, 1e-100)
+    # eps_L_b_07[i] = get_eps_L_book_gamma(2.0*q, hw, Epl_20, 1e-100)
 
 
 plt.plot(ww, np.imag(eps_L_b_03))
 plt.plot(ww, np.imag(eps_L_b_05))
 plt.plot(ww, np.imag(eps_L_b_07))
 
+# plt.plot(ww, np.real(eps_L_b_03))
+# plt.plot(ww, np.real(eps_L_b_05))
+# plt.plot(ww, np.real(eps_L_b_07))
+
 
 book = np.loadtxt('book_L_im.txt')
+# book = np.loadtxt('book_L_real.txt')
 
 plt.plot(book[:, 0], book[:, 1], '.')
 
 
 # plt.xlim(0, 30)
 # plt.ylim(-5, 25)
+
+
+#%%
+plt.plot(ww, np.imag(-1/eps_L_b_03))
+plt.plot(ww, np.imag(-1/eps_L_b_05))
+plt.plot(ww, np.imag(-1/eps_L_b_07))
+
+lindhard = np.loadtxt('Lindharh_ELF_book.txt')
+
+# plt.plot(lindhard[:, 0], lindhard[:, 1], '.')
+
+
+
+
 
