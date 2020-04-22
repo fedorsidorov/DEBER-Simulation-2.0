@@ -43,6 +43,7 @@ def get_kF_vF(wp): ## SGS
     return kF, vF
 
 
+## DEPRECATED
 def get_eps_L(k, w, wp, gamma): ## SGS gamma is energy!!!
     
     
@@ -89,7 +90,7 @@ def get_eps_L(k, w, wp, gamma): ## SGS gamma is energy!!!
     EF = m_sgs * vF**2 / 2
     wF = EF / h_bar_sgs
     
-    z = k/(2*kF)
+    z = k/(2 * kF)
     
     # chi_2 = e_sgs**2 / (np.pi * h_bar_sgs * vF)
     # mult = chi_2 / z**2
@@ -102,7 +103,7 @@ def get_eps_L(k, w, wp, gamma): ## SGS gamma is energy!!!
         # u = (h_bar_sgs*w + 1j*h_bar_sgs*gamma) / EF
         u = (w + 1j*gamma / h_bar_sgs) / (k * vF)
         
-        print(u, z)
+        # print(u, z)
         
         return 1 + mult * f(u, z)
     
@@ -110,19 +111,19 @@ def get_eps_L(k, w, wp, gamma): ## SGS gamma is energy!!!
         
         u = w / (k * vF)
         
-        print(u, z)
+        # print(u, z)
         
         return 1 + mult * (f1(u, z) + 1j*f2(u, z))
 
 
-def get_eps_L_book_gamma(q, hw, Epl, gamma): ## gamma is energy!
+def get_eps_L_book_gamma(q, hw_eV, Epl_eV, gamma_eV): ## gamma is energy!
     
-    kF, vF = get_kF_vF(Epl / h_bar_sgs)
+    kF, vF = get_kF_vF(Epl_eV * eV_sgs / h_bar_sgs)
     qF = h_bar_sgs * kF
     EF = m_sgs * vF**2 / 2
     
-    z = q/qF
-    x = (hw + 1j*gamma) / EF
+    z = q/ (2 * qF)
+    x = (hw_eV + 1j*gamma_eV) * eV_sgs / EF
     
     chi_2 = e_sgs**2 / (np.pi * h_bar_sgs * vF)
     
@@ -142,24 +143,25 @@ def get_eps_L_book_gamma(q, hw, Epl, gamma): ## gamma is energy!
 
 def get_eps_L_book(q, hw_eV, Epl_eV):
     
-    kF, vF = get_kF_vF(Epl_eV / h_bar_sgs)
+    kF, vF = get_kF_vF(Epl_eV * eV_sgs / h_bar_sgs)
+    
+    # print(vF)
+    
     qF = h_bar_sgs * kF
     EF = m_sgs * vF**2 / 2
     
-    z = q/qF
+    # print(EF)
+    
+    z = q/ (2 * qF)
     x = hw_eV * eV_sgs / EF
     
-    print(x, z)
+    # print(x, z)
     
-    chi_2 = e_sgs**2 / (np.pi * h_bar_sgs * vF)
+    # chi_2 = e_sgs**2 / (np.pi * h_bar_sgs * vF)
+    chi_2 = (4 / (9 * np.pi**4))**(1/3) * 1.78
     
     
     def f1(x, z):
-        
-        # res = 1/2 + 1/(8*z) * (1 - (z - x/(4*z))**2) *\
-        # np.log( np.abs( (z - x/(4*z) + 1) / (z - x/(4*z) - 1) ) ) +\
-        # 1/(8*z) * (1 - (z + x/(4*z))**2) *\
-        # np.log( np.abs( (z + x/(4*z) + 1) / (z + x/(4*z) - 1) ) )
         
         br_1 = 1 - (z - x/(4*z))**2
         br_2 = 1 - (z + x/(4*z))**2
@@ -174,10 +176,14 @@ def get_eps_L_book(q, hw_eV, Epl_eV):
     
     def f2(x, z):
         
-        if 0 < x and x < 4 * z * (1 - z):
+        u = x / (4 * z)
+        
+        # if 0 < x and x < 4 * z * (1 - z):
+        if z + u < 1:
             return np.pi * x / (8 * z)
     
-        elif 4 * z * (z - 1) < x and x < 4 * z * (z + 1) and x > 4 * z * (1 - z):
+        # elif 4 * z * (z - 1) < x and x < 4 * z * (z + 1) and x > 4 * z * (1 - z):
+        elif np.abs(z - u) < 1 and 1 < z + u:
             return (np.pi / 8) * (1 - (x / (4 * z))**2)
         
         else:
@@ -196,30 +202,39 @@ k = q / h_bar_sgs
 
 Epl_20 = 20
 
-ww = np.linspace(1, 30, 10)
+ww = np.linspace(0, 30, 100)
+# ww = np.linspace(3, 7, 2)
 
 eps_L_03 = np.zeros(len(ww), dtype=complex)
 eps_L_05 = np.zeros(len(ww), dtype=complex)
 eps_L_07 = np.zeros(len(ww), dtype=complex)
 
+eps_L_b_03 = np.zeros(len(ww), dtype=complex)
+eps_L_b_05 = np.zeros(len(ww), dtype=complex)
+eps_L_b_07 = np.zeros(len(ww), dtype=complex)
+
 
 for i, hw in enumerate(ww):
     
-   eps_L_03[i] = get_eps_L(0.3*k, hw * eV_sgs / h_bar_sgs, Epl_20 * eV_sgs / h_bar_sgs, 0)
+    eps_L_b_03[i] = get_eps_L_book(0.3*q, hw, Epl_20)
     
-    # eps_L_03[i] = get_eps_L_book(0.3*q, hw, Epl_20)
-    # eps_L_05[i] = get_eps_L_book(0.5*q, hw, Epl_20)
-    # eps_L_07[i] = get_eps_L_book(0.7*q, hw, Epl_20)
+    # eps_L_b_03[i] = get_eps_L_book_gamma(0.3*q, hw, Epl_20, 1e-100)
+    # eps_L_b_05[i] = get_eps_L_book_gamma(0.5*q, hw, Epl_20, 1e-100)
+    # eps_L_b_07[i] = get_eps_L_book_gamma(0.7*q, hw, Epl_20, 1e-100)
+    
+    eps_L_b_03[i] = get_eps_L_book(0.3*q, hw, Epl_20)
+    eps_L_b_05[i] = get_eps_L_book(0.5*q, hw, Epl_20)
+    eps_L_b_07[i] = get_eps_L_book(0.7*q, hw, Epl_20)
 
 
-plt.plot(ww, np.imag(eps_L_03))
-# plt.plot(ww, np.imag(eps_L_05))
-# plt.plot(ww, np.imag(eps_L_07))
+plt.plot(ww, np.imag(eps_L_b_03))
+plt.plot(ww, np.imag(eps_L_b_05))
+plt.plot(ww, np.imag(eps_L_b_07))
 
 
 book = np.loadtxt('book_L_im.txt')
 
-# plt.plot(book[:, 0], book[:, 1], '.')
+plt.plot(book[:, 0], book[:, 1], '.')
 
 
 # plt.xlim(0, 30)
