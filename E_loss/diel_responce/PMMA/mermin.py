@@ -262,7 +262,7 @@ def get_PMMA_OLF_D(hw, params_hw_hg_A):
 
 
 #%%
-def get_PMMA_DIIMFP(E_eV, hw_eV):
+def get_PMMA_DIIMFP(E_eV, hw_eV, exchange=False):
     
     if hw_eV > E_eV:
         return 0
@@ -272,7 +272,18 @@ def get_PMMA_DIIMFP(E_eV, hw_eV):
     
     
     def get_Y(k):
+        
+        if exchange:
+            
+            v = np.sqrt(E_eV * eV_sgs / m_sgs)
+            frac = (h_bar_sgs * k) / (m_sgs * v)
+            
+            return (1 + frac**4 - frac**2) *\
+                get_PMMA_ELF(k * h_bar_sgs, hw_eV, PMMA_params, 'M') / k
+        
+        
         return get_PMMA_ELF(k * h_bar_sgs, hw_eV, PMMA_params, 'M') / k
+    
     
     kp = np.sqrt(2*m_sgs / h_bar_sgs**2) * (np.sqrt(E) + np.sqrt(E - hw))
     km = np.sqrt(2*m_sgs / h_bar_sgs**2) * (np.sqrt(E) - np.sqrt(E - hw))
@@ -305,4 +316,41 @@ def get_PMMA_DIIMFP(E_eV, hw_eV):
 
 # plt.xlim(0, 100)
 # plt.ylim(0, 0.008)
+
+
+#%%
+def get_PMMA_IIMFP(E_eV):
+    
+    
+    def get_Y(hw_eV):
+        return get_PMMA_DIIMFP(E_eV, hw_eV)
+    
+    return integrate.quad(get_Y, 0, E_eV/2)[0]
+
+
+#%%
+# EE = np.logspace(1, 3, 100)
+EE = mc.EE_prec
+
+DIIMFP = np.zeros((len(EE), len(EE)))
+IIMFP = np.zeros(len(EE))
+
+
+for i, E in enumerate(EE):
+    
+    mu.pbar(i, len(EE))
+    
+    # IIMFP[i] = get_PMMA_IIMFP(E)
+    
+    
+    for j, hw in enumerate(EE):
+        
+        DIIMFP[i, j] = get_PMMA_DIIMFP(E, hw)
+
+
+#%%
+plt.loglog(EE, 1/IIMFP * 1e+8)
+
+DB = np.loadtxt('curves/Dapor_BOOK_grey.txt')
+plt.loglog(DB[:, 0], DB[:, 1])
 
