@@ -1,5 +1,7 @@
 #%% Import
 import numpy as np
+import matplotlib.pyplot as plt
+
 import my_constants as mc
 import my_utilities as mu
 
@@ -26,8 +28,6 @@ E_cut = [mc.E_cut_PMMA, mc.E_cut_Si]
 
 
 #%%
-ans = sigma_diff_sample_processes[1][4]
-
-
-
+plt.loglog(mc.EE, pp.u_processes[:, 0])
+plt.loglog(mc.EE, ps.u_processes[:, 0])
 

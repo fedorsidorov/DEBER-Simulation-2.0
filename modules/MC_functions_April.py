@@ -198,7 +198,8 @@ def get_TT_and_sim_data(d_PMMA, TT, n_TT, tr_num, par_num, E0, x0y0z0, O):
                 else:
                     
                     W, On, O2nd = get_ee_W_On_O2nd(layer_ind, proc_ind, E, E_ind, O)
-                    E -= W + ma.E_bind[proc_ind]
+                    W += ma.E_bind[proc_ind-1]
+                    E -= W
             
             
             else:

@@ -24,11 +24,11 @@ d_PMMA = 500e-7
 # d_PMMA = 1
 
 
-# n_files = 1000
+# n_files = 1
 # n_tracks = 100
 
-n_files = 1
-n_tracks = 10
+n_files = 10000
+n_tracks = 5
 
 num = 0
 
@@ -47,7 +47,7 @@ while num < n_files:
         
     fname_PMMA_inel = os.path.join(dest_dir, 'DATA_PMMA_inel_' + str(num) + '.npy')
     
-    # np.save(fname_PMMA_inel, DATA_PMMA_inel)
+    np.save(fname_PMMA_inel, DATA_PMMA_inel)
     
     print('file ' + fname_PMMA_inel + ' is ready')    
     
