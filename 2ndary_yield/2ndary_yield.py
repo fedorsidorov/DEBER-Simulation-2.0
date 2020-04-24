@@ -67,15 +67,15 @@ def print_2ndaries(model, n_tracks):
 
 
 #%%
-print_2ndaries('0p5_0p14_chi_1_RH', 100)
+print_2ndaries('Mermin', 100)
 
-C_sim = np.loadtxt(os.path.join(mc.sim_folder, '2ndary_yield', 'ciappa2010.txt'))
-# D_sim = np.loadtxt(os.path.join(mc.sim_folder, '2ndary_yield', 'Dapor_sim.txt'))
-# D_exp = np.loadtxt(os.path.join(mc.sim_folder, '2ndary_yield', 'Dapor_exp.txt'))
+# C_sim = np.loadtxt(os.path.join(mc.sim_folder, '2ndary_yield', 'ciappa2010.txt'))
+D_sim = np.loadtxt(os.path.join(mc.sim_folder, '2ndary_yield', 'Dapor_sim.txt'))
+D_exp = np.loadtxt(os.path.join(mc.sim_folder, '2ndary_yield', 'Dapor_exp.txt'))
 
-plt.semilogx(C_sim[:, 0], C_sim[:, 1], 'o-', label='Ciappa')
-# plt.semilogx(D_sim[:, 0], D_sim[:, 1], 'o-', label='Dapor')
-# plt.plot(D_exp[:, 0], D_exp[:, 1], 'o-', label='experiment')
+# plt.plot(C_sim[:, 0], C_sim[:, 1], 'o-', label='Ciappa')
+plt.plot(D_sim[:, 0], D_sim[:, 1], 'o-', label='Dapor')
+plt.plot(D_exp[:, 0], D_exp[:, 1], 'o-', label='experiment')
 
 plt.legend()
 plt.grid()

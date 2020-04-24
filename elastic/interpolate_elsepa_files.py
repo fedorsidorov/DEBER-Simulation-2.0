@@ -71,7 +71,8 @@ def interpolate_diff_cs(diff_cs_raw, EE_raw, THETA_deg_raw, extrap=False):
         now_diff_cs_pre.append(diff_cs_pre[i, -1])
         now_THETA_deg_raw.append(THETA_deg_raw[-1])
         
-        diff_cs[i, :] = mu.semilogy_interp1d(now_THETA_deg_raw, now_diff_cs_pre)(mc.THETA_deg)
+        diff_cs[i, :] = mu.semilogy_interp1d(now_THETA_deg_raw,
+                                             now_diff_cs_pre)(mc.THETA_deg)
     
     
     return diff_cs

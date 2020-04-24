@@ -19,17 +19,17 @@ pd = importlib.reload(pd)
 
 
 #%%
-E0_list = [50, 100, 150, 200, 300, 350, 400, 450, 500, 600, 800, 1000, 1500]
+# E0_list = [50, 100, 150, 200, 300, 350, 400, 450, 500, 600, 800, 1000]
 # E0_list = [100, 200, 300, 400, 1000]
-# E0_list = [250]
+E0_list = [1000]
 
-model = '0p1_0p15_chi_1_RH'
+model = 'Mermin'
 
-n_files = 1000
-n_tracks = 100
+# n_files = 1000
+# n_tracks = 100
 
-# n_files = 1
-# n_tracks = 5
+n_files = 1
+n_tracks = 1
 
 num = 0
 
@@ -50,7 +50,7 @@ while num < n_files:
             os.makedirs(dest_dir)
         
         fname = os.path.join(dest_dir, 'n_2nd_for_100_prim_tracks_' + str(num) + '.npy')
-        np.save(fname, np.array((n_2ndaries)))
+        # np.save(fname, np.array((n_2ndaries)))
         
         print('file ' + fname + ' is ready')
     

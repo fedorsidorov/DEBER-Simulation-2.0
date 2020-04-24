@@ -114,11 +114,12 @@ PMMA_Ebind = [25.84, 3.6, 288, 543]
 #%%
 TT_len = int(7e+3)
 
-DATA_tr_len = int(3e+4)
-# DATA_tr_len = int(3e+5)
+# DATA_tr_len = int(3e+4)
+DATA_tr_len = int(3e+5)
+
+Wf_PMMA = 4.68
 
 E_cut_PMMA = 3.7
 E_cut_Si = 16.7
+# E_cut_Si = 20
 
-# Wf_PMMA = 4.68
-Wf_PMMA = 1.0

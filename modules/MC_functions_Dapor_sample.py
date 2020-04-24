@@ -3,7 +3,8 @@ import numpy.random as rnd
 
 import importlib
 
-import prepare_PMMA_Dapor_sample as ma
+import prepare_PMMA_sample as pp
+import prepare_Si_sample as ps
 import my_constants as mc
 import my_utilities as mu
 

@@ -319,38 +319,23 @@ def get_PMMA_DIIMFP(E_eV, hw_eV, exchange=False):
 
 
 #%%
-def get_PMMA_IIMFP(E_eV):
-    
-    
-    def get_Y(hw_eV):
-        return get_PMMA_DIIMFP(E_eV, hw_eV)
-    
-    return integrate.quad(get_Y, 0, E_eV/2)[0]
-
-
-#%%
-# EE = np.logspace(1, 3, 100)
 EE = mc.EE_prec
 
-DIIMFP = np.zeros((len(EE), len(EE)))
-IIMFP = np.zeros(len(EE))
+DIIMFP_part = np.zeros((len(EE), len(EE)))
 
 
-for i, E in enumerate(EE):
+for i, E in enumerate(EE[824:950]):
+    
+    print(E)
     
     mu.pbar(i, len(EE))
-    
-    # IIMFP[i] = get_PMMA_IIMFP(E)
-    
+
     
     for j, hw in enumerate(EE):
-        
-        DIIMFP[i, j] = get_PMMA_DIIMFP(E, hw)
+        DIIMFP_part[i, j] = get_PMMA_DIIMFP(E, hw)
 
 
 #%%
-plt.loglog(EE, 1/IIMFP * 1e+8)
+plt.loglog(EE, DIIMFP_part[700, :])
 
-DB = np.loadtxt('curves/Dapor_BOOK_grey.txt')
-plt.loglog(DB[:, 0], DB[:, 1])
 

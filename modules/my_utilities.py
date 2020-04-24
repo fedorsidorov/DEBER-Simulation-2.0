@@ -28,36 +28,46 @@ def pbar(progress, total):
     sys.stdout.flush()
 
 
-def log_interp1d(xx, yy, kind='linear'):
+def log_log_interp(xx, yy, kind='linear'):
     
     logx = np.log10(xx)
-    
     logy = np.log10(yy)
 
     lin_interp = interpolate.interp1d(logx, logy, kind=kind)
-
     log_interp = lambda zz: np.power(10.0, lin_interp(np.log10(zz)))
     
     return log_interp
 
 
-def semilogy_interp1d(xx, yy, kind='linear'):
+def log_log_interp_2d(xx, yy, zz, kind='linear'):
+    
+    logx = np.log10(xx)
+    logy = np.log10(yy)
+    logz = np.log10(zz)
+    
+    xm, ym = np.meshgrid(logx, logy)
+    
+    lin_interp = interpolate.interp2d(logx, logy, logz, kind='linear')
+    log_interp = lambda zz, tt: np.power(10.0, lin_interp(np.log10(zz), np.log10(tt)))
+    
+    return log_interp
+
+
+def lin_log_interp(xx, yy, kind='linear'):
     
     logy = np.log10(yy)
 
     lin_interp = interpolate.interp1d(xx, logy, kind=kind)
-
     log_interp = lambda zz: np.power(10.0, lin_interp(zz))
     
     return log_interp
 
 
-def semilogx_interp1d(xx, yy, kind='linear'):
+def log_lin_interp(xx, yy, kind='linear'):
     
     logx = np.log10(xx)
 
     lin_interp = interpolate.interp1d(logx, yy, kind=kind)
-
     log_interp = lambda zz: lin_interp(np.log10(zz))
     
     return log_interp
